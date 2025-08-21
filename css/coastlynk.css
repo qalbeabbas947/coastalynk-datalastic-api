@@ -180,6 +180,27 @@
     gap: 20px;
 }
 
+#coastalynk-table {
+    font-size: 1rem; /* Adjust this value to your preference */
+}
+
+/* Or, be more specific to target just the cell data */
+#coastalynk-table tbody td {
+    font-size: 1rem;
+}
+
+/* Optional: Adjust the header font size separately */
+#coastalynk-table thead th {
+    font-size: 1rem;
+    font-weight: bold;
+}
+#coastalynk-table_info{
+    font-size: 1rem;
+
+}
+.wp-block-post-title{
+    display: none;
+}
 .datalastic-container .port-card {
     background: #f8f9fa;
     border-radius: 8px;

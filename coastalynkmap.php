@@ -12,14 +12,11 @@
  *
  * @package CreateBlock
  */
-require 'vendor/autoload.php';
-
-use GraphQL\Client;
-use GraphQL\Exception\QueryError;
-use GraphQL\Query;
-use GraphQL\RawObject;
 
 add_shortcode( 'show_vessels', 'wpdocs_show_vessels' );
+/**
+ * show_vessels shortcode content.
+ */
 function wpdocs_show_vessels( $atts ) {
 	
     ob_start();
@@ -129,107 +126,107 @@ function wpdocs_show_vessels( $atts ) {
 
     // 5. Define the resolution of our heatmap grid (number of cells)
     // More cells = smoother but more computationally expensive heatmap
-    $gridColumns = 100;
-    $gridRows = 60;
+    // $gridColumns = 100;
+    // $gridRows = 60;
 
-    // Initialize an empty 2D array to hold our vessel counts
-    $heatmapGrid = array_fill(0, $gridRows, array_fill(0, $gridColumns, 0));
+    // // Initialize an empty 2D array to hold our vessel counts
+    // $heatmapGrid = array_fill(0, $gridRows, array_fill(0, $gridColumns, 0));
 
-    // Calculate the size (in degrees) of each grid cell
-    $cellWidth = ($maxLon - $minLon) / $gridColumns;
-    $cellHeight = ($maxLat - $minLat) / $gridRows;
+    // // Calculate the size (in degrees) of each grid cell
+    // $cellWidth = ($maxLon - $minLon) / $gridColumns;
+    // $cellHeight = ($maxLat - $minLat) / $gridRows;
 
-    // Place each vessel into a grid cell
-    foreach ($allVesselPositions as $position) {
-        $lat = $position['lat'];
-        $lon = $position['lon'];
+    // // Place each vessel into a grid cell
+    // foreach ($allVesselPositions as $position) {
+    //     $lat = $position['lat'];
+    //     $lon = $position['lon'];
 
-        // Calculate the grid column (x-index) and row (y-index) for this vessel
-        $col = (int)floor(($lon - $minLon) / $cellWidth);
-        $row = (int)floor(($lat - $minLat) / $cellHeight);
+    //     // Calculate the grid column (x-index) and row (y-index) for this vessel
+    //     $col = (int)floor(($lon - $minLon) / $cellWidth);
+    //     $row = (int)floor(($lat - $minLat) / $cellHeight);
 
-        // Ensure the calculated indices are within the grid bounds
-        if ($col >= 0 && $col < $gridColumns && $row >= 0 && $row < $gridRows) {
-            $heatmapGrid[$row][$col]++;
-        }
-    }
+    //     // Ensure the calculated indices are within the grid bounds
+    //     if ($col >= 0 && $col < $gridColumns && $row >= 0 && $row < $gridRows) {
+    //         $heatmapGrid[$row][$col]++;
+    //     }
+    // }
 
-    // Find the maximum vessel count in any single cell to normalize our colors
-    $maxCount = 0;
-    foreach ($heatmapGrid as $row) {
-        $rowMax = max($row);
-        if ($rowMax > $maxCount) {
-            $maxCount = $rowMax;
-        }
-    }
+    // // Find the maximum vessel count in any single cell to normalize our colors
+    // $maxCount = 0;
+    // foreach ($heatmapGrid as $row) {
+    //     $rowMax = max($row);
+    //     if ($rowMax > $maxCount) {
+    //         $maxCount = $rowMax;
+    //     }
+    // }
 
-    // Create a truecolor image with transparency
-    $im = imagecreatetruecolor($gridWidth, $gridHeight);
-    imagesavealpha($im, true);
-    $transparent = imagecolorallocatealpha($im, 0, 0, 0, 127);
-    imagefill($im, 0, 0, $transparent);
+    // // Create a truecolor image with transparency
+    // $im = imagecreatetruecolor($gridWidth, $gridHeight);
+    // imagesavealpha($im, true);
+    // $transparent = imagecolorallocatealpha($im, 0, 0, 0, 127);
+    // imagefill($im, 0, 0, $transparent);
 
-    // Create a color palette (from transparent blue to intense red)
-    $colorPalette = [];
-    if ($maxCount > 0) {
-        for ($i = 0; $i <= 100; $i++) {
-            $intensity = $i / 100;
-            $r = (int)min(255, round(255 * $intensity)); // Red increases
-            $g = 0; // No green
-            $b = (int)max(0, round(255 * (1 - $intensity))); // Blue decreases
-            $alpha = (int)(50 * (1 - $intensity*0.5)); // More intense = less transparent
-            $colorPalette[$i] = imagecolorallocatealpha($im, $r, $g, $b, $alpha);
-        }
-    }
+    // // Create a color palette (from transparent blue to intense red)
+    // $colorPalette = [];
+    // if ($maxCount > 0) {
+    //     for ($i = 0; $i <= 100; $i++) {
+    //         $intensity = $i / 100;
+    //         $r = (int)min(255, round(255 * $intensity)); // Red increases
+    //         $g = 0; // No green
+    //         $b = (int)max(0, round(255 * (1 - $intensity))); // Blue decreases
+    //         $alpha = (int)(50 * (1 - $intensity*0.5)); // More intense = less transparent
+    //         $colorPalette[$i] = imagecolorallocatealpha($im, $r, $g, $b, $alpha);
+    //     }
+    // }
 
-    // Calculate the size of each cell in pixels
-    $cellWidthPx = $gridWidth / $gridColumns;
-    $cellHeightPx = $gridHeight / $gridRows;
+    // // Calculate the size of each cell in pixels
+    // $cellWidthPx = $gridWidth / $gridColumns;
+    // $cellHeightPx = $gridHeight / $gridRows;
 
-    // Draw each cell of the heatmap
-    for ($row = 0; $row < $gridRows; $row++) {
-        for ($col = 0; $col < $gridColumns; $col++) {
-            $count = $heatmapGrid[$row][$col];
-            if ($count > 0) {
-                // Normalize the count to an intensity index (0-100)
-                $intensityIndex = (int)min(100, ($count / $maxCount) * 100);
-                $color = $colorPalette[$intensityIndex];
+    // // Draw each cell of the heatmap
+    // for ($row = 0; $row < $gridRows; $row++) {
+    //     for ($col = 0; $col < $gridColumns; $col++) {
+    //         $count = $heatmapGrid[$row][$col];
+    //         if ($count > 0) {
+    //             // Normalize the count to an intensity index (0-100)
+    //             $intensityIndex = (int)min(100, ($count / $maxCount) * 100);
+    //             $color = $colorPalette[$intensityIndex];
 
-                // Calculate the pixel coordinates for this cell
-                $x1 = (int)($col * $cellWidthPx);
-                $y1 = (int)($row * $cellHeightPx);
-                $x2 = (int)(($col + 1) * $cellWidthPx - 1);
-                $y2 = (int)(($row + 1) * $cellHeightPx - 1);
+    //             // Calculate the pixel coordinates for this cell
+    //             $x1 = (int)($col * $cellWidthPx);
+    //             $y1 = (int)($row * $cellHeightPx);
+    //             $x2 = (int)(($col + 1) * $cellWidthPx - 1);
+    //             $y2 = (int)(($row + 1) * $cellHeightPx - 1);
 
-                // Draw the cell as a filled rectangle
-                imagefilledrectangle($im, $x1, $y1, $x2, $y2, $color);
-            }
-        }
-    }
+    //             // Draw the cell as a filled rectangle
+    //             imagefilledrectangle($im, $x1, $y1, $x2, $y2, $color);
+    //         }
+    //     }
+    // }
 
-    // Mark the port locations on the map for reference
-    $portColor = imagecolorallocate($im, 255, 255, 0); // Yellow
-    foreach ($ports as $portName => $portCoords) {
-        list($portLat, $portLon) = $portCoords;
-        $x = (int)(($portLon - $minLon) / ($maxLon - $minLon) * $gridWidth);
-        $y = (int)(($portLat - $minLat) / ($maxLat - $minLat) * $gridHeight);
-        imagefilledellipse($im, $x, $y, 8, 8, $portColor); // Draw a dot
-        imagestring($im, 2, $x+5, $y-5, $portName, $portColor); // Label the port
-    }
+    // // Mark the port locations on the map for reference
+    // $portColor = imagecolorallocate($im, 255, 255, 0); // Yellow
+    // foreach ($ports as $portName => $portCoords) {
+    //     list($portLat, $portLon) = $portCoords;
+    //     $x = (int)(($portLon - $minLon) / ($maxLon - $minLon) * $gridWidth);
+    //     $y = (int)(($portLat - $minLat) / ($maxLat - $minLat) * $gridHeight);
+    //     imagefilledellipse($im, $x, $y, 8, 8, $portColor); // Draw a dot
+    //     imagestring($im, 2, $x+5, $y-5, $portName, $portColor); // Label the port
+    // }
 
-    // Save the image
-    $heatmapImagePath = 'nigerian_ports_heatmap_radius.png';
-    imagepng($im, $heatmapImagePath);
-    imagedestroy($im);
+    // // Save the image
+    // $heatmapImagePath = 'nigerian_ports_heatmap_radius.png';
+    // imagepng($im, $heatmapImagePath);
+    // imagedestroy($im);
 
 
     // Optional: Save the data for further analysis or web visualization
-    $outputData = [
-        'vessel_positions' => $allVesselPositions,
-        'bbox' => [$minLon, $minLat, $maxLon, $maxLat],
-        'ports' => $ports
-    ];
-    file_put_contents('heatmap_data.json', json_encode($outputData));
+    // $outputData = [
+    //     'vessel_positions' => $allVesselPositions,
+    //     'bbox' => [$minLon, $minLat, $maxLon, $maxLat],
+    //     'ports' => $ports
+    // ];
+    // file_put_contents('heatmap_data.json', json_encode($outputData));
 
     // Initialize arrays
     $allVesselPositions = [];
@@ -289,38 +286,6 @@ function wpdocs_show_vessels( $atts ) {
             }
         }
     }
-
-    // Create GeoJSON structure
-    $geoJSON = [
-        'type' => 'FeatureCollection',
-        'features' => $features
-    ];
-
-    // Save data for Leaflet
-    file_put_contents('vessel_data.geojson', json_encode($geoJSON));
-
-    // Also save port locations
-    $portFeatures = [];
-    foreach ($ports as $portName => $coords) {
-        $portFeatures[] = [
-            'type' => 'Feature',
-            'geometry' => [
-                'type' => 'Point',
-                'coordinates' => [$coords[1], $coords[0]] // [lon, lat]
-            ],
-            'properties' => [
-                'name' => $portName,
-                'type' => 'port'
-            ]
-        ];
-    }
-
-    $portsGeoJSON = [
-        'type' => 'FeatureCollection',
-        'features' => $portFeatures
-    ];
-
-    file_put_contents('ports_data.geojson', json_encode($portsGeoJSON));    
     ?>
         <div class="datalastic-container">
             <header>
@@ -443,6 +408,46 @@ function wpdocs_show_vessels( $atts ) {
 
                 </div>
             </div>
+
+            <table id="coastalynk-table" class="display" class="cell-border hover stripe">
+
+
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>MMSI</th>
+                        <th>IMO</th>
+                        <th>Destination</th>
+                        <th>Speed</th>
+                        <th>Status</th>
+                        <th>UTC</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach( $features as $feature ) { ?>
+                        <tr>
+                            <td><?php echo $feature['properties']['name']; ?></td>
+                            <td><?php echo $feature['properties']['mmsi']; ?></td>
+                            <td><?php echo $feature['properties']['imo']; ?></td>
+                            <td><?php echo $feature['properties']['destination']; ?></td>
+                            <td><?php echo $feature['properties']['speed']; ?></td>
+                            <td><?php echo $feature['properties']['navigation_status']; ?></td>
+                            <td><?php echo $feature['properties']['timestamp'] ? date('Y-m-d H:i:s', $feature['properties']['timestamp']) : 'N/A'; ?></td>
+                        </tr>
+                    <?php } ?>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <th>Name</th>
+                        <th>MMSI</th>
+                        <th>IMO</th>
+                        <th>Destination</th>
+                        <th>Speed</th>
+                        <th>Status</th>
+                        <th>UTC</th>
+                    </tr>
+                </tfoot>
+            </table>
         </div>
 
         <!-- Leaflet JS -->
@@ -641,6 +646,8 @@ function wpdocs_show_vessels( $atts ) {
                 });
             });
         </script>
+
+        
     <?php
     
     $content = ob_get_contents();
@@ -652,8 +659,10 @@ function wpdocs_show_vessels( $atts ) {
  * Enqueue script with script.aculo.us as a dependency.
  */
 function my_scripts_method() {
-
     
+    wp_enqueue_style( 'coastlynk-map-dataTables-css', '//cdn.datatables.net/2.3.3/css/dataTables.dataTables.min.css' );
+    wp_enqueue_script( 'coastlynk-map-dataTables-js', '//cdn.datatables.net/2.3.3/js/dataTables.min.js', array( 'jquery' ) );
+
     wp_enqueue_script( 'leaflet', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js', array( 'jquery' ) );
     wp_enqueue_script( 'markercluster', 'https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js', array( 'jquery' ) );
 
