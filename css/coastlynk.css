@@ -3,7 +3,9 @@
     margin: 0 auto;
     padding: 20px;
 }
-
+.coastlynk-port-card{
+    cursor: pointer;
+}
 .datalastic-container header {
     text-align: center;
     padding: 20px 0;

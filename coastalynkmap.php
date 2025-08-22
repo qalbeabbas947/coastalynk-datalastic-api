@@ -8,7 +8,7 @@
  * Author:            The WordPress Contributors
  * License:           GPL-2.0-or-later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:       my-block
+ * Text Domain:       castalynkmap
  *
  * @package CreateBlock
  */
@@ -19,6 +19,7 @@ add_shortcode( 'show_vessels', 'wpdocs_show_vessels' );
  */
 function wpdocs_show_vessels( $atts ) {
 	
+    $searchfield = isset( $_REQUEST['searchfield']  ) ? sanitize_text_field( $_REQUEST['searchfield'] ): "";
     ob_start();
 
     // Your Datalastic API Key
@@ -97,7 +98,15 @@ function wpdocs_show_vessels( $atts ) {
                 if (isset($vessel['lat']) && isset($vessel['lon'])) {
                     $lat = (float)$vessel['lat'];
                     $lon = (float)$vessel['lon'];
-
+                    $name = isset( $vessel['name'] ) ? $vessel['name']: '';
+                    $mmsi = isset( $vessel['mmsi'] ) ? $vessel['mmsi'] : '';
+                    $imo = isset( $vessel['imo'] ) ? $vessel['imo'] : '';
+                    if( !empty( $searchfield ) ) {
+                        
+                        if( ! str_contains( $name, $searchfield ) && ! str_contains( $mmsi, $searchfield ) &&  ! str_contains( $imo, $searchfield ) ) {
+                            continue;
+                        }
+                    }
                     $allVesselPositions[] = ['lat' => $lat, 'lon' => $lon];
 
                     // Expand the overall bounding box to include this point
@@ -110,124 +119,10 @@ function wpdocs_show_vessels( $atts ) {
 
                 }
             }
-        } else {
-            echo "<br>No vessels found or API error for $portName.\n";
-            if (isset($data['message'])) {
-                echo "<br>Message: " . $data['message'] . "\n";
-            }
-        }
+        } 
     }
 
-    // Check if we found any vessels at all
-    if (empty($allVesselPositions)) {
-        die('<br>No vessel data found to generate a heatmap.');
-    }
-
-
-    // 5. Define the resolution of our heatmap grid (number of cells)
-    // More cells = smoother but more computationally expensive heatmap
-    // $gridColumns = 100;
-    // $gridRows = 60;
-
-    // // Initialize an empty 2D array to hold our vessel counts
-    // $heatmapGrid = array_fill(0, $gridRows, array_fill(0, $gridColumns, 0));
-
-    // // Calculate the size (in degrees) of each grid cell
-    // $cellWidth = ($maxLon - $minLon) / $gridColumns;
-    // $cellHeight = ($maxLat - $minLat) / $gridRows;
-
-    // // Place each vessel into a grid cell
-    // foreach ($allVesselPositions as $position) {
-    //     $lat = $position['lat'];
-    //     $lon = $position['lon'];
-
-    //     // Calculate the grid column (x-index) and row (y-index) for this vessel
-    //     $col = (int)floor(($lon - $minLon) / $cellWidth);
-    //     $row = (int)floor(($lat - $minLat) / $cellHeight);
-
-    //     // Ensure the calculated indices are within the grid bounds
-    //     if ($col >= 0 && $col < $gridColumns && $row >= 0 && $row < $gridRows) {
-    //         $heatmapGrid[$row][$col]++;
-    //     }
-    // }
-
-    // // Find the maximum vessel count in any single cell to normalize our colors
-    // $maxCount = 0;
-    // foreach ($heatmapGrid as $row) {
-    //     $rowMax = max($row);
-    //     if ($rowMax > $maxCount) {
-    //         $maxCount = $rowMax;
-    //     }
-    // }
-
-    // // Create a truecolor image with transparency
-    // $im = imagecreatetruecolor($gridWidth, $gridHeight);
-    // imagesavealpha($im, true);
-    // $transparent = imagecolorallocatealpha($im, 0, 0, 0, 127);
-    // imagefill($im, 0, 0, $transparent);
-
-    // // Create a color palette (from transparent blue to intense red)
-    // $colorPalette = [];
-    // if ($maxCount > 0) {
-    //     for ($i = 0; $i <= 100; $i++) {
-    //         $intensity = $i / 100;
-    //         $r = (int)min(255, round(255 * $intensity)); // Red increases
-    //         $g = 0; // No green
-    //         $b = (int)max(0, round(255 * (1 - $intensity))); // Blue decreases
-    //         $alpha = (int)(50 * (1 - $intensity*0.5)); // More intense = less transparent
-    //         $colorPalette[$i] = imagecolorallocatealpha($im, $r, $g, $b, $alpha);
-    //     }
-    // }
-
-    // // Calculate the size of each cell in pixels
-    // $cellWidthPx = $gridWidth / $gridColumns;
-    // $cellHeightPx = $gridHeight / $gridRows;
-
-    // // Draw each cell of the heatmap
-    // for ($row = 0; $row < $gridRows; $row++) {
-    //     for ($col = 0; $col < $gridColumns; $col++) {
-    //         $count = $heatmapGrid[$row][$col];
-    //         if ($count > 0) {
-    //             // Normalize the count to an intensity index (0-100)
-    //             $intensityIndex = (int)min(100, ($count / $maxCount) * 100);
-    //             $color = $colorPalette[$intensityIndex];
-
-    //             // Calculate the pixel coordinates for this cell
-    //             $x1 = (int)($col * $cellWidthPx);
-    //             $y1 = (int)($row * $cellHeightPx);
-    //             $x2 = (int)(($col + 1) * $cellWidthPx - 1);
-    //             $y2 = (int)(($row + 1) * $cellHeightPx - 1);
-
-    //             // Draw the cell as a filled rectangle
-    //             imagefilledrectangle($im, $x1, $y1, $x2, $y2, $color);
-    //         }
-    //     }
-    // }
-
-    // // Mark the port locations on the map for reference
-    // $portColor = imagecolorallocate($im, 255, 255, 0); // Yellow
-    // foreach ($ports as $portName => $portCoords) {
-    //     list($portLat, $portLon) = $portCoords;
-    //     $x = (int)(($portLon - $minLon) / ($maxLon - $minLon) * $gridWidth);
-    //     $y = (int)(($portLat - $minLat) / ($maxLat - $minLat) * $gridHeight);
-    //     imagefilledellipse($im, $x, $y, 8, 8, $portColor); // Draw a dot
-    //     imagestring($im, 2, $x+5, $y-5, $portName, $portColor); // Label the port
-    // }
-
-    // // Save the image
-    // $heatmapImagePath = 'nigerian_ports_heatmap_radius.png';
-    // imagepng($im, $heatmapImagePath);
-    // imagedestroy($im);
-
-
-    // Optional: Save the data for further analysis or web visualization
-    // $outputData = [
-    //     'vessel_positions' => $allVesselPositions,
-    //     'bbox' => [$minLon, $minLat, $maxLon, $maxLat],
-    //     'ports' => $ports
-    // ];
-    // file_put_contents('heatmap_data.json', json_encode($outputData));
-
+    
     // Initialize arrays
     $allVesselPositions = [];
     $features = []; // For GeoJSON
@@ -262,6 +157,16 @@ function wpdocs_show_vessels( $atts ) {
 
                     }
 
+                    $name = isset( $vessel['name'] ) ? $vessel['name']: '';
+                    $mmsi = isset( $vessel['mmsi'] ) ? $vessel['mmsi'] : '';
+                    $imo = isset( $vessel['imo'] ) ? $vessel['imo'] : '';
+                    if( !empty( $searchfield ) ) {
+                        
+                        if( ! str_contains( $name, $searchfield ) && ! str_contains( $mmsi, $searchfield ) &&  ! str_contains( $imo, $searchfield ) ) {
+                            continue;
+                        }
+                    }
+
                     // Create a GeoJSON feature for each vessel
                     $features[] = [
                         'type' => 'Feature',
@@ -271,8 +176,8 @@ function wpdocs_show_vessels( $atts ) {
                         ],
 
                         'properties' => [
-                            'name' => $vessel['name'] ?? 'Unknown',
-                            'mmsi' => $vessel['mmsi'] ?? 'N/A',
+                            'name' => $vessel['name'] ?? __( "Unknown", "castalynkmap" ),
+                            'mmsi' => $vessel['mmsi'] ?? __( 'N/A', "castalynkmap" ),
                             'imo' => $vessel['imo'] ?? '',
                             'port' => $portName,
                             'destination' => $vessel['destination'] ?? '',
@@ -289,34 +194,34 @@ function wpdocs_show_vessels( $atts ) {
     ?>
         <div class="datalastic-container">
             <header>
-                <h1>Nigerian Ports Traffic Heatmap</h1>
-                <p class="subtitle">Real-time vessel traffic analysis for major Nigerian ports</p>
-                <p class="subtitlelastupdate">Last updated: <?php echo $last_position_utc;?></p>
+                <h1><?php _e( "Nigerian Ports Traffic Heatmap", "castalynkmap" );?></h1>
+                <p class="subtitle"><?php _e( "Real-time vessel traffic analysis for major Nigerian ports", "castalynkmap" );?></p>
+                <p class="subtitlelastupdate"><?php _e( "Last updated:", "castalynkmap" );?> <?php echo $last_position_utc;?></p>
             </header>
             
             <div class="controls">
                 <div class="port-selector">
-                    <button class="port-button active" data-port="all">All Ports</button>
-                    <button class="port-button" data-port="apapa">Apapa</button>
-                    <button class="port-button" data-port="TinCanIsland">Tin Can Island</button>
-                    <button class="port-button" data-port="onne">Onne</button>
-                    <button class="port-button" data-port="calabar">Calabar</button>
-                    <button class="port-button" data-port="lomé">Lomé</button>
-                    <button class="port-button" data-port="tema">Tema</button>
+                    <button class="port-button active" data-port="all"><?php _e( "All Ports", "castalynkmap" );?></button>
+                    <button class="port-button" data-port="apapa"><?php _e( "Apapa", "castalynkmap" );?></button>
+                    <button class="port-button" data-port="TinCanIsland"><?php _e( "Tin Can Island", "castalynkmap" );?></button>
+                    <button class="port-button" data-port="onne"><?php _e( "Onne", "castalynkmap" );?></button>
+                    <button class="port-button" data-port="calabar"><?php _e( "Calabar", "castalynkmap" );?></button>
+                    <button class="port-button" data-port="lomé"><?php _e( "Lomé", "castalynkmap" );?>Lomé</button>
+                    <button class="port-button" data-port="tema"><?php _e( "Tema", "castalynkmap" );?></button>
                 </div>
                 
                 <div class="view-options">
-                    <button class="view-button active" data-view="heatmap">Heatmap</button>
-                    <button class="view-button" data-view="vessels">Vessels</button>
-                    <button class="view-button" data-view="ports">Ports</button>
+                    <button class="view-button active" data-view="heatmap"><?php _e( "Heatmap", "castalynkmap" );?></button>
+                    <button class="view-button" data-view="vessels"><?php _e( "Vessels", "castalynkmap" );?></button>
+                    <button class="view-button" data-view="ports"><?php _e( "Ports", "castalynkmap" );?></button>
                 </div>
             </div>
             
             <div class="dashboard">
                 <div class="stats-panel">
-                    <h2>Port Statistics</h2>
+                    <h2><?php _e( "Port Statistics", "castalynkmap" );?></h2>
                     <div class="stat-item">
-                        <div class="stat-label">Total Vessels Tracked</div>
+                        <div class="stat-label"><?php _e( "Total Vessels Tracked", "castalynkmap" );?></div>
                         <div class="stat-value" id="total-vessels"><?php echo $total_vessels;?></div>
                     </div>
                     <!-- <div class="stat-item">
@@ -334,7 +239,7 @@ function wpdocs_show_vessels( $atts ) {
             <div class="info-panel">
                 <h2>Port Information</h2>
                 <div class="port-info">
-                    <div class="port-card">
+                    <div class="port-card coastlynk-port-card" data-port="apapa">
                         <h3>Apapa Port</h3>
                         <div class="port-stat">
                             <span>UN/LOCODE:</span>
@@ -346,7 +251,7 @@ function wpdocs_show_vessels( $atts ) {
                         </div>
                         
                     </div>
-                    <div class="port-card">
+                    <div class="port-card coastlynk-port-card" data-port="TinCanIsland">
                         <h3>Tin Can Island Port</h3>
                         <div class="port-stat">
                             <span>UN/LOCODE:</span>
@@ -358,7 +263,7 @@ function wpdocs_show_vessels( $atts ) {
                         </div>
                     </div>
                     
-                    <div class="port-card">
+                    <div class="port-card coastlynk-port-card" data-port="onne">
                         <h3>Onne Port</h3>
                         <div class="port-stat">
                             <span>UN/LOCODE:</span>
@@ -370,7 +275,7 @@ function wpdocs_show_vessels( $atts ) {
                         </div>
                     </div>
                     
-                    <div class="port-card">
+                    <div class="port-card coastlynk-port-card" data-port="calabar">
                         <h3>Calabar Port</h3>
                         <div class="port-stat">
                             <span>UN/LOCODE:</span>
@@ -382,7 +287,7 @@ function wpdocs_show_vessels( $atts ) {
                         </div>
                     </div>
 
-                    <div class="port-card">
+                    <div class="port-card coastlynk-port-card" data-port="lomé">
                         <h3>Lomé Port</h3>
                         <div class="port-stat">
                             <span>UN/LOCODE:</span>
@@ -394,7 +299,7 @@ function wpdocs_show_vessels( $atts ) {
                         </div>
                     </div>
 
-                    <div class="port-card">
+                    <div class="port-card coastlynk-port-card" data-port="tema">
                         <h3>Tema Port</h3>
                         <div class="port-stat">
                             <span>UN/LOCODE:</span>
@@ -414,19 +319,21 @@ function wpdocs_show_vessels( $atts ) {
 
                 <thead>
                     <tr>
-                        <th>Name</th>
-                        <th>MMSI</th>
-                        <th>IMO</th>
-                        <th>Destination</th>
-                        <th>Speed</th>
-                        <th>Status</th>
-                        <th>UTC</th>
+                        <th><?php _e( "Name", "castalynkmap" );?></th>
+                        <th><?php _e( "Port", "castalynkmap" );?></th>
+                        <th><?php _e( "MMSI", "castalynkmap" );?></th>
+                        <th><?php _e( "IMO", "castalynkmap" );?></th>
+                        <th><?php _e( "Destination", "castalynkmap" );?></th>
+                        <th><?php _e( "Speed", "castalynkmap" );?></th>
+                        <th><?php _e( "Status", "castalynkmap" );?></th>
+                        <th><?php _e( "UTC", "castalynkmap" );?></th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach( $features as $feature ) { ?>
                         <tr>
                             <td><?php echo $feature['properties']['name']; ?></td>
+                            <td><?php echo $feature['properties']['port']; ?></td>
                             <td><?php echo $feature['properties']['mmsi']; ?></td>
                             <td><?php echo $feature['properties']['imo']; ?></td>
                             <td><?php echo $feature['properties']['destination']; ?></td>
@@ -438,13 +345,14 @@ function wpdocs_show_vessels( $atts ) {
                 </tbody>
                 <tfoot>
                     <tr>
-                        <th>Name</th>
-                        <th>MMSI</th>
-                        <th>IMO</th>
-                        <th>Destination</th>
-                        <th>Speed</th>
-                        <th>Status</th>
-                        <th>UTC</th>
+                        <th><?php _e( "Name", "castalynkmap" );?></th>
+                        <th><?php _e( "Port", "castalynkmap" );?></th>
+                        <th><?php _e( "MMSI", "castalynkmap" );?></th>
+                        <th><?php _e( "IMO", "castalynkmap" );?></th>
+                        <th><?php _e( "Destination", "castalynkmap" );?></th>
+                        <th><?php _e( "Speed", "castalynkmap" );?></th>
+                        <th><?php _e( "Status", "castalynkmap" );?></th>
+                        <th><?php _e( "UTC", "castalynkmap" );?></th>
                     </tr>
                 </tfoot>
             </table>
