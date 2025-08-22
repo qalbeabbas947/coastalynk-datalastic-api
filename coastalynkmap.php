@@ -194,9 +194,11 @@ function wpdocs_show_vessels( $atts ) {
     ?>
         <div class="datalastic-container">
             <header>
-                <h1><?php _e( "Nigerian Ports Traffic Heatmap", "castalynkmap" );?></h1>
-                <p class="subtitle"><?php _e( "Real-time vessel traffic analysis for major Nigerian ports", "castalynkmap" );?></p>
-                <p class="subtitlelastupdate"><?php _e( "Last updated:", "castalynkmap" );?> <?php echo $last_position_utc;?></p>
+                <div class="section-title d-flex whitetitle direction-column mb-0 mt-2">
+                    <h2 class="mb-2"><?php _e( "Nigerian Ports Traffic Heatmap", "castalynkmap" );?></h2>
+                    <p class="subtitle"><?php _e( "Real-time vessel traffic analysis for major Nigerian ports", "castalynkmap" );?></p>
+                    <p class="subtitle"><?php _e( "Last updated:", "castalynkmap" );?> <?php echo $last_position_utc;?></p>
+                </div>
             </header>
             
             <div class="controls">
@@ -210,7 +212,7 @@ function wpdocs_show_vessels( $atts ) {
                     <button class="port-button" data-port="tema"><?php _e( "Tema", "castalynkmap" );?></button>
                 </div>
                 
-                <div class="view-options">
+                <div class="view-options mt-2">
                     <button class="view-button active" data-view="heatmap"><?php _e( "Heatmap", "castalynkmap" );?></button>
                     <button class="view-button" data-view="vessels"><?php _e( "Vessels", "castalynkmap" );?></button>
                     <button class="view-button" data-view="ports"><?php _e( "Ports", "castalynkmap" );?></button>
@@ -219,7 +221,9 @@ function wpdocs_show_vessels( $atts ) {
             
             <div class="dashboard">
                 <div class="stats-panel">
-                    <h2><?php _e( "Port Statistics", "castalynkmap" );?></h2>
+                     <div class="section-title d-flex justify-content-between mb-0 leftalign">
+                        <h2><?php _e( "Port Statistics", "castalynkmap" );?></h2>               
+                    </div>
                     <div class="stat-item">
                         <div class="stat-label"><?php _e( "Total Vessels Tracked", "castalynkmap" );?></div>
                         <div class="stat-value" id="total-vessels"><?php echo $total_vessels;?></div>
@@ -237,7 +241,9 @@ function wpdocs_show_vessels( $atts ) {
             </div>
             
             <div class="info-panel">
-                <h2>Port Information</h2>
+                <div class="section-title d-flex justify-content-between mb-0 leftalign">
+                    <h2><?php _e( "Port Information", "castalynkmap" );?></h2>               
+                </div>
                 <div class="port-info">
                     <div class="port-card coastlynk-port-card" data-port="apapa">
                         <h3>Apapa Port</h3>
@@ -313,10 +319,7 @@ function wpdocs_show_vessels( $atts ) {
 
                 </div>
             </div>
-
             <table id="coastalynk-table" class="display" class="cell-border hover stripe">
-
-
                 <thead>
                     <tr>
                         <th><?php _e( "Name", "castalynkmap" );?></th>

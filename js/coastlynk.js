@@ -27,8 +27,6 @@
                     table.column(1).search(port).draw();
                     
                 });
-//
-                
             }
         };
         coastalynk.init();
