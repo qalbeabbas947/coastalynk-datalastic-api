@@ -6,6 +6,12 @@
 .coastlynk-port-card{
     cursor: pointer;
 }
+.datalastic-container .stats-panel h3 {
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+    font-size: 1.2rem;
+}
+
 .datalastic-container header {
     text-align: center;
     padding: 20px 0;
@@ -39,6 +45,20 @@
     border-radius: 10px;
     padding: 20px;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    height: 600px;
+    max-height: 100%;
+}
+.coastalynk-retrieve-tonnage-btn{
+    border: none;
+    border-radius: 5px;
+    padding: 6px;
+    background-color: #0088FF;
+    color: white;
+    cursor: pointer;
+}
+
+.coastalyn-flag-port-listing{
+    width:80px;
 }
 
 .datalastic-container .stats-panel h2 {
@@ -74,6 +94,34 @@
     color: #0088FF;
 }
 
+.coastalynk-congestion-data .stat-item {
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.coastalynk-congestion-data .stat-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.coastalynk-congestion-data .stat-label {
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 5px;
+    font-size: 1rem;
+}
+
+.coastalynk-congestion-data .stat-value {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #0088FF;
+}
+.coastalynk-congestion-data{
+    overflow: scroll;
+    height: 60%;
+}
 .datalastic-container .progress-bar {
     height: 8px;
     background-color: #e9ecef;
@@ -271,6 +319,138 @@
     -ms-overflow-style: -ms-autohiding-scrollbar;
 }
 
+/****************************/
+#coastalynk-column-loader{
+	width:110px;
+	height: 25px;
+	display: block;
+	position: relative;
+	margin:auto;
+}
+
+.coastalynk-column-blockG{
+	background-color:rgb(255,255,255);
+	border:3px solid #0088FF;
+	float:left;
+	height:20px;
+	margin-left:7px;
+	width:23px;
+	opacity:0.1;
+	animation-name:bounceG;
+		-o-animation-name:bounceG;
+		-ms-animation-name:bounceG;
+		-webkit-animation-name:bounceG;
+		-moz-animation-name:bounceG;
+	animation-duration:1.5s;
+		-o-animation-duration:1.5s;
+		-ms-animation-duration:1.5s;
+		-webkit-animation-duration:1.5s;
+		-moz-animation-duration:1.5s;
+	animation-iteration-count:infinite;
+		-o-animation-iteration-count:infinite;
+		-ms-animation-iteration-count:infinite;
+		-webkit-animation-iteration-count:infinite;
+		-moz-animation-iteration-count:infinite;
+	animation-direction:normal;
+		-o-animation-direction:normal;
+		-ms-animation-direction:normal;
+		-webkit-animation-direction:normal;
+		-moz-animation-direction:normal;
+	transform:scale(0.7);
+		-o-transform:scale(0.7);
+		-ms-transform:scale(0.7);
+		-webkit-transform:scale(0.7);
+		-moz-transform:scale(0.7);
+}
+
+#coastalynk-column-blockG_1{
+	animation-delay:0.45s;
+		-o-animation-delay:0.45s;
+		-ms-animation-delay:0.45s;
+		-webkit-animation-delay:0.45s;
+		-moz-animation-delay:0.45s;
+}
+
+#coastalynk-column-blockG_2{
+	animation-delay:0.6s;
+		-o-animation-delay:0.6s;
+		-ms-animation-delay:0.6s;
+		-webkit-animation-delay:0.6s;
+		-moz-animation-delay:0.6s;
+}
+
+#coastalynk-column-blockG_3{
+	animation-delay:0.75s;
+		-o-animation-delay:0.75s;
+		-ms-animation-delay:0.75s;
+		-webkit-animation-delay:0.75s;
+		-moz-animation-delay:0.75s;
+}
+
+/************************************/
+
+@keyframes bounceG{
+	0%{
+		transform:scale(1.2);
+		opacity:1;
+	}
+
+	100%{
+		transform:scale(0.7);
+		opacity:0.1;
+	}
+}
+
+@-o-keyframes bounceG{
+	0%{
+		-o-transform:scale(1.2);
+		opacity:1;
+	}
+
+	100%{
+		-o-transform:scale(0.7);
+		opacity:0.1;
+	}
+}
+
+@-ms-keyframes bounceG{
+	0%{
+		-ms-transform:scale(1.2);
+		opacity:1;
+	}
+
+	100%{
+		-ms-transform:scale(0.7);
+		opacity:0.1;
+	}
+}
+
+@-webkit-keyframes bounceG{
+	0%{
+		-webkit-transform:scale(1.2);
+		opacity:1;
+	}
+
+	100%{
+		-webkit-transform:scale(0.7);
+		opacity:0.1;
+	}
+}
+
+@-moz-keyframes bounceG{
+	0%{
+		-moz-transform:scale(1.2);
+		opacity:1;
+	}
+
+	100%{
+		-moz-transform:scale(0.7);
+		opacity:0.1;
+	}
+}
+/****************************/
+
+
 @media (max-width: 768px) {
     .datalastic-container .dashboard {
         grid-template-columns: 1fr;
@@ -293,9 +473,12 @@
 
 
 @media (max-width: 768px) {
+    
     .datalastic-container .info-panel, .datalastic-container .stats-panel {
         padding: 20px 0;
         box-shadow: inherit;
+        height: 100%;
+        max-height: 100%;
     }
     .datalastic-container .map-container {
         height: 60vh;

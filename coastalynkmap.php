@@ -12,8 +12,201 @@
  *
  * @package CreateBlock
  */
+//add_action( 'init', 'wpdocs_show_vessels_congestion' );
+/**
+ * show_vessels shortcode content.
+ */
 
-add_shortcode( 'show_vessels', 'wpdocs_show_vessels' );
+define( 'CoastalynkMap_PLUGIN_FILE', __FILE__ );
+define( 'CoastalynkMap_PLUGIN_URL', plugin_dir_url( CoastalynkMap_PLUGIN_FILE ) );
+define( 'CoastalynkMap_Images_URL', CoastalynkMap_PLUGIN_URL . 'images/' );
+function wpdocs_show_vessels_congestion( $atts ) {
+
+    $url = sprintf(
+        "https://api.datalastic.com/api/v0/vessel_inradius?api-key=%s&lat=%f&lon=%f&radius=%d",
+        urlencode('15df4420-d28b-4b26-9f01-13cca621d55e'),
+        "6.45",
+        "3.36",
+        10
+    );
+
+    // Make the API request
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Enable in production
+
+    $response = curl_exec($ch);
+
+
+    if (curl_errno($ch)) {
+        echo "cURL Error for: " . curl_error($ch) . "\n";
+        curl_close($ch);
+    }
+    curl_close($ch);
+
+    // Decode the JSON response
+    $data = json_decode($response, true);
+
+    // Check if we got data
+    if (isset($data['data']['vessels'])) {
+        $vessels = $data['data']['vessels'];
+        
+        // Add each vessel's position to our master list and update the overall bounding box
+        foreach ($vessels as $vessel) {
+            if (isset($vessel['lat']) && isset($vessel['lon'])) {
+                $prodata = get_vessal_data( $vessel['uuid'] );
+                echo '<pre>';
+                print_r($prodata);
+                $prodata = $prodata['data'];
+                
+                
+                
+                print( $prodata['uuid'].' : '.$prodata['imo'].' : '.$prodata['mmsi'].' : '.$prodata['navigation_status'] );
+                echo '</pre>';
+            }
+        }
+    }
+
+    exit;
+}
+
+function get_vessal_data( $uuid ) {
+    $url = sprintf(
+        "https://api.datalastic.com/api/v0/vessel_pro?api-key=%s&uuid=%s",
+        urlencode('15df4420-d28b-4b26-9f01-13cca621d55e'),
+        $uuid
+    );
+
+    // Make the API request
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Enable in production
+
+    $response = curl_exec($ch);
+
+
+    if (curl_errno($ch)) {
+        echo "cURL Error for: " . curl_error($ch) . "\n";
+        curl_close($ch);
+    }
+    curl_close($ch);
+
+    // Decode the JSON response
+    $data = json_decode($response, true);
+
+    return $data;
+}
+
+
+
+
+
+/**
+ * show_vessels shortcode content.
+ */
+function coastalynk_show_port_congestion( ) {
+
+    global $wpdb;
+
+    if ( ! check_ajax_referer( 'coastalynk_secure_ajax_nonce', 'nonce', false ) ) {
+        wp_send_json_error( __( 'Security nonce check failed. Please refresh the page.', "castalynkmap" ) );
+        wp_die();
+    }
+
+    $port_name = sanitize_text_field( $_REQUEST['selected_port'] );
+    if( empty( $port_name ) || $port_name == 'all' ) {
+        $port_name = 'Apapa';
+    }  
+
+    ob_start();
+    $types = [ "Cargo", "Tanker", "Passenger", "Tug", "Pilot", "Dredger", "Fishing", "Law Enforcement", "Other" ];
+    ?>
+        <div class="section-title d-flex justify-content-between mb-0 leftalign">
+            <h3><?php echo  __( ucwords( $port_name ) . ' Port Congestion', "castalynkmap" );?></h3>               
+        </div>
+    <?php
+    $updated_at = $wpdb->get_var( "select updated_at from ".$wpdb->prefix."port_congestion limit 1" );
+    
+    foreach( $types as $type  ) {
+        $total = $wpdb->get_var( "select sum(total) as total from ".$wpdb->prefix."port_congestion where port like '%" . $wpdb->esc_like( $port_name ) . "%'  and vessel_type like '%" . $wpdb->esc_like( $type ) . "%'" );
+        if( intval($total) > 0 ) {
+            ?>
+                <div class="stat-item">
+                    <div class="stat-label"><?php _e( ucwords( $type ), "castalynkmap" );?></div>
+                    <div class="stat-value" id="total-vessels"><?php echo $total;?> <?php _e( "vessel(s)", "castalynkmap" );?></div>
+                </div>
+            <?php
+        }
+    }
+    ?>
+        <div class="stat-item">
+            <div class="stat-label"><?php _e( "Updated Congestion Data", "castalynkmap" );?></div>
+            <div class="stat-value" id="total-vessels"><?php echo $updated_at;?></div>
+        </div>
+    <?php
+    $content = ob_get_contents();
+    ob_end_clean();
+    
+    echo $content;
+    die();
+
+}
+add_action('wp_ajax_coastalynk_load_port_congestion', 'coastalynk_show_port_congestion');
+add_action('wp_ajax_nopriv_coastalynk_load_port_congestion', 'coastalynk_show_port_congestion');
+
+/**
+ * retrieve the vessel tonnage.
+ */
+function coastalynk_retrieve_tonnage() {
+    $selected_uuid = isset( $_REQUEST['selected_uuid']  ) ? sanitize_text_field( $_REQUEST['selected_uuid'] ): "";
+    $selected_name = isset( $_REQUEST['selected_name']  ) ? sanitize_text_field( $_REQUEST['selected_name'] ): "";
+
+    if ( ! check_ajax_referer( 'coastalynk_secure_ajax_nonce', 'nonce', false ) ) {
+        wp_send_json_error( __( 'Security nonce check failed. Please refresh the page.', "castalynkmap" ) );
+        wp_die();
+    }
+
+    $apiKey = '15df4420-d28b-4b26-9f01-13cca621d55e'; // Replace with your actual API key.
+    $endpoint = 'https://api.datalastic.com/api/v0/vessel_find';
+    $params = array(
+        'api-key' => $apiKey,
+        'name' => $selected_name,
+        'fuzzy'    => '0'
+    );
+    $url = add_query_arg($params, $endpoint);
+
+    $response = wp_remote_get($url);
+
+    if (is_wp_error($response)) {
+        error_log('API Request Failed: ' . $response->get_error_message());
+        return false;
+    }
+
+    $body = wp_remote_retrieve_body($response);
+    $data = json_decode($body);
+
+    // Process the data as needed.
+    if (!empty($data)) {
+        foreach( $data->data as $dat ) {
+            if( $selected_uuid == $dat->uuid ) {
+                if( intval( $dat->gross_tonnage ) > 0 ) {
+                    echo $dat->gross_tonnage.' '.__( "Ton(s)", "castalynkmap" );
+                } else {
+                    echo __( "N/A", "castalynkmap" );
+                }
+                
+                exit;
+            } 
+        }
+    }
+
+    exit;
+}
+add_action('wp_ajax_coastalynk_retrieve_tonnage', 'coastalynk_retrieve_tonnage');
+add_action('wp_ajax_nopriv_coastalynk_retrieve_tonnage', 'coastalynk_retrieve_tonnage');
+
 /**
  * show_vessels shortcode content.
  */
@@ -53,8 +246,6 @@ function wpdocs_show_vessels( $atts ) {
     // Initialize an array to hold all vessel positions
     $allVesselPositions = [];
 
-    // Build the API URL
-    $url = "https://api.datalastic.com/api/v0/vessel_inradius?api-key=15df4420-d28b-4b26-9f01-13cca621d55e&port_uuid=2cb375dd-aea5-fc12-a639-7c15b893e250&radius=10";
     $total_vessels = 0;
     // Loop through each port and fetch vessels in its radius
     foreach ($ports as $portName => $portCoords) {
@@ -76,7 +267,6 @@ function wpdocs_show_vessels( $atts ) {
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Enable in production
 
         $response = curl_exec($ch);
-    
 
         if (curl_errno($ch)) {
             echo "cURL Error for $portName: " . curl_error($ch) . "\n";
@@ -121,7 +311,6 @@ function wpdocs_show_vessels( $atts ) {
             }
         } 
     }
-
     
     // Initialize arrays
     $allVesselPositions = [];
@@ -140,14 +329,14 @@ function wpdocs_show_vessels( $atts ) {
             $searchRadiusKm
         );
 
-        $response = file_get_contents($url);
-        $data = json_decode($response, true);
+        $response = file_get_contents( $url );
+        $data = json_decode( $response, true );
 
         if (isset($data['data']['vessels'])) {
-            foreach ($data['data']['vessels'] as $vessel) {
-                if (isset($vessel['lat']) && isset($vessel['lon'])) {
-                    $lat = (float)$vessel['lat'];
-                    $lon = (float)$vessel['lon'];
+            foreach ( $data['data']['vessels'] as $vessel ) {
+                if ( isset( $vessel['lat'] ) && isset( $vessel['lon'] ) ) {
+                    $lat = (float) $vessel['lat'];
+                    $lon = (float) $vessel['lon'];
                     
                     // Add to all positions array
                     $allVesselPositions[] = ['lat' => $lat, 'lon' => $lon];
@@ -167,6 +356,10 @@ function wpdocs_show_vessels( $atts ) {
                         }
                     }
 
+                    $flag = 'no-flag';
+                    if( !empty( $vessel['country_iso'] ) ) {
+                        $flag = $vessel['country_iso'];
+                    }
                     // Create a GeoJSON feature for each vessel
                     $features[] = [
                         'type' => 'Feature',
@@ -174,12 +367,13 @@ function wpdocs_show_vessels( $atts ) {
                             'type' => 'Point',
                             'coordinates' => [$lon, $lat]
                         ],
-
                         'properties' => [
+                            'uuid' => $vessel['uuid'],
                             'name' => $vessel['name'] ?? __( "Unknown", "castalynkmap" ),
                             'mmsi' => $vessel['mmsi'] ?? __( 'N/A', "castalynkmap" ),
                             'imo' => $vessel['imo'] ?? '',
                             'port' => $portName,
+                            'country_flag' => CoastalynkMap_Images_URL."flags/".strtolower( $flag ).".jpg" ?? '',
                             'destination' => $vessel['destination'] ?? '',
                             'speed' => $vessel['speed'] ?? '',
                             'navigation_status' => $vessel['navigation_status'] ?? '',
@@ -202,7 +396,7 @@ function wpdocs_show_vessels( $atts ) {
             </header>
             
             <div class="controls">
-                <div class="port-selector">
+                <div class="port-selector coastalynk-port-selector">
                     <button class="port-button active" data-port="all"><?php _e( "All Ports", "castalynkmap" );?></button>
                     <button class="port-button" data-port="apapa"><?php _e( "Apapa", "castalynkmap" );?></button>
                     <button class="port-button" data-port="TinCanIsland"><?php _e( "Tin Can Island", "castalynkmap" );?></button>
@@ -228,11 +422,12 @@ function wpdocs_show_vessels( $atts ) {
                         <div class="stat-label"><?php _e( "Total Vessels Tracked", "castalynkmap" );?></div>
                         <div class="stat-value" id="total-vessels"><?php echo $total_vessels;?></div>
                     </div>
-                    <!-- <div class="stat-item">
-                        <div class="stat-label">Last Updated</div>
-                        <div class="stat-value" id="last-updated"><?php echo date("M d, Y h:i:s A", $last_position_epoch);?></div>
-
-                    </div> -->
+                    <div class="coastalynk-congestion-data" style="display: none;">
+                     </div>
+                    <div class="stat-item coastalynk-congestion-loader" style="display: none;">
+                        <div class="stat-label"><?php _e( "Loading, please wait...", "castalynkmap" );?></div>
+                    
+                    </div>
                 </div>
                 
                 <div class="map-container">
@@ -322,6 +517,7 @@ function wpdocs_show_vessels( $atts ) {
             <table id="coastalynk-table" class="display" class="cell-border hover stripe">
                 <thead>
                     <tr>
+                        <th></th>
                         <th><?php _e( "Name", "castalynkmap" );?></th>
                         <th><?php _e( "Port", "castalynkmap" );?></th>
                         <th><?php _e( "MMSI", "castalynkmap" );?></th>
@@ -330,11 +526,19 @@ function wpdocs_show_vessels( $atts ) {
                         <th><?php _e( "Speed", "castalynkmap" );?></th>
                         <th><?php _e( "Status", "castalynkmap" );?></th>
                         <th><?php _e( "UTC", "castalynkmap" );?></th>
+                        <th><?php _e( "Tonnage", "castalynkmap" );?></th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach( $features as $feature ) { ?>
                         <tr>
+                            <td>
+                                <?php 
+                                    if( !empty( $feature['properties']['country_flag'] ) ) {
+                                        echo '<img src="'.$feature['properties']['country_flag'].'" class="coastalyn-flag-port-listing" alt="'.$feature['properties']['name'].'">';
+                                    }
+                                ?>
+                            </td>
                             <td><?php echo $feature['properties']['name']; ?></td>
                             <td><?php echo $feature['properties']['port']; ?></td>
                             <td><?php echo $feature['properties']['mmsi']; ?></td>
@@ -343,11 +547,20 @@ function wpdocs_show_vessels( $atts ) {
                             <td><?php echo $feature['properties']['speed']; ?></td>
                             <td><?php echo $feature['properties']['navigation_status']; ?></td>
                             <td><?php echo $feature['properties']['timestamp'] ? date('Y-m-d H:i:s', $feature['properties']['timestamp']) : 'N/A'; ?></td>
+                            <td>
+                                <input type="button" class="coastalynk-retrieve-tonnage-btn" data-name="<?php echo $feature['properties']['name']; ?>" data-uuid="<?php echo $feature['properties']['uuid']; ?>" value="<?php _e( "Retrieve Tonnage", "castalynkmap" );?>">
+                                <div id="coastalynk-column-loader" style="display:none;">
+                                    <div id="coastalynk-column-blockG_1" class="coastalynk-column-blockG"></div>
+                                    <div id="coastalynk-column-blockG_2" class="coastalynk-column-blockG"></div>
+                                    <div id="coastalynk-column-blockG_3" class="coastalynk-column-blockG"></div>
+                                </div>
+                            </td>
                         </tr>
                     <?php } ?>
                 </tbody>
                 <tfoot>
                     <tr>
+                        <th></th>
                         <th><?php _e( "Name", "castalynkmap" );?></th>
                         <th><?php _e( "Port", "castalynkmap" );?></th>
                         <th><?php _e( "MMSI", "castalynkmap" );?></th>
@@ -356,6 +569,7 @@ function wpdocs_show_vessels( $atts ) {
                         <th><?php _e( "Speed", "castalynkmap" );?></th>
                         <th><?php _e( "Status", "castalynkmap" );?></th>
                         <th><?php _e( "UTC", "castalynkmap" );?></th>
+                        <th><?php _e( "Tonnage", "castalynkmap" );?></th>
                     </tr>
                 </tfoot>
             </table>
@@ -369,11 +583,11 @@ function wpdocs_show_vessels( $atts ) {
             // Add base layers
             const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
                 attribution: '© OpenStreetMap contributors'
-            }).addTo(map);
+            });
 
             const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
                 attribution: '© Esri'
-            });
+            }).addTo(map);
 
             // Define port locations
             const ports = {
@@ -400,6 +614,7 @@ function wpdocs_show_vessels( $atts ) {
                         },
                         properties: {
                             name: "<?php echo $feature['properties']['name'];?>",
+                            country_flag: "<?php echo $feature['properties']['country_flag'];?>",
                             mmsi: "<?php echo $feature['properties']['mmsi'];?>",
                             port: "<?php echo $feature['properties']['port'];?>",
                             timestamp: "<?php echo $feature['properties']['timestamp'];?>",
@@ -443,9 +658,10 @@ function wpdocs_show_vessels( $atts ) {
                 
                 const props = feature.properties;
                 marker.bindPopup(`
-                    <strong>${props.name}</strong><br>
+                    <table cellspacing="4"><tr><td><img src="${props.country_flag}" alt="${props.name}" style="width: 80px; height: auto;"></td>
+                    <td><strong>${props.name}</strong><br>
                     MMSI: ${props.mmsi}<br>
-                    IMO: ${props.imo}<br>
+                    IMO: ${props.imo}<br></td></tr></table>
                     Destination: ${props.destination}<br>
                     Speed: ${props.speed}<br>
                     Navigation Status: ${props.navigation_status}<br>
@@ -455,7 +671,7 @@ function wpdocs_show_vessels( $atts ) {
                 
                 vesselsLayer.addLayer(marker);
             });
-
+            vesselsLayer.addTo(map);
             // Create port markers layer
             const portsLayer = L.layerGroup();
             
@@ -512,6 +728,7 @@ function wpdocs_show_vessels( $atts ) {
                 `;
                 return div;
             };
+
             legend.addTo(map);
 
             // Set up button handlers
@@ -565,6 +782,7 @@ function wpdocs_show_vessels( $atts ) {
     ob_end_clean();
     return $content;
 }
+add_shortcode( 'show_vessels', 'wpdocs_show_vessels' );
 
 /**
  * Enqueue script with script.aculo.us as a dependency.
@@ -579,7 +797,8 @@ function my_scripts_method() {
 
 	wp_enqueue_script( 'coastlynk-map-js', plugins_url( '/js/coastlynk.js' , __FILE__ ), array( 'jquery' ), time(), true );
     wp_localize_script( 'coastlynk-map-js', 'COSTALUNKVARS', [          
-                'ajaxURL' => admin_url( 'admin-ajax.php' )
+                'ajaxURL' => admin_url( 'admin-ajax.php' ),
+                'nonce'    => wp_create_nonce('coastalynk_secure_ajax_nonce') // Create nonce
             ] );
     
     wp_enqueue_style( 'coastlynk-map-leaflet-css', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css', array(), time() );
