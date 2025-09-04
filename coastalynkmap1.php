@@ -1,21 +1,10 @@
 <?php
-/**
- * Plugin Name:       Coastalynk Map
- * Description:       Displays a map for the end user.
- * Version:           0.1.0
- * Requires at least: 6.7
- * Requires PHP:      7.4
- * Author:            The WordPress Contributors
- * License:           GPL-2.0-or-later
- * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:       castalynkmap
- *
- * @package CreateBlock
- */
+
 //add_action( 'init', 'wpdocs_show_vessels_congestion' );
 /**
  * show_vessels shortcode content.
  */
+
 
 /**
  * Class Coastalynk_Sea_Vessel_Map
@@ -100,9 +89,89 @@ function Coastalynk_Map_Load() {
 }
 add_action( 'plugins_loaded', 'Coastalynk_Map_Load' );
 
+
 define( 'CoastalynkMap_PLUGIN_FILE', __FILE__ );
 define( 'CoastalynkMap_PLUGIN_URL', plugin_dir_url( CoastalynkMap_PLUGIN_FILE ) );
 define( 'CoastalynkMap_Images_URL', CoastalynkMap_PLUGIN_URL . 'images/' );
+function wpdocs_show_vessels_congestion( $atts ) {
+
+    $url = sprintf(
+        "https://api.datalastic.com/api/v0/vessel_inradius?api-key=%s&lat=%f&lon=%f&radius=%d",
+        urlencode('15df4420-d28b-4b26-9f01-13cca621d55e'),
+        "6.45",
+        "3.36",
+        10
+    );
+
+    // Make the API request
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Enable in production
+
+    $response = curl_exec($ch);
+
+
+    if (curl_errno($ch)) {
+        echo "cURL Error for: " . curl_error($ch) . "\n";
+        curl_close($ch);
+    }
+    curl_close($ch);
+
+    // Decode the JSON response
+    $data = json_decode($response, true);
+
+    // Check if we got data
+    if (isset($data['data']['vessels'])) {
+        $vessels = $data['data']['vessels'];
+        
+        // Add each vessel's position to our master list and update the overall bounding box
+        foreach ($vessels as $vessel) {
+            if (isset($vessel['lat']) && isset($vessel['lon'])) {
+                $prodata = get_vessal_data( $vessel['uuid'] );
+                echo '<pre>';
+                print_r($prodata);
+                $prodata = $prodata['data'];
+                
+                
+                
+                print( $prodata['uuid'].' : '.$prodata['imo'].' : '.$prodata['mmsi'].' : '.$prodata['navigation_status'] );
+                echo '</pre>';
+            }
+        }
+    }
+
+    exit;
+}
+
+function get_vessal_data( $uuid ) {
+    $url = sprintf(
+        "https://api.datalastic.com/api/v0/vessel_pro?api-key=%s&uuid=%s",
+        urlencode('15df4420-d28b-4b26-9f01-13cca621d55e'),
+        $uuid
+    );
+
+    // Make the API request
+    $ch = curl_init();
+    curl_setopt($ch, CURLOPT_URL, $url);
+    curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+    curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false); // Enable in production
+
+    $response = curl_exec($ch);
+
+
+    if (curl_errno($ch)) {
+        echo "cURL Error for: " . curl_error($ch) . "\n";
+        curl_close($ch);
+    }
+    curl_close($ch);
+
+    // Decode the JSON response
+    $data = json_decode($response, true);
+
+    return $data;
+}
+
 
 
 
@@ -581,8 +650,13 @@ function wpdocs_show_vessels( $atts ) {
 
         <!-- Leaflet JS -->
         <script>
+
+            
             // Initialize the map centered on Nigeria
             const map = L.map('map').setView([6.5, 5.0], 7);
+
+            var ship1 = L.marker([37.55, 122.08], {icon: vesselIcon}).addTo(map);
+            var ship2 = L.marker([37.56, 122.09], {icon: vesselIcon}).addTo(map);
 
             // Add base layers
             const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
