@@ -12,10 +12,6 @@
  *
  * @package CreateBlock
  */
-//add_action( 'init', 'wpdocs_show_vessels_congestion' );
-/**
- * show_vessels shortcode content.
- */
 
 /**
  * Class Coastalynk_Sea_Vessel_Map
@@ -65,7 +61,8 @@ class Coastalynk_Sea_Vessel_Map {
          */
         define( 'CSM_URL', trailingslashit ( plugins_url ( '', __FILE__ ) ) );
         define( 'CSM_IMAGES_URL', trailingslashit ( CSM_URL . 'images/' ) );
-       
+        define( 'CSM_CSS_URL', trailingslashit ( CSM_URL . 'css/' ) );
+        define( 'CSM_JS_URL', trailingslashit ( CSM_URL . 'css/' ) );
         /**
          * plugin Version
          */
@@ -81,12 +78,24 @@ class Coastalynk_Sea_Vessel_Map {
          * Required all files 
          */
 
-        // if( file_exists( CSM_INCLUDES_DIR.'admin.php' ) ) {
-        //     require_once CSM_INCLUDES_DIR . 'admin.php';
-        // }
+        if( file_exists( CSM_INCLUDES_DIR.'settings.php' ) ) {
+            require_once( CSM_INCLUDES_DIR . 'settings.php' );
+        }
+
+        if( file_exists( CSM_INCLUDES_DIR.'front.php' ) ) {
+            require_once CSM_INCLUDES_DIR . 'front.php';
+        }
 
         if( file_exists( CSM_INCLUDES_DIR.'sts-shortcode.php' ) ) {
             require_once( CSM_INCLUDES_DIR . 'sts-shortcode.php' );
+        }
+
+        if( file_exists( CSM_INCLUDES_DIR.'sbm-shortcode.php' ) ) {
+            require_once( CSM_INCLUDES_DIR . 'sbm-shortcode.php' );
+        }
+
+        if( file_exists( CSM_INCLUDES_DIR.'ports-shortcode.php' ) ) {
+            require_once( CSM_INCLUDES_DIR . 'ports-shortcode.php' );
         }
     }
 }
@@ -107,120 +116,19 @@ define( 'CoastalynkMap_Images_URL', CoastalynkMap_PLUGIN_URL . 'images/' );
 
 
 
-/**
- * show_vessels shortcode content.
- */
-function coastalynk_show_port_congestion( ) {
 
-    global $wpdb;
-
-    if ( ! check_ajax_referer( 'coastalynk_secure_ajax_nonce', 'nonce', false ) ) {
-        wp_send_json_error( __( 'Security nonce check failed. Please refresh the page.', "castalynkmap" ) );
-        wp_die();
-    }
-
-    $port_name = sanitize_text_field( $_REQUEST['selected_port'] );
-    if( empty( $port_name ) || $port_name == 'all' ) {
-        $port_name = 'Apapa';
-    }  
-
-    ob_start();
-    $types = [ "Cargo", "Tanker", "Passenger", "Tug", "Pilot", "Dredger", "Fishing", "Law Enforcement", "Other" ];
-    ?>
-        <div class="section-title d-flex justify-content-between mb-0 leftalign">
-            <h3><?php echo  __( ucwords( $port_name ) . ' Port Congestion', "castalynkmap" );?></h3>               
-        </div>
-    <?php
-    $updated_at = $wpdb->get_var( "select updated_at from ".$wpdb->prefix."port_congestion limit 1" );
-    
-    foreach( $types as $type  ) {
-        $total = $wpdb->get_var( "select sum(total) as total from ".$wpdb->prefix."port_congestion where port like '%" . $wpdb->esc_like( $port_name ) . "%'  and vessel_type like '%" . $wpdb->esc_like( $type ) . "%'" );
-        if( intval($total) > 0 ) {
-            ?>
-                <div class="stat-item">
-                    <div class="stat-label"><?php _e( ucwords( $type ), "castalynkmap" );?></div>
-                    <div class="stat-value" id="total-vessels"><?php echo $total;?> <?php _e( "vessel(s)", "castalynkmap" );?></div>
-                </div>
-            <?php
-        }
-    }
-    ?>
-        <div class="stat-item">
-            <div class="stat-label"><?php _e( "Updated Congestion Data", "castalynkmap" );?></div>
-            <div class="stat-value" id="total-vessels"><?php echo $updated_at;?></div>
-        </div>
-    <?php
-    $content = ob_get_contents();
-    ob_end_clean();
-    
-    echo $content;
-    die();
-
-}
-add_action('wp_ajax_coastalynk_load_port_congestion', 'coastalynk_show_port_congestion');
-add_action('wp_ajax_nopriv_coastalynk_load_port_congestion', 'coastalynk_show_port_congestion');
-
-/**
- * retrieve the vessel tonnage.
- */
-function coastalynk_retrieve_tonnage() {
-    $selected_uuid = isset( $_REQUEST['selected_uuid']  ) ? sanitize_text_field( $_REQUEST['selected_uuid'] ): "";
-    $selected_name = isset( $_REQUEST['selected_name']  ) ? sanitize_text_field( $_REQUEST['selected_name'] ): "";
-
-    if ( ! check_ajax_referer( 'coastalynk_secure_ajax_nonce', 'nonce', false ) ) {
-        wp_send_json_error( __( 'Security nonce check failed. Please refresh the page.', "castalynkmap" ) );
-        wp_die();
-    }
-
-    $apiKey = '15df4420-d28b-4b26-9f01-13cca621d55e'; // Replace with your actual API key.
-    $endpoint = 'https://api.datalastic.com/api/v0/vessel_find';
-    $params = array(
-        'api-key' => $apiKey,
-        'name' => $selected_name,
-        'fuzzy'    => '0'
-    );
-    $url = add_query_arg($params, $endpoint);
-
-    $response = wp_remote_get($url);
-
-    if (is_wp_error($response)) {
-        error_log('API Request Failed: ' . $response->get_error_message());
-        return false;
-    }
-
-    $body = wp_remote_retrieve_body($response);
-    $data = json_decode($body);
-
-    // Process the data as needed.
-    if (!empty($data)) {
-        foreach( $data->data as $dat ) {
-            if( $selected_uuid == $dat->uuid ) {
-                if( intval( $dat->gross_tonnage ) > 0 ) {
-                    echo $dat->gross_tonnage.' '.__( "Ton(s)", "castalynkmap" );
-                } else {
-                    echo __( "N/A", "castalynkmap" );
-                }
-                
-                exit;
-            } 
-        }
-    }
-
-    exit;
-}
-add_action('wp_ajax_coastalynk_retrieve_tonnage', 'coastalynk_retrieve_tonnage');
-add_action('wp_ajax_nopriv_coastalynk_retrieve_tonnage', 'coastalynk_retrieve_tonnage');
 
 /**
  * show_vessels shortcode content.
  */
 function wpdocs_show_vessels( $atts ) {
-	
+	$apiKey 	= get_option( 'coatalynk_datalastic_apikey' );
+
     $searchfield = isset( $_REQUEST['searchfield']  ) ? sanitize_text_field( $_REQUEST['searchfield'] ): "";
     ob_start();
 
     // Your Datalastic API Key
-    $apiKey = '15df4420-d28b-4b26-9f01-13cca621d55e';
+    
     $total_port_vessels = [];
     // 1. Define the center points (latitude, longitude) of our ports
     $ports = [

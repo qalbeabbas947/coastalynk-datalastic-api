@@ -1,6 +1,6 @@
 <?php
 /**
- * Pay Per Lesson shortcode page
+ * STS shortcode page
  *
  * Do not allow directly accessing this file.
  */
@@ -47,7 +47,7 @@ class Coastalynk_STS_Shortcode {
         ob_start();
         
             // Your Datalastic API Key
-        $apiKey = '15df4420-d28b-4b26-9f01-13cca621d55e';
+        $apiKey 	= get_option( 'coatalynk_datalastic_apikey' );
         $total_port_vessels = [];
         // 1. Define the center points (latitude, longitude) of our ports
         $table_name = $wpdb->prefix . 'coastalynk_ports';
@@ -470,10 +470,10 @@ class Coastalynk_STS_Shortcode {
     */
     function coastalynk_enqueue_scripts() : void {
         // Enqueue my styles.
-       wp_enqueue_style( 'coastalynk-slick-front-style', CSSN_ASSETS_URL.'css/sts-shortcode.css' );
+       wp_enqueue_style( 'coastalynk-sts-shortcode-style', CSM_CSS_URL.'sts-shortcode.css' );
        
         // Enqueue my scripts.
-        wp_enqueue_script( 'coastalynk-slick-carousel-front', CSSN_ASSETS_URL.'js/sts-shortcode.js', array("jquery"), time(), true );    
+        wp_enqueue_script( 'coastalynk-sts-shortcode-front', CSM_JS_URL.'sts-shortcode.js', array("jquery"), time(), true );    
         
     }
 }

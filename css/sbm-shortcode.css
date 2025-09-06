@@ -1,0 +1,197 @@
+
+.sbm-main-content {
+    display: flex;
+    flex: 1;
+}
+
+.sbm-sidebar {
+    width: 300px;
+    background: linear-gradient(180deg, #0f2a4f 0%, #0a1929 100%);
+    padding: 1.5rem;
+    border-right: 1px solid #2a4b7c;
+    overflow-y: auto;
+}
+
+.sbm-map-container {
+    flex: 1;
+    position: relative;
+}
+
+#sbm-map {
+    width: 100%;
+    height: 100%;
+}
+
+.sbm-card {
+    background: rgba(26, 54, 93, 0.6);
+    border-radius: 8px;
+    padding: 1.2rem;
+    margin-bottom: 1.5rem;
+    border: 1px solid #2a4b7c;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.sbm-card-title {
+    color: #4da6ff;
+    font-size: 1.2rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #2a4b7c;
+}
+
+.sbm-list {
+    list-style: none;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.sbm-item {
+    padding: 0.8rem;
+    margin-bottom: 0.8rem;
+    background: rgba(38, 66, 104, 0.4);
+    border-radius: 6px;
+    border-left: 4px solid #4da6ff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sbm-name {
+    font-weight: bold;
+    color: white;
+}
+
+.sbm-status {
+    font-size: 0.85rem;
+    padding: 0.3rem 0.6rem;
+    border-radius: 4px;
+}
+
+.sbm-status-active {
+    background-color: #2e7d32;
+    color: #a2eea2;
+}
+
+.sbm-vessel-list {
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.sbm-vessel-item {
+    padding: 0.8rem;
+    margin-bottom: 0.8rem;
+    background: rgba(38, 66, 104, 0.4);
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.sbm-vessel-name {
+    font-weight: bold;
+    color: #4da6ff;
+}
+
+.sbm-vessel-details {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.9rem;
+}
+
+.sbm-vessel-location {
+    color: #a0c5e8;
+}
+
+.sbm-vessel-status {
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+}
+
+.sbm-status-at-sbm {
+    background-color: #2e7d32;
+    color: #a2eea2;
+}
+
+.sbm-status-in-transit {
+    background-color: #7d5c2e;
+    color: #eee0a2;
+}
+
+button {
+    padding: 0.6rem 1.2rem;
+    background: linear-gradient(135deg, #4da6ff 0%, #0056b3 100%);
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    background: linear-gradient(135deg, #5fb1ff 0%, #0069d9 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.sbm-legend {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(26, 54, 93, 0.8);
+    padding: 1rem;
+    border-radius: 8px;
+    z-index: 1000;
+    border: 1px solid #2a4b7c;
+}
+
+.sbm-legend-title {
+    color: #4da6ff;
+    margin-bottom: 0.8rem;
+}
+
+.sbm-legend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.5rem;
+    color: white;
+}
+.sbm-legend-item span{ 
+    color: white;
+}
+.sbm-legend-color {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin-right: 0.8rem;
+}
+
+.sbm-marker {
+    background-color: #4da6ff;
+    border: 3px solid white;
+}
+
+.sbm-vessel-marker {
+    background-color: #ff9800;
+    border: 2px solid white;
+}
+
+.sbm-pulse-effect {
+    animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(77, 166, 255, 0.7);
+    }
+    70% {
+        transform: scale(1.05);
+        box-shadow: 0 0 0 10px rgba(77, 166, 255, 0);
+    }
+    100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(77, 166, 255, 0);
+    }
+}
