@@ -118,23 +118,6 @@
     color: #eee0a2;
 }
 
-button {
-    padding: 0.6rem 1.2rem;
-    background: linear-gradient(135deg, #4da6ff 0%, #0056b3 100%);
-    border: none;
-    border-radius: 4px;
-    color: white;
-    cursor: pointer;
-    font-weight: bold;
-    transition: all 0.3s ease;
-}
-
-button:hover {
-    background: linear-gradient(135deg, #5fb1ff 0%, #0069d9 100%);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
 .sbm-legend {
     position: absolute;
     bottom: 20px;
