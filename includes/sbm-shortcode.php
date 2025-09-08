@@ -104,7 +104,7 @@ class Coastalynk_SBM_Shortcode {
                     </div>
                     
                     <div class="sbm-map-container">
-                        <div id="sbm-map"></div>
+                        <div id="sbm-map" style="height: 100vh; width: 100%; min-width:100%;"></div>
                         
                         <div class="sbm-legend">
                             <h3 class="sbm-legend-title"><?php _e( "Map Legend", "castalynkmap" );?></h3>
@@ -149,8 +149,41 @@ class Coastalynk_SBM_Shortcode {
                 
                 // Vessel data
                 const vessels = [
-                    <?php foreach( $vessel_data as $vessel ) { ?>
-                        { name: '<?php echo $vessel->name; ?>', mmsi: '<?php echo $vessel->mmsi; ?>', lat: '<?php echo $vessel->lat; ?>', lng: '<?php echo $vessel->lon; ?>', status: 'at-sbm', sbm: '<?php echo $vessel->port; ?>' },
+                    <?php foreach( $vessel_data as $vessel ) { 
+                        $status = '';
+                        if($vessel->is_offloaded == 'No') {
+                            $status = 'at-sbm';
+                        } else {
+                            $status = 'complete';
+                        }
+
+                        $draught = abs( floatval( $vessel->draught ) - floatval( $vessel->completed_draught ) );
+                        $leavy_data = '';
+                        if($vessel->is_offloaded == 'Yes') {
+                            $leavy_data = '<div><br><strong>leavy Data</strong></div>';
+                            $total = 0;
+                            $cargo_dues = ( $draught * 6.79 );
+
+                            $total += $cargo_dues;
+                            $leavy_data .= 'NPA cargo dues (liquid bulk): $'.$cargo_dues.'/ton<br>';
+
+                            $sbm_spm_harbour = ( $draught * 1.39 );
+                            $total += $sbm_spm_harbour;
+
+                            $leavy_data .= 'SBM/SPM harbour dues: $'.$sbm_spm_harbour.'/ton<br>';
+
+                            $env_leavy = ( $draught * 0.12 );
+                            $total += $env_leavy;
+                            $leavy_data .= 'Environmental levy: $'. $env_leavy.'/ton<br>';
+
+                            $polution_leavy = ( $draught * 0.10 );
+                            $total += $polution_leavy;
+                            $leavy_data .= 'NIMASA pollution levy: $'.$polution_leavy.'/ton<br>';
+                            $leavy_data .= 'NIMASA wet cargo levy: 3% of freight value<br>';
+                            $leavy_data .= 'Total levy: $'.$total.'/ton<br>';
+                        }
+                        ?>
+                        { name: '<?php echo $vessel->name; ?>', mmsi: '<?php echo $vessel->mmsi; ?>', lat: '<?php echo $vessel->lat; ?>', lng: '<?php echo $vessel->lon; ?>', status: '<?php echo $status; ?>', sbm: '<?php echo $vessel->port; ?>', draught: '<?php echo $vessel->draught; ?>', completed_draught: '<?php echo $vessel->completed_draught; ?>',leavy_data: '<?php echo $leavy_data; ?>' },
                     <?php } ?>
                 ];
                 
@@ -174,14 +207,14 @@ class Coastalynk_SBM_Shortcode {
                     sbmMarkers.push(marker);
                     
                     // Add SBM label
-                    L.marker([location.lat, location.lng], {
-                        icon: L.divIcon({
-                            html: `<div style="background: rgba(26, 54, 93, 0.8); padding: 4px 8px; border-radius: 4px; color: white; font-weight: bold; border: 1px solid #2a4b7c;">${location.name}</div>`,
-                            className: 'sbm-label',
-                            iconSize: [60, 20],
-                            iconAnchor: [30, 0]
-                        })
-                    }).addTo(map);
+                    // L.marker([location.lat, location.lng], {
+                    //     icon: L.divIcon({
+                    //         html: `<div style="background: rgba(26, 54, 93, 0.8); padding: 4px 8px; border-radius: 4px; color: white; font-weight: bold; border: 1px solid #2a4b7c;">${location.name}</div>`,
+                    //         className: 'sbm-label',
+                    //         iconSize: [60, 20],
+                    //         iconAnchor: [30, 0]
+                    //     })
+                    // }).addTo(map);
                 });
                 
                 // Create vessel markers
@@ -205,8 +238,12 @@ class Coastalynk_SBM_Shortcode {
                     marker.bindPopup(`
                         <div style="font-weight: bold; margin-bottom: 8px;">${vessel.name}</div>
                         <div>MMSI: ${vessel.mmsi}</div>
-                        <div>Status: <span style="color: ${vessel.status === 'at-sbm' ? '#2e7d32' : '#ff9800'}">${vessel.status === 'at-sbm' ? 'At SBM' : 'In Transit'}</span></div>
-                        ${vessel.sbm ? `<div>Current SBM: ${vessel.sbm}</div>` : ''}
+                        <div>Status: <span style="color: ${vessel.status === 'at-sbm' ? '#2e7d32' : '#ff9800'}">${vessel.status === 'at-sbm' ? '<?php _e( "At SBM", "castalynkmap" );?>' : '<?php _e( "Complete", "castalynkmap" );?>'}</span></div>
+                        <div>Before Draught: ${vessel.draught}</div>
+                        <div>After Draught: ${vessel.completed_draught}</div>
+                        
+                        ${vessel.leavy_data}<br>
+                        ${vessel.sbm ? `<div>SBM: ${vessel.sbm}</div>` : ''}
                     `);
                     
                     vesselMarkers.push(marker);
@@ -215,14 +252,6 @@ class Coastalynk_SBM_Shortcode {
                 // Add a scale control
                 L.control.scale({metric: true, imperial: false}).addTo(map);
                 
-                // Button functionality for demo purposes
-                document.getElementById('sbm-refresh-btn').addEventListener('click', function() {
-                    alert('Data refresh simulated. In a real application, this would update vessel positions from the API.');
-                });
-                
-                document.getElementById('sbm-simulate-btn').addEventListener('click', function() {
-                    alert('Vessel movement simulation triggered. In a real application, this would animate vessel movements.');
-                });
             </script>
         <?php
         $content = ob_get_contents();
