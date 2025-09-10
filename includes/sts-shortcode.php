@@ -65,12 +65,11 @@ class Coastalynk_STS_Shortcode {
         $vessel_data = $wpdb->get_results("SELECT * FROM $table_name_sts");
 
         ?>
+        <div class="vessel-dashboard-container">
+            <?php coastalynk_side_bar_menu();?>
             <div class="datalastic-container">
                 <header>
-                    <div class="section-title d-flex whitetitle direction-column mb-0 mt-2">
-                        <h2 class="mb-2"><?php _e( "Nigerian Ports Ship-To-Ship", "castalynkmap" );?></h2>
-                        <p class="subtitle"><?php _e( "Ship-To-Ship vessel traffic for major Nigerian ports", "castalynkmap" );?></p>
-                    </div>
+                    
                 </header>
                 
                 <div class="controls">

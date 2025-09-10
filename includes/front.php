@@ -64,7 +64,9 @@ class Coastalynk_Sea_Vessel_Map_Front {
             </div>
         <?php
         $updated_at = $wpdb->get_var( "select updated_at from ".$wpdb->prefix."port_congestion limit 1" );
-        
+        ?>
+            <div class="coastalynk-stat-item-wrapper">
+        <?php
         foreach( $types as $type  ) {
             $total = $wpdb->get_var( "select sum(total) as total from ".$wpdb->prefix."port_congestion where port like '%" . $wpdb->esc_like( $port_name ) . "%'  and vessel_type like '%" . $wpdb->esc_like( $type ) . "%'" );
             if( intval($total) > 0 ) {
@@ -77,7 +79,8 @@ class Coastalynk_Sea_Vessel_Map_Front {
             }
         }
         ?>
-            <div class="stat-item">
+            </div>
+            <div class="coastalynk-date-updated">
                 <div class="stat-label"><?php _e( "Updated Congestion Data", "castalynkmap" );?></div>
                 <div class="stat-value" id="total-vessels"><?php echo $updated_at;?></div>
             </div>

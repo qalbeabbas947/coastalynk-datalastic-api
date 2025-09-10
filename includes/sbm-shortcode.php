@@ -63,14 +63,14 @@ class Coastalynk_SBM_Shortcode {
         $vessel_data = $wpdb->get_results("SELECT * FROM $table_name_sbm");
 
         ?>
+        <script>
+        
+    </script>
+        <div class="vessel-dashboard-container">
+            <?php coastalynk_side_bar_menu(); ?>
+            <!-- Sidebar -->
+
             <div class="datalastic-container">
-                <header>
-                    <div class="section-title d-flex whitetitle direction-column mb-0 mt-2">
-                        <h2 class="mb-2"><?php _e( "Nigerian Single Buoy Mooring (SBM)", "castalynkmap" );?></h2>
-                        <p class="subtitle"><?php _e( "SBM vessel traffic for major Nigerian ports", "castalynkmap" );?></p>
-                    </div>
-                </header>
-                
                 <div class="sbm-main-content">
                     <div class="sbm-sidebar">
                         <div class="sbm-card">
@@ -124,7 +124,7 @@ class Coastalynk_SBM_Shortcode {
                     </div>
                 </div>
             </div>
-
+        </div>
             <!-- Leaflet JS -->
             <script>
                 // Initialize the map
@@ -263,12 +263,12 @@ class Coastalynk_SBM_Shortcode {
     * Load custom CSS and JavaScript.
     */
     function coastalynk_enqueue_scripts() : void {
+        
         // Enqueue my styles.
-       wp_enqueue_style( 'coastalynk-sbm-shortcode-style', CSM_CSS_URL.'sbm-shortcode.css?'.time() );
-       
+        wp_enqueue_style( 'coastalynk-sbm-shortcode-style', CSM_CSS_URL.'sbm-shortcode.css?'.time() );
+
         // Enqueue my scripts.
         wp_enqueue_script( 'coastalynk-sbm-shortcode-front', CSM_JS_URL.'sbm-shortcode.js', array("jquery"), time(), true );    
-        
     }
 }
 
