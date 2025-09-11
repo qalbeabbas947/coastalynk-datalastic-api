@@ -65,27 +65,29 @@ class Coastalynk_Sea_Vessel_Map_Front {
         <?php
         $updated_at = $wpdb->get_var( "select updated_at from ".$wpdb->prefix."port_congestion limit 1" );
         ?>
+        <div class="coastalynk-stat-main-wrapper">
             <div class="coastalynk-stat-item-wrapper">
-        <?php
-        foreach( $types as $type  ) {
-            $total = $wpdb->get_var( "select sum(total) as total from ".$wpdb->prefix."port_congestion where port like '%" . $wpdb->esc_like( $port_name ) . "%'  and vessel_type like '%" . $wpdb->esc_like( $type ) . "%'" );
-            if( intval($total) > 0 ) {
-                ?>
-                    <div class="stat-item">
-                        <div class="stat-label"><?php _e( ucwords( $type ), "castalynkmap" );?></div>
-                        <div class="stat-value" id="total-vessels">
-                            <?php echo $total;?> <?php if(intval( $total ) > 1 ) { echo __( "vessel(s)", "castalynkmap" ); } else { echo __( "vessel", "castalynkmap" ); } ?>
-                        </div>
-                    </div>
                 <?php
-            }
-        }
-        ?>
+                foreach( $types as $type  ) {
+                    $total = $wpdb->get_var( "select sum(total) as total from ".$wpdb->prefix."port_congestion where port like '%" . $wpdb->esc_like( $port_name ) . "%'  and vessel_type like '%" . $wpdb->esc_like( $type ) . "%'" );
+                    if( intval($total) > 0 ) {
+                        ?>
+                            <div class="stat-item">
+                                <div class="stat-label"><?php _e( ucwords( $type ), "castalynkmap" );?></div>
+                                <div class="stat-value" id="total-vessels">
+                                    <?php echo $total;?> <?php if(intval( $total ) > 1 ) { echo __( "vessel(s)", "castalynkmap" ); } else { echo __( "vessel", "castalynkmap" ); } ?>
+                                </div>
+                            </div>
+                        <?php
+                    }
+                }
+                ?>
             </div>
             <div class="coastalynk-date-updated">
                 <div class="stat-label"><?php _e( "Updated Congestion Data", "castalynkmap" );?></div>
                 <div class="stat-value" id="total-vessels"><?php echo $updated_at;?></div>
             </div>
+        </div>
         <?php
         $content = ob_get_contents();
         ob_end_clean();

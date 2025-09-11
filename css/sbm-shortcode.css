@@ -171,7 +171,6 @@
 /* Sidebar Styles */
 .coastlynk-vessel-dashboard-menu {
     width: 80px;
-    height: 100vh;
     background: var(--wp--preset--color--text-blue);
     color: white;
     transition: all 0.4s ease;
@@ -183,8 +182,7 @@
 
 .coastlynk-vessel-dashboard-menu.coastalynk-expanded {
     width: 280px;
-    height: 100vh;
-    max-height: 100vh;
+    height: auto;
 }
 
 .coastlynk-menu-toggle {

@@ -8,11 +8,12 @@
 }
 .datalastic-container .stats-panel h3 {
     margin-bottom: 5px;
+    padding-top: 22px;
+    padding-left: 20px;
     padding-bottom: 5px;
     font-size: 1.375rem;
     color: var(--wp--preset--color--text-blue);
     font-weight: bold;
-
 }
 
 .datalastic-container header {
@@ -72,7 +73,6 @@
     font-size: 1.75rem;
 }
 .coastalynk-totoal-vessels{
-    height: 10vh;
     width: 100%;
     max-width: 100%;
     background-color: var(--wp--preset--color--logoblue);
@@ -80,16 +80,20 @@
     text-align: center;
     vertical-align: middle;
     color: white;
-    margin: 0px;
-    padding: 15px;
+    display: flex;
+    height: 131px;
+    flex-direction: column;
+    justify-content: space-evenly;
 }
 
 .coastalynk-totoal-vessels .stat-label,.coastalynk-totoal-vessels .stat-value  {
     color: white !important;
     font-size: 1.25rem;
 }
+.coastalynk-port-congestion-sidebar-wrapper{
+    background-color: #F2F4F7;
+}
 .datalastic-container .stat-item {
-    margin-bottom: 15px;
     padding-bottom: 15px;
     border-bottom: 1px solid #7C8FA8;
 }
@@ -113,13 +117,26 @@
     font-weight: 700;
     color: var(--wp--preset--color--logoblue);
 }
+.coastalynk-stat-main-wrapper{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+    
+}
+div#coastalynk-table_wrapper{
+    margin: 20px;
+}
 
 .coastalynk-congestion-data .stat-item {
     margin-bottom: 15px;
     padding-bottom: 15px;
-    border-bottom: 1px solid #f0f0f0;
+    border-bottom: 1px solid #7C8FA8 !important;
     display: flex;
     justify-content: space-between;
+}
+
+.coastalynk-congestion-data .stat-item:first {
+    border-top: 1px solid #7C8FA8;
 }
 
 .coastalynk-congestion-data .stat-item:last-child {
@@ -144,9 +161,10 @@
     height: 82%;
 }
 .coastalynk-stat-item-wrapper{
-    height: 74%;
-    padding: 5px;
+    padding: 10px 20px 0px 20px;
     background-color: #F2F4F7;
+    height: 537px;
+    max-width: 100%;
 }
 .coastalynk-date-updated .stat-value {
     color: white;
@@ -155,10 +173,12 @@
     text-align: center;
 }
 .coastalynk-date-updated {
-    background-color: var(--wp--preset--color--text-blue);
+    background-color: var(--wp--preset--color--logoblue);
     padding: 8px;
     display: flex;
+    height: 101px;
     flex-direction: column;
+    justify-content: space-evenly;
 }
 
 .coastalynk-date-updated .stat-label {
@@ -407,23 +427,16 @@ div.dt-container .dt-paging .dt-paging-button.current:hover{
     border: 5px solid #C1D8EE !important;
     color: white !important;
 }
-/* For every odd row (optional, if you want a different color for odd rows) */
-.dataTable tr:nth-child(odd) {
-    background-color: #ffffff; /* White */
-    box-shadow: none !important;
-}
+table.dataTable tbody tr.odd,
+    table.dataTable tbody tr.even {
+        background-color: transparent !important; /* or a specific color like #FFFFFF */
+    }
 
-table.dataTable.stripe>tbody>tr:nth-child(odd)>*, table.dataTable.display>tbody>tr:nth-child(odd)>* {
-    
-}
-/* Alternate row colors */
-table.dataTable tbody tr:nth-child(even) {
-    background-color: #ffffff !important; /* Light grey for even rows */
-}
-
-table.dataTable tbody tr:nth-child(odd) {
-    background-color: #ffffff; /* White for odd rows */
-}
+    /* If using nth-child selectors, override them as well */
+    table.dataTable tbody tr:nth-child(odd),
+    table.dataTable tbody tr:nth-child(even) {
+        background-color: transparent !important; /* or a specific color like #FFFFFF */
+    }
 .dt-paging nav{
     text-align: right !important;
 }

@@ -248,15 +248,18 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                         <div class="section-title d-flex justify-content-between mb-0 leftalign">
                             <h2><?php _e( "Port Statistics", "castalynkmap" );?></h2>               
                         </div>
-                        <div class="stat-item coastalynk-totoal-vessels">
-                            <div class="stat-label"><?php _e( "Total Vessels Tracked", "castalynkmap" );?></div>
-                            <div class="stat-value" id="total-vessels"><?php echo $total_vessels;?></div>
-                        </div>
-                        <div class="coastalynk-congestion-data" style="display: none;">
-                        </div>
-                        <div class="stat-item coastalynk-congestion-loader" style="display: none;">
-                            <div class="stat-label"><?php _e( "Loading, please wait...", "castalynkmap" );?></div>
-                        
+                        <div class="coastalynk-port-congestion-sidebar-wrapper"> 
+                            <div class="stat-item coastalynk-totoal-vessels">
+                                <div class="stat-label"><?php _e( "Total Vessels Tracked", "castalynkmap" );?></div>
+                                <div class="stat-value" id="total-vessels"><?php echo $total_vessels;?></div>
+                            </div>
+                            
+                            <div class="coastalynk-congestion-data" style="display: none;">
+                            </div>
+                            <div class="stat-item coastalynk-congestion-loader" style="display: none;">
+                                <div class="stat-label"><?php _e( "Loading, please wait...", "castalynkmap" );?></div>
+                            
+                            </div>
                         </div>
                     </div>
                     

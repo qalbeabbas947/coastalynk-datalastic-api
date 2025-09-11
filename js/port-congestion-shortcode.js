@@ -65,7 +65,6 @@
                             selected_port: port
                         },
                         success: function(response) {
-                            
                             $( '.coastalynk-congestion-data' ).html(response).css("display", "block");
                             $('.coastalynk-congestion-loader').css("display", "none");
                         },
