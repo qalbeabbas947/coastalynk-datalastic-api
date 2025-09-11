@@ -80,7 +80,7 @@
             load_data_table: function() {
                 new DataTable('#coastalynk-table', {
                     layout: {
-                        bottomEnd: {
+                        bottomEnd: { 
                             paging: {
                                 firstLast: false
                             }

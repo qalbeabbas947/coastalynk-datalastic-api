@@ -272,11 +272,11 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                     <div class="port-info">
                         <div class="port-card coastlynk-port-card" data-port="apapa">
                             <h3>Apapa Port</h3>
-                            <div class="port-stat">
-                                <span>UN/LOCODE:</span>
+                            <div class="port-stat coastlynk-port-stat-code"> 
+                                <div>UN/LOCODE:</div>
                                 <span>NGAPP</span>
                             </div>
-                            <div class="port-stat">
+                            <div class="port-stat coastlynk-port-stat-vessel">
                                 <span>Vessels:</span>
                                 <span id="apapa-vessels"><?php echo $total_port_vessels["Apapa"];?></span> 
                             </div>
@@ -284,61 +284,61 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                         </div>
                         <div class="port-card coastlynk-port-card" data-port="TinCanIsland">
                             <h3>Tin Can Island Port</h3>
-                            <div class="port-stat">
+                            <div class="port-stat coastlynk-port-stat-code">
                                 <span>UN/LOCODE:</span>
                                 <span>NGTIN</span>
                             </div>
-                            <div class="port-stat">
+                            <div class="port-stat coastlynk-port-stat-vessel">
                                 <span>Vessels:</span>
-                                <span id="tincan-vessels"><?php echo $total_port_vessels["TinCanIsland"];?></span>
+                                <span id="tincan-vessels"><?php //echo $total_port_vessels["TinCanIsland"];?></span>
                             </div>
                         </div>
                         
                         <div class="port-card coastlynk-port-card" data-port="onne">
                             <h3>Onne Port</h3>
-                            <div class="port-stat">
+                            <div class="port-stat coastlynk-port-stat-code">
                                 <span>UN/LOCODE:</span>
                                 <span>NGONN</span>
                             </div>
-                            <div class="port-stat">
+                            <div class="port-stat coastlynk-port-stat-vessel">
                                 <span>Vessels:</span>
-                                <span id="onne-vessels"><?php echo $total_port_vessels["Onne"];?></span>
+                                <span id="onne-vessels"><?php //echo $total_port_vessels["Onne"];?></span>
                             </div>
                         </div>
                         
                         <div class="port-card coastlynk-port-card" data-port="calabar">
                             <h3>Calabar Port</h3>
-                            <div class="port-stat">
+                            <div class="port-stat coastlynk-port-stat-code">
                                 <span>UN/LOCODE:</span>
                                 <span>NGCBQ</span>
                             </div>
-                            <div class="port-stat">
+                            <div class="port-stat coastlynk-port-stat-vessel">
                                 <span>Vessels:</span>
-                                <span id="calabar-vessels"><?php echo $total_port_vessels["Calabar"];?></span>
+                                <span id="calabar-vessels"><?php //echo $total_port_vessels["Calabar"];?></span>
                             </div>
                         </div>
 
                         <div class="port-card coastlynk-port-card" data-port="lomé">
                             <h3>Lomé Port</h3>
-                            <div class="port-stat">
+                            <div class="port-stat coastlynk-port-stat-code">
                                 <span>UN/LOCODE:</span>
                                 <span>TGLFW</span>
                             </div>
-                            <div class="port-stat">
+                            <div class="port-stat coastlynk-port-stat-vessel">
                                 <span>Vessels:</span>
-                                <span id="calabar-vessels"><?php echo $total_port_vessels["Lomé"];?></span>
+                                <span id="calabar-vessels"><?php //echo $total_port_vessels["Lomé"];?></span>
                             </div>
                         </div>
 
                         <div class="port-card coastlynk-port-card" data-port="tema">
                             <h3>Tema Port</h3>
-                            <div class="port-stat">
+                            <div class="port-stat coastlynk-port-stat-code">
                                 <span>UN/LOCODE:</span>
                                 <span>GHTEM</span>
                             </div>
-                            <div class="port-stat">
+                            <div class="port-stat coastlynk-port-stat-vessel">
                                 <span>Vessels:</span>
-                                <span id="calabar-vessels"><?php echo $total_port_vessels["Tema"];?></span>
+                                <span id="calabar-vessels"><?php //echo $total_port_vessels["Tema"];?></span>
                             </div>
                         </div>
 
@@ -389,18 +389,7 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                         <?php } ?>
                     </tbody>
                     <tfoot>
-                        <tr>
-                            <th></th>
-                            <th><?php _e( "Name", "castalynkmap" );?></th>
-                            <th><?php _e( "Port", "castalynkmap" );?></th>
-                            <th><?php _e( "MMSI", "castalynkmap" );?></th>
-                            <th><?php _e( "IMO", "castalynkmap" );?></th>
-                            <th><?php _e( "Destination", "castalynkmap" );?></th>
-                            <th><?php _e( "Speed", "castalynkmap" );?></th>
-                            <th><?php _e( "Status", "castalynkmap" );?></th>
-                            <th><?php _e( "UTC", "castalynkmap" );?></th>
-                            <th><?php _e( "Tonnage", "castalynkmap" );?></th>
-                        </tr>
+                        
                     </tfoot>
                 </table>
             </div>

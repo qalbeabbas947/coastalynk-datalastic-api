@@ -73,7 +73,9 @@ class Coastalynk_Sea_Vessel_Map_Front {
                 ?>
                     <div class="stat-item">
                         <div class="stat-label"><?php _e( ucwords( $type ), "castalynkmap" );?></div>
-                        <div class="stat-value" id="total-vessels"><?php echo $total;?> <?php _e( "vessel(s)", "castalynkmap" );?></div>
+                        <div class="stat-value" id="total-vessels">
+                            <?php echo $total;?> <?php if(intval( $total ) > 1 ) { echo __( "vessel(s)", "castalynkmap" ); } else { echo __( "vessel", "castalynkmap" ); } ?>
+                        </div>
                     </div>
                 <?php
             }
