@@ -209,8 +209,10 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                                 'country_flag' => CSM_IMAGES_URL."flags/".strtolower( $flag ).".jpg" ?? '',
                                 'destination' => $vessel['destination'] ?? '',
                                 'speed' => $vessel['speed'] ?? '',
-                                'navigation_status' => $vessel['navigation_status'] ?? '',
                                 'timestamp' => $vessel['last_position_epoch'] ?? '',
+                                'type' => $vessel['type'] ?? '',
+                                'type_specific' => $vessel['type_specific'] ?? '',
+                                
 
                             ]
                         ];
@@ -226,7 +228,7 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                 <header>
                     <div class="controls">
                         <div class="port-selector coastalynk-port-selector">
-                            <input type="image" src="<?php echo CSM_IMAGES_URL;?>burger-port-page.png" />
+                            <input type="image" class="coastlynk-menu-toggle coastlynk-menu-toggle-open" src="<?php echo CSM_IMAGES_URL;?>burger-port-page.png" />
                             <button class="port-button active" data-port="all"><?php _e( "All Ports", "castalynkmap" );?></button>
                             <button class="port-button" data-port="apapa"><?php _e( "Apapa", "castalynkmap" );?></button>
                             <button class="port-button" data-port="TinCanIsland"><?php _e( "Tin Can Island", "castalynkmap" );?></button>
@@ -357,7 +359,6 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                             <th><?php _e( "IMO", "castalynkmap" );?></th>
                             <th><?php _e( "Destination", "castalynkmap" );?></th>
                             <th><?php _e( "Speed", "castalynkmap" );?></th>
-                            <th><?php _e( "Status", "castalynkmap" );?></th>
                             <th><?php _e( "UTC", "castalynkmap" );?></th>
                             <th><?php _e( "Tonnage", "castalynkmap" );?></th>
                         </tr>
@@ -378,7 +379,6 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                                 <td><?php echo $feature['properties']['imo']; ?></td>
                                 <td><?php echo $feature['properties']['destination']; ?></td>
                                 <td><?php echo $feature['properties']['speed']; ?></td>
-                                <td><?php echo $feature['properties']['navigation_status']; ?></td>
                                 <td><?php echo $feature['properties']['timestamp'] ? date('Y-m-d H:i:s', $feature['properties']['timestamp']) : 'N/A'; ?></td>
                                 <td>
                                     <input type="button" class="coastalynk-retrieve-tonnage-btn" data-name="<?php echo $feature['properties']['name']; ?>" data-uuid="<?php echo $feature['properties']['uuid']; ?>" value="<?php _e( "Retrieve Tonnage", "castalynkmap" );?>">
@@ -438,12 +438,15 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                             name: "<?php echo $feature['properties']['name'];?>",
                             country_flag: "<?php echo $feature['properties']['country_flag'];?>",
                             mmsi: "<?php echo $feature['properties']['mmsi'];?>",
+                            type: "<?php echo $feature['properties']['type'];?>",
+                            type_specific: "<?php echo $feature['properties']['type_specific'];?>",
                             port: "<?php echo $feature['properties']['port'];?>",
                             timestamp: "<?php echo $feature['properties']['timestamp'];?>",
+                            lat: "<?php echo $feature['geometry']['coordinates'][0];?>",
+                            lng: "<?php echo $feature['geometry']['coordinates'][1];?>",
                             imo: "<?php echo $feature['properties']['imo'];?>",
                             destination: "<?php echo $feature['properties']['destination'];?>",
                             speed: "<?php echo $feature['properties']['speed'];?>",
-                            navigation_status: "<?php echo $feature['properties']['navigation_status'];?>",
                         }
                     });
             <?php } ?>
@@ -480,15 +483,64 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                 
                 const props = feature.properties;
                 marker.bindPopup(`
-                    <table cellspacing="4"><tr><td><img src="${props.country_flag}" alt="${props.name}" style="width: 80px; height: auto;"></td>
-                    <td><strong>${props.name}</strong><br>
-                    MMSI: ${props.mmsi}<br>
-                    IMO: ${props.imo}<br></td></tr></table>
-                    Destination: ${props.destination}<br>
-                    Speed: ${props.speed}<br>
-                    Navigation Status: ${props.navigation_status}<br>
-                    Near: ${props.port} Port<br>
-                    Last Update: ${new Date(props.timestamp * 1000).toLocaleString()}
+                    <table class="coastalynk-sbm-marker" cellpadding="5" width="100%">
+                        <tr>
+                            <td colspan="2" valign="top" class="coastalynk-sbm-marker-name-part">
+                                <table width="100%">
+                                    <tr>
+                                        <td valign="top" width="40%"><img src="${props.country_flag}" alt="${props.name}" style="width: 50px; height: 50px;"></td>
+                                        <td valign="top" width="60%">
+                                            <h3>${props.name}</h3>
+                                            <div>${props.type}</div>
+                                        </td>
+                                    </tr>
+                                    
+                                </table>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" class="coastalynk-sbm-marker-labels-part"><b><?php _e( "Last Updated:", "castalynkmap" );?></b> ${new Date(props.timestamp * 1000).toLocaleString()}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" class="coastalynk-sbm-marker-middle-part">
+                                <table width="100%">
+                                    <tr class="coastalynk-sbm-marker-first-row">
+                                        <td width="50%">
+                                            <b><?php _e( "Speed:", "castalynkmap" );?></b><br>
+                                            ${props.speed}
+                                        </td>
+                                        <td width="50%">
+                                            <b><?php _e( "Near:", "castalynkmap" );?></b><br>
+                                            ${props.port}
+                                        </td>
+                                    </tr>
+                                    <tr class="coastalynk-sbm-marker-second-row">
+                                        <td colspan="3">
+                                            <b><?php _e( "Specific Type", "castalynkmap" );?></b><br>
+                                            ${props.type_specific}
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                        <tr class="coastalynk-sbm-marker-bottom-part">
+                            <td>
+                                <b><?php _e( "Lat:", "castalynkmap" );?></b>
+                                ${props.lat}<br>
+                                
+                            </td>
+                            <td>
+                                
+                                <b><?php _e( "Lon:", "castalynkmap" );?></b>
+                                ${props.lng}
+                            </td>
+                        </tr>
+                        <tr class="coastalynk-sbm-marker-bottom-part">
+                            <td colspan="2">
+                                <b><?php _e( "Destination:", "castalynkmap" );?></b> ${props.destination}
+                            </td>
+                        </tr>
+                    </table>
                 `);
                 
                 vesselsLayer.addLayer(marker);

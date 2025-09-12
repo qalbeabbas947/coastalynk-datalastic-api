@@ -15,16 +15,16 @@
                 });
             },
             mark_active: function(){
-                $('#coastlynk-menu-toggle-open').on('click', function() {
+                $('.coastlynk-menu-toggle-open').on('click', function() {
                     $('#coastlynk-vessel-dashboard-menu').addClass('coastalynk-expanded');
                     $('#coastlynk-menu-toggle-close').css( 'display', 'block' );
-                    $('#coastlynk-menu-toggle-open').css( 'display', 'none' );
+                    $('.coastlynk-menu-toggle-open').css( 'display', 'none' );
                 });
 
                 $('#coastlynk-menu-toggle-close').on('click', function() {
                     $('#coastlynk-vessel-dashboard-menu').removeClass('coastalynk-expanded');
                     $('#coastlynk-menu-toggle-close').css( 'display', 'none' );
-                    $('#coastlynk-menu-toggle-open').css( 'display', 'block' );
+                    $('.coastlynk-menu-toggle-open').css( 'display', 'block' );
                 });
             },
             menu_toggle_click: function(){
@@ -42,7 +42,7 @@
                     $('.coastalynk-expanded #coastlynk-menu-toggle-close').css( 'display', 'block' );
                 } else {
                     $('#coastlynk-vessel-dashboard-menu').removeClass('coastalynk-expanded');
-                    $('#coastlynk-menu-toggle-open').css( 'display', 'block' );
+                    $('.coastlynk-menu-toggle-open').css( 'display', 'block' );
                 }
             }
         }

@@ -221,10 +221,15 @@ class Coastalynk_STS_Shortcode {
                             id: '<?php echo $feature->vessel1_uuid;?>',
                             name: '<?php echo $feature->vessel1_name;?>',
                             type: '<?php echo $feature->vessel1_type;?>',
+                            type_specific: '<?php echo $feature->vessel1_type_specific;?>',
                             position: [<?php echo $feature->vessel1_lat;?>, <?php echo $feature->vessel1_lon;?>],
                             speed: <?php echo $feature->vessel1_speed;?>,
                             draught: <?php echo $feature->vessel1_draught;?>,
                             navigation_status: "<?php echo $feature->vessel1_navigation_status;?>",
+                            country_iso: "<?php echo $feature->vessel1_country_iso;?>",
+                            flag: "<?php echo CSM_IMAGES_URL."flags/".strtolower( $feature->vessel1_country_iso ).".jpg"; ?>",
+                            lat: <?php echo $feature->vessel1_lat;?>,
+                            lng: <?php echo $feature->vessel1_lon;?>,
                             port: "<?php echo $feature->port;?>",
                             distance: "<?php echo $feature->distance;?>",
                             last_updated: "<?php echo $feature->last_updated;?>",
@@ -233,10 +238,15 @@ class Coastalynk_STS_Shortcode {
                             id: '<?php echo $feature->vessel2_uuid;?>',
                             name: '<?php echo $feature->vessel2_name;?>',
                             type: '<?php echo $feature->vessel2_type;?>',
+                            type_specific: '<?php echo $feature->vessel2_type_specific;?>',
                             position: [<?php echo $feature->vessel2_lat;?>, <?php echo $feature->vessel2_lon;?>],
+                            lat: <?php echo $feature->vessel2_lat;?>,
+                            lng: <?php echo $feature->vessel2_lon;?>,
                             speed: <?php echo $feature->vessel2_speed;?>,
+                            country_iso: "<?php echo $feature->vessel2_country_iso;?>",
                             draught: <?php echo $feature->vessel2_draught;?>,
                             navigation_status: "<?php echo $feature->vessel2_navigation_status;?>",
+                            flag: "<?php echo CSM_IMAGES_URL."flags/".strtolower( $feature->vessel2_country_iso ).".jpg"; ?>",
                             port: "<?php echo $feature->port;?>",
                             distance: "<?php echo $feature->distance;?>",
                             last_updated: "<?php echo $feature->last_updated;?>",
@@ -254,7 +264,7 @@ class Coastalynk_STS_Shortcode {
                         vessel2: '<?php echo $feature->vessel2_uuid;?>',
                         speed: <?php echo $feature->vessel1_speed;?>,
                         port: "<?php echo $feature->port;?>",
-                        distance: "<?php echo $feature->distance;?>",
+                        distance: "<?php echo number_format($feature->distance);?>",
                         last_updated: "<?php echo $feature->last_updated;?>",
                         color: '#00ff00'
                     },
@@ -278,17 +288,63 @@ class Coastalynk_STS_Shortcode {
                         
                         // Add popup to vessel
                         vesselMarkers[vesselId].bindPopup(`
-                            <div class="vessel-info">
-                                <h4>${vessel.name}</h4>
-                                <p>Type: ${vessel.type}</p>
-                                <p>Speed: ${vessel.speed} knots</p>
-                                <p>Port: ${vessel.port}</p>
-                                <p>Speed: ${vessel.speed} knots</p>
-                                <p>Navigation Status: ${vessel.navigation_status}</p>
-                                <p>Draught: ${vessel.draught} meters</p>
-                                <p>Distance: ${vessel.distance} meters</p>
-                                <p>Last Updated: ${vessel.last_updated}</p>
-                            </div>
+                            <table class="coastalynk-sbm-marker">
+                            <tr>
+                                <td colspan="2" valign="top" class="coastalynk-sbm-marker-name-part">
+                                    <table>
+                                        <tr>
+                                            <td valign="top"><img src="${vessel.flag}" alt="${vessel.country_iso}" style="width: 50px; height: 50px;"></td>
+                                            <td valign="top">
+                                                <h3>${vessel.name}</h3>
+                                                <div>${vessel.type}</div>
+                                            </td>
+                                        </tr>
+                                        
+                                    </table>
+                                </td>
+                            </tr>
+                            
+                            <tr>
+                                <td colspan="2" class="coastalynk-sbm-marker-middle-part">
+                                    <table>
+                                        <tr class="coastalynk-sbm-marker-first-row">
+                                            <td width="33%">
+                                                <b><?php _e( "Speed", "castalynkmap" );?></b><br>
+                                                ${vessel.speed}
+                                            </td>
+                                            <td width="33%">
+                                                <b><?php _e( "Draught", "castalynkmap" );?></b><br>
+                                                ${vessel.draught}m
+                                            </td>
+                                            <td width="33%">
+                                                <b><?php _e( "Distance", "castalynkmap" );?></b><br>
+                                                ${vessel.distance}m
+                                            </td>
+                                        </tr>
+                                        <tr class="coastalynk-sbm-marker-second-row">
+                                            <td colspan="3">
+                                                <b><?php _e( "Type Specific", "castalynkmap" );?></b><br>
+                                                ${vessel.type_specific}
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr class="coastalynk-sbm-marker-bottom-part">
+                                <td>
+                                    <b><?php _e( "Nav. Status:", "castalynkmap" );?></b><br>
+                                    ${vessel.navigation_status}
+                                </td>
+                                <td>
+                                    <b><?php _e( "Lat:", "castalynkmap" );?></b>
+                                    ${vessel.lat}<br>
+                                    <b><?php _e( "Lon:", "castalynkmap" );?></b>
+                                    ${vessel.lng}
+                                </td>
+                            </tr>
+                        </table>
+                        
+                            
                         `);
                     }
                 }

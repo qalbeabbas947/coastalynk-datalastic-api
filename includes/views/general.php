@@ -7,7 +7,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $coatalynk_datalastic_apikey 	= get_option( 'coatalynk_datalastic_apikey' );
-
+$coatalynk_ports_page 	= get_option( 'coatalynk_ports_page' );
+$coatalynk_vessels_page = get_option( 'coatalynk_vessels_page' );
+$coatalynk_sbm_page 	= get_option( 'coatalynk_sbm_page' );
+$coatalynk_sts_page 	= get_option( 'coatalynk_sts_page' );
 ?>
 <div id="general_settings" class="cs_ld_tabs"> 
     <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
@@ -24,8 +27,50 @@ $coatalynk_datalastic_apikey 	= get_option( 'coatalynk_datalastic_apikey' );
                         </p>
                     </td>    
                 </tr>   
-                
-				       
+                <tr> 
+                    <td align="left" valign="top">
+						<strong><label align="left" for="coatalynk_ports_page"><?php _e( 'Ports Page', 'castalynkmap' ); ?></label></strong>
+					</td>
+                    <td>
+                        <?php wp_dropdown_pages( ['selected' => $coatalynk_ports_page, 'name' => 'coatalynk_ports_page', 'show_option_none' => __('Select Ports Page', 'castalynkmap'), 'sort_column' => 'post_title'] );?>
+                        <p class="description">
+                            <?php echo __('Select the ports page.', "castalynkmap" ); ?>
+                        </p>
+                    </td>    
+                </tr>  
+				<tr> 
+                    <td align="left" valign="top">
+						<strong><label align="left" for="coatalynk_vessels_page"><?php _e( 'Vessels Page', 'castalynkmap' ); ?></label></strong>
+					</td>
+                    <td>
+                        <?php wp_dropdown_pages( ['selected' => $coatalynk_vessels_page, 'name' => 'coatalynk_vessels_page', 'show_option_none' => __('Select Vessels Page', 'castalynkmap'), 'sort_column' => 'post_title'] );?>
+                        <p class="description">
+                            <?php echo __('Select the vessels page.', "castalynkmap" ); ?>
+                        </p>
+                    </td>    
+                </tr> 
+                <tr> 
+                    <td align="left" valign="top">
+						<strong><label align="left" for="coatalynk_sbm_page"><?php _e( 'SBM Page', 'castalynkmap' ); ?></label></strong>
+					</td>
+                    <td>
+                        <?php wp_dropdown_pages( ['selected' => $coatalynk_sbm_page, 'name' => 'coatalynk_sbm_page', 'show_option_none' => __('Select SBM Page', 'castalynkmap'), 'sort_column' => 'post_title'] );?>
+                        <p class="description">
+                            <?php echo __('Select the SBM page.', "castalynkmap" ); ?>
+                        </p>
+                    </td>    
+                </tr> 
+                <tr> 
+                    <td align="left" valign="top">
+						<strong><label align="left" for="coatalynk_sts_page"><?php _e( 'STS Page', 'castalynkmap' ); ?></label></strong>
+					</td>
+                    <td>
+                        <?php wp_dropdown_pages( ['selected' => $coatalynk_sts_page, 'name' => 'coatalynk_sts_page', 'show_option_none' => __('Select STS Page', 'castalynkmap'), 'sort_column' => 'post_title'] );?>
+                        <p class="description">
+                            <?php echo __('Select the STS page.', "castalynkmap" ); ?>
+                        </p>
+                    </td>    
+                </tr>       
             </tbody>
         </table>
         

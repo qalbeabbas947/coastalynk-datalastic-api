@@ -15,7 +15,9 @@
     color: var(--wp--preset--color--text-blue);
     font-weight: bold;
 }
-
+.leaflet-popup-content, .leaflet-popup-content-wrapper{
+    background-color:#F7FBFC;
+}
 .datalastic-container header {
     text-align: center;
     padding: 20px 0;
@@ -27,7 +29,37 @@
     border-bottom: 1px solid var(--wp--preset--color--logoblue);
 
 }
+.coastalynk-sbm-marker{
+    color: var(--wp--preset--color--text-blue);
+    font-size: 0.875rem;
+    vertical-align: top;
+}
+.coastalynk-sbm-marker-name-part{
+    border-bottom: 1px solid var(--wp--preset--color--text-blue);
+}
+.coastalynk-sbm-marker-middle-part{
+    border: 1px solid var(--wp--preset--color--text-blue);
+    color: black;
+    background-color: white;
+    font-family: 400;
+}
+.coastalynk-sbm-marker-middle-part h3{
+    text-align: center;
+}
+.coastalynk-sbm-marker-bottom-part{
+    color: black;
+}
+.coastalynk-sbm-marker-middle-part table {
+    margin:5px
+}
+.coastalynk-sbm-marker-labels-part {
+    padding: 5px 0px;
+}
 
+.coastalynk-sbm-marker-name-part img{
+    border-radius: 50%;
+    width: 32px;
+}
 .datalastic-container h1 {
     font-size: 2.5rem;
     margin-bottom: 10px;
@@ -440,6 +472,10 @@ table.dataTable tbody tr.odd,
 .dt-paging nav{
     text-align: right !important;
 }
+.coastlynk-vessel-menu-text a{
+    color: white;
+    text-decoration: none;
+}
 /* Remove box-shadow from all table elements or specific ones if needed */
 table.dataTable,
 table.dataTable th,
@@ -609,10 +645,9 @@ table.dataTable tbody tr.selected {
 
 
 @media (max-width: 768px) {
-    
     .datalastic-container .info-panel, .datalastic-container .stats-panel {
-        padding: 20px 0;
-        height: 100%;
+        padding: 10px 0px 0px 0px;
+        height: unset;
         max-height: 100%;
     }
     .datalastic-container .map-container {
@@ -651,17 +686,66 @@ table.dataTable tbody tr.selected {
         flex-direction: column;
         align-items: center;
     }
+    .datalastic-container .info-panel h2{
+        margin-left: 15px;
+    }
+    .coastalynk-congestion-loader .stat-label {
+        text-align: center;
+        padding: 19px;
+    }
+    .datalastic-container .stats-panel h2{
+        margin-bottom: 0px;
+        margin-top: 15px;
+        padding-left: 15px;
+        padding-bottom: 10px;
+    }
+    .datalastic-container header{
+        height: auto;
+    }
+    .coastalynk-totoal-vessels{
+        justify-content: center;
+        padding: 15px 0px;
+        height: unset;
+    }
 }
 
 @media (max-width: 480px) {
-    
+    .coastalynk-totoal-vessels{
+        justify-content: center;
+        padding: 15px 0px;
+        height: unset;
+    }
+    .datalastic-container .info-panel, .datalastic-container .stats-panel{
+        height: unset;
+    }
+    .datalastic-container .info-panel h2{
+        margin-left: 15px;
+    }
+    .coastalyn-flag-port-listing {
+        width: 40px;
+    }
+    .datalastic-container .stats-panel h2{
+        margin-bottom: 0px;
+        margin-top: 15px;
+        padding-left: 15px;
+        padding-bottom: 10px;
+    }
+    .coastalynk-congestion-loader .stat-label {
+        text-align: center;
+        padding: 19px;
+    }
+    .datalastic-container .port-card{
+        margin: 0 15px;
+    }
 /* Force horizontal scrolling on small screens */
     #coastalynk-table .table-container {
         width: 100%;
         overflow-x: auto;
         display: block;
     }
-    
+   .datalastic-container header{
+        height: auto;
+   }
     #coastalynk-table table {
         min-width: 550px; /* Force table to be wider than viewport */
     }

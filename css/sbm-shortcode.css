@@ -3,7 +3,9 @@
     display: flex;
     flex: 1;
 }
-
+.coastlynk-vessel-menu-item a {
+    color: white;
+}
 .sbm-sidebar {
     width: 300px;
     overflow-y: auto;

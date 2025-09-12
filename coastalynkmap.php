@@ -121,26 +121,3 @@ function Coastalynk_Map_Load() {
     return Coastalynk_Sea_Vessel_Map::instance();
 }
 add_action( 'plugins_loaded', 'Coastalynk_Map_Load' );
-
-
-/**
- * Enqueue script with script.aculo.us as a dependency.
- */
-// function my_scripts_method() {
-    
-//     wp_enqueue_style( 'coastlynk-map-dataTables-css', '//cdn.datatables.net/2.3.3/css/dataTables.dataTables.min.css' );
-//     wp_enqueue_script( 'coastlynk-map-dataTables-js', '//cdn.datatables.net/2.3.3/js/dataTables.min.js', array( 'jquery' ) );
-
-//     wp_enqueue_script( 'leaflet', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js', array( 'jquery' ) );
-//     wp_enqueue_script( 'markercluster', 'https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js', array( 'jquery' ) );
-
-// 	wp_enqueue_script( 'coastlynk-map-js', plugins_url( '/js/coastlynk.js' , __FILE__ ), array( 'jquery' ), time(), true );
-//     wp_localize_script( 'coastlynk-map-js', 'COSTALUNKVARS', [          
-//                 'ajaxURL' => admin_url( 'admin-ajax.php' ),
-//                 'nonce'    => wp_create_nonce('coastalynk_secure_ajax_nonce') // Create nonce
-//             ] );
-    
-//     wp_enqueue_style( 'coastlynk-map-leaflet-css', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css', array(), time() );
-//     wp_enqueue_style( 'coastlynk-map-css', plugins_url( '/css/coastlynk.css' , __FILE__ ), array(), time() );
-// }
-// add_action( 'wp_enqueue_scripts', 'my_scripts_method' );

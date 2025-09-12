@@ -62,8 +62,16 @@ class Coastalynk_Maps_Settings {
         if( $current_tab === 'general' ) {
 
             $coatalynk_datalastic_apikey = isset( $_POST['coatalynk_datalastic_apikey'] ) ? sanitize_textarea_field( stripslashes_deep( $_POST['coatalynk_datalastic_apikey'] ) ) : '';
-            
-            update_option( 'coatalynk_datalastic_apikey', $coatalynk_datalastic_apikey );
+            $coatalynk_ports_page = isset( $_POST['coatalynk_ports_page'] ) ? sanitize_textarea_field( stripslashes_deep( $_POST['coatalynk_ports_page'] ) ) : '';
+            $coatalynk_vessels_page = isset( $_POST['coatalynk_vessels_page'] ) ? sanitize_textarea_field( stripslashes_deep( $_POST['coatalynk_vessels_page'] ) ) : '';
+            $coatalynk_sbm_page = isset( $_POST['coatalynk_sbm_page'] ) ? sanitize_textarea_field( stripslashes_deep( $_POST['coatalynk_sbm_page'] ) ) : '';
+            $coatalynk_sts_page = isset( $_POST['coatalynk_sts_page'] ) ? sanitize_textarea_field( stripslashes_deep( $_POST['coatalynk_sts_page'] ) ) : '';
+
+            update_option( 'coatalynk_ports_page',          $coatalynk_ports_page );
+            update_option( 'coatalynk_vessels_page',        $coatalynk_vessels_page );
+            update_option( 'coatalynk_sbm_page',            $coatalynk_sbm_page );
+            update_option( 'coatalynk_sts_page',            $coatalynk_sts_page );
+            update_option( 'coatalynk_datalastic_apikey',   $coatalynk_datalastic_apikey );
             $url = add_query_arg( 'tab', 'general', $url );
         }
 

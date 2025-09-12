@@ -160,30 +160,30 @@ class Coastalynk_SBM_Shortcode {
                         $draught = abs( floatval( $vessel->draught ) - floatval( $vessel->completed_draught ) );
                         $leavy_data = '';
                         if($vessel->is_offloaded == 'Yes') {
-                            $leavy_data = '<div><br><strong>leavy Data</strong></div>';
+                            $leavy_data = '';
                             $total = 0;
                             $cargo_dues = ( $draught * 6.79 );
 
                             $total += $cargo_dues;
-                            $leavy_data .= 'NPA cargo dues (liquid bulk): $'.$cargo_dues.'/ton<br>';
+                            $leavy_data .= '<b>NPA cargo dues (liquid bulk):</b> $'.$cargo_dues.'/ton<br>';
 
                             $sbm_spm_harbour = ( $draught * 1.39 );
                             $total += $sbm_spm_harbour;
 
-                            $leavy_data .= 'SBM/SPM harbour dues: $'.$sbm_spm_harbour.'/ton<br>';
+                            $leavy_data .= '<b>SBM/SPM harbour dues:</b> $'.$sbm_spm_harbour.'/ton<br>';
 
                             $env_leavy = ( $draught * 0.12 );
                             $total += $env_leavy;
-                            $leavy_data .= 'Environmental levy: $'. $env_leavy.'/ton<br>';
+                            $leavy_data .= '<b>Environmental levy:</b> $'. $env_leavy.'/ton<br>';
 
                             $polution_leavy = ( $draught * 0.10 );
                             $total += $polution_leavy;
-                            $leavy_data .= 'NIMASA pollution levy: $'.$polution_leavy.'/ton<br>';
-                            $leavy_data .= 'NIMASA wet cargo levy: 3% of freight value<br>';
-                            $leavy_data .= 'Total levy: $'.$total.'/ton<br>';
+                            $leavy_data .= '<b>NIMASA pollution levy:</b> $'.$polution_leavy.'/ton<br>';
+                            $leavy_data .= '<b>NIMASA wet cargo levy:</b> 3% of freight value<br>';
+                            $leavy_data .= '<b>Total levy:</b> $'.$total.'/ton<br>';
                         }
                         ?>
-                        { name: '<?php echo $vessel->name; ?>', mmsi: '<?php echo $vessel->mmsi; ?>', lat: '<?php echo $vessel->lat; ?>', lng: '<?php echo $vessel->lon; ?>', status: '<?php echo $status; ?>', sbm: '<?php echo $vessel->port; ?>', draught: '<?php echo $vessel->draught; ?>', completed_draught: '<?php echo $vessel->completed_draught; ?>',leavy_data: '<?php echo $leavy_data; ?>' },
+                        { name: '<?php echo $vessel->name; ?>',completed_draught: '<?php echo $vessel->completed_draught; ?>',navigation_status: '<?php echo $vessel->navigation_status; ?>', type_specific: '<?php echo $vessel->type_specific; ?>', distance: '<?php echo number_format($vessel->distance); ?>', draught: '<?php echo $vessel->draught; ?>', speed: '<?php echo $vessel->speed; ?>', type: '<?php echo $vessel->type; ?>',flag: '<?php echo CSM_IMAGES_URL."flags/".strtolower( $vessel->country_iso ).".jpg"; ?>', mmsi: '<?php echo $vessel->mmsi; ?>', lat: '<?php echo $vessel->lat; ?>', lng: '<?php echo $vessel->lon; ?>', status: '<?php echo $status; ?>', sbm: '<?php echo $vessel->port; ?>', draught: '<?php echo $vessel->draught.(!empty($vessel->draught)?__( "meters", "castalynkmap" ):''); ?>', completed_draught: '<?php echo $vessel->completed_draught.(!empty($vessel->completed_draught)?__( "meters", "castalynkmap" ):''); ?>',leavy_data: '<?php echo $leavy_data; ?>' },
                     <?php } ?>
                 ];
                 
@@ -206,15 +206,6 @@ class Coastalynk_SBM_Shortcode {
                     
                     sbmMarkers.push(marker);
                     
-                    // Add SBM label
-                    // L.marker([location.lat, location.lng], {
-                    //     icon: L.divIcon({
-                    //         html: `<div style="background: rgba(26, 54, 93, 0.8); padding: 4px 8px; border-radius: 4px; color: white; font-weight: bold; border: 1px solid #2a4b7c;">${location.name}</div>`,
-                    //         className: 'sbm-label',
-                    //         iconSize: [60, 20],
-                    //         iconAnchor: [30, 0]
-                    //     })
-                    // }).addTo(map);
                 });
                 
                 // Create vessel markers
@@ -236,14 +227,77 @@ class Coastalynk_SBM_Shortcode {
                     }
                     
                     marker.bindPopup(`
-                        <div style="font-weight: bold; margin-bottom: 8px;">${vessel.name}</div>
-                        <div>MMSI: ${vessel.mmsi}</div>
-                        <div>Status: <span style="color: ${vessel.status === 'at-sbm' ? '#2e7d32' : '#ff9800'}">${vessel.status === 'at-sbm' ? '<?php _e( "At SBM", "castalynkmap" );?>' : '<?php _e( "Complete", "castalynkmap" );?>'}</span></div>
-                        <div>Before Draught: ${vessel.draught}</div>
-                        <div>After Draught: ${vessel.completed_draught}</div>
-                        
-                        ${vessel.leavy_data}<br>
-                        ${vessel.sbm ? `<div>SBM: ${vessel.sbm}</div>` : ''}
+                        <table class="coastalynk-sbm-marker">
+                            <tr>
+                                <td colspan="2" valign="top" class="coastalynk-sbm-marker-name-part">
+                                    <table>
+                                        <tr style="border-bottom: 1px solid #003366;">
+                                            <td valign="top"><img src="${vessel.flag}" alt="${vessel.country_iso}" style="width: 50px; height: 50px;"></td>
+                                            <td valign="top">
+                                                <h3>${vessel.name}</h3>
+                                                <div>${vessel.type}</div>
+                                            </td>
+                                        </tr>
+                                        
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="coastalynk-sbm-marker-labels-part"><b><?php _e( "Before Draught", "castalynkmap" );?>:</b></td>
+                                <td class="coastalynk-sbm-marker-labels-part">${vessel.draught}</td>
+                            </tr>
+                            <tr>
+                                <td class="coastalynk-sbm-marker-labels-part"><b><?php _e( "Completed Draught", "castalynkmap" );?>:</b></td>
+                                <td class="coastalynk-sbm-marker-labels-part">${vessel.completed_draught}</td>
+                            </tr>
+                            <tr>
+                                <td colspan="2" class="coastalynk-sbm-marker-middle-part">
+                                    <table>
+                                        <tr class="coastalynk-sbm-marker-first-row">
+                                            <td width="50%">
+                                                <b><?php _e( "Speed:", "castalynkmap" );?></b><br>
+                                                ${vessel.speed}
+                                            </td>
+                                            <td width="50%">
+                                                <b><?php _e( "Distance:", "castalynkmap" );?></b><br>
+                                                ${vessel.distance}m
+                                            </td>
+                                        </tr>
+                                        <tr class="coastalynk-sbm-marker-second-row">
+                                            <td colspan="2">
+                                                <b><?php _e( "Type Specific", "castalynkmap" );?></b><br>
+                                                ${vessel.type_specific}
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <h3><?php _e( "Leavy Data", "castalynkmap" );?></h3>
+                                </td>
+                            </tr>    
+                            <tr>
+                                <td colspan="2" class="coastalynk-sbm-marker-middle-part">
+                                    ${vessel.leavy_data}
+                                </td>
+                            </tr>
+                            <tr class="coastalynk-sbm-marker-bottom-part">
+                                <td>
+                                    <b><?php _e( "Lat:", "castalynkmap" );?></b>
+                                    ${vessel.lat}
+                                </td>
+                                <td>
+                                    <b><?php _e( "Lon:", "castalynkmap" );?></b>
+                                    ${vessel.lng}
+                                </td>
+                            </tr>
+                            <tr class="coastalynk-sbm-marker-bottom-part">
+                                <td colspan="2">
+                                    <b><?php _e( "Nav. Status:", "castalynkmap" );?></b> ${vessel.navigation_status}
+                                </td>
+                            </tr>
+                        </table>
                     `);
                     
                     vesselMarkers.push(marker);
