@@ -23,7 +23,7 @@
     padding: 20px 0;
     background: #F2F4F7;
     color: white;
-    height: 75px;
+    height: auto;
     width: 100%;
     max-width: 100%;
     border-bottom: 1px solid var(--wp--preset--color--logoblue);
@@ -254,7 +254,7 @@ div#coastalynk-table_wrapper{
     display: flex;
     gap: 10px;
     align-items: center;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
 }
 
 .datalastic-container .port-button {
@@ -440,6 +440,10 @@ border-bottom: 1px solid #7C8FA8;
 div.dt-container .dt-paging .dt-paging-button{
     font-size: 1rem;
 }
+div.dt-container .dt-paging .dt-paging-button {
+    width: 50px;
+    height: 50px;
+}
 
 div.dt-container.dt-empty-footer tbody>tr:last-child>*, table.dataTable.row-border>tbody>tr>*, table.dataTable.display>tbody>tr>* {
     border-bottom: 1px solid #F2F4F7;
@@ -558,7 +562,12 @@ table.dataTable tbody tr.selected {
 		-webkit-animation-delay:0.75s;
 		-moz-animation-delay:0.75s;
 }
-
+#coastalynk-table th {
+    background: rgba(0, 0, 0, 0.15);
+}
+#coastalynk-table .dt-column-header span {
+    margin-bottom: 0;
+}
 /************************************/
 
 @keyframes bounceG{
@@ -710,6 +719,26 @@ table.dataTable tbody tr.selected {
 }
 
 @media (max-width: 480px) {
+    .coastlynk-menu-dashboard-open-close-burger{
+        display: block;
+    }
+
+    .coastlynk-menu-toggle, #coastlynk-menu-toggle-close{
+        display: none;
+    }
+     .coastalynk-stat-item-wrapper {
+        padding: 10px 20px 20px 20px;
+        height:auto;
+    }  
+    .port-card.coastlynk-port-card span {
+        margin-bottom:5px;
+    }             
+    .coastlynk-vessel-dashboard-menu{
+        /* position: absolute; */
+        width: 100%;
+        position: absolute;
+        z-index: 1000;
+    }
     .coastalynk-totoal-vessels{
         justify-content: center;
         padding: 15px 0px;

@@ -1,0 +1,428 @@
+.coastalynk_vessel_search_options{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 15px;
+}
+
+.coastalynk_vessel_search_options select option {
+        background-color: white; /* May not work consistently across browsers */
+        color: black;
+    }
+.coastalynk-vessel-type-field, .coastalynk-vessel-country-field {
+    padding: 4px;
+    background-color: white;
+    border-radius: 5px;
+    width: 20%;
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: #7C8FA8;
+    margin-left: 15px;
+}
+.coastalynk-vessel-type-field select, .coastalynk-vessel-country-field  select{
+    height: 40px;
+    outline: none;
+    border: none;
+    width: 120px;
+}
+.coastalynk-vessel-search-submit{
+    width: 8%;
+    margin-left: 3px;
+}
+
+#coastalynk-vessel-search-submit-btn{
+    background-color: var(--wp--preset--color--text-blue);
+    color: white;
+    padding: 11px;
+    border-radius: 5px;
+    font-size: 1.125rem;
+}
+
+.coastalynk_vessel_search_options select:focus, .coastalynk_vessel_search_options select:hover {
+    outline: none;
+    box-shadow: none;
+}
+
+.coastalynk-vessel-search-parent select {
+    width: 38%;
+    height: 40px;
+    outline: none;
+    border: none;
+}
+.coastalynk-vessel-search-parent input[type=text] {
+    width: 52%;
+    height: 40px;
+}
+.coastalynk-vessel-search-parent {
+    padding: 4px;
+    background-color: white;
+    border-radius: 5px;
+    width: 50%;
+    font-size: 1.125rem;
+    font-weight: 500;
+    color: #7C8FA8;
+}
+
+.coastalynk-vessel-search-field {
+    border-right: 1px solid #7C8FA8;
+    border-bottom: none;
+    border-top: none;
+    border-left: none;
+}
+
+.coastalynk-vessel-search-field:hover, .coastalynk-vessel-search-field:focus {
+    border-right: 1px solid #7C8FA8;
+}
+
+.coastalynk-vessel-search-field:focus, .coastalynk-vessel-search-parent select {
+  outline: none;
+  box-shadow: none;
+  border: none;
+}
+
+.coastalynk-vessel-filter-types {
+    display: inline-block;
+    width: 30%;
+}
+
+.coastalynk-vessel-search-parent .fa-search {
+    color: #888; /* Optional: style the icon color */
+}
+
+.coastalynk-vessel-table-wrapper{
+    margin: 20px auto;
+    width: 90%;
+}
+
+table.dataTable thead th, table.dataTable tfoot th{
+    font-weight: bold;
+    line-height: unset;
+    height: 60px !important;
+    margin-bottom: unset;
+    padding: 0px;
+}
+
+table.dataTable.stripe>tbody>tr:nth-child(odd)>*, table.dataTable.display>tbody>tr:nth-child(odd)>*{
+    box-shadow: none;
+}
+
+table.dataTable tbody tr:nth-child(even) {
+    box-shadow: inset 0 0 0 9999px rgba(0, 0, 0, 0.023);
+}
+
+#coastalynk-vessel-table thead tr {
+    box-shadow: inset 0 0 0 9999px rgba(0, 0, 0, 0.023);
+    font-size: 1rem;
+    font-weight: 600;
+}
+
+.coastalynk-retrieve-popup-btn{
+    background-color: var(--wp--preset--color--logoblue);
+    color: white;
+    padding: 12px;
+    border-radius: 5px;
+    outline: none;
+    border: none;
+}
+
+.coastalynk-retrieve-popup-btn:hover{
+    background-color: var(--wp--preset--color--text-blue);
+    transition: border 0.4s ease-in;
+    cursor: pointer;
+}
+
+/******************************Drop Down fancy*************************/
+.coastalynk-ddl-select {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    max-width: 100%;
+    font-size: 1rem;
+}
+.coastalynk-ddl-select span{
+    font-size: 1rem;
+    text-wrap: nowrap;
+}
+.coastalynk-ddl-button {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 0.675em 1em;
+    border: none;
+    border-radius: 0.25rem;
+    background-color: white;
+    cursor: pointer;
+}
+
+.coastalynk-ddl-arrow {
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 6px solid #000;
+    transition: transform ease-in-out 0.3s;
+}
+
+.coastalynk-ddl-dropdown {
+    position: absolute;
+    top: 111%;
+    left: 0;
+    width: 200px;
+    border: 1px solid var(--wp--preset--color--logoblue);
+    border-radius: 0.25rem;
+    background-color: white;
+    list-style: none;
+    padding: 10px;
+    margin: 10px 0 0;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    max-height: 200px;
+    overflow: auto;
+    z-index: 9999;
+}
+
+.coastalynk-ddl-dropdown-wrapper::before{
+    content: ' ';
+    width: 0px;
+    height: 0px;
+    border-bottom: 10px solid white;
+    border-left: 10px solid transparent;
+    border-right: 10px solid transparent;
+    top: 48px;
+    position: absolute;
+    left: calc(25% - 0px);
+    z-index: 10000;
+}
+
+.coastalynk-ddl-dropdown::-webkit-scrollbar {
+    width: 7px;
+}
+.coastalynk-ddl-dropdown::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 25px;
+}
+
+.coastalynk-ddl-dropdown::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 25px;
+}
+
+.coastalynk-ddl-dropdown li {
+    padding: 10px;
+    cursor: pointer;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    text-align: left;
+}
+
+/* Highlight the selected option */
+.coastalynk-ddl-dropdown li.selected {
+    background-color: #f2f2f2;
+    border-radius: 4px;
+    font-weight: bold;
+}
+
+.coastalynk-ddl-dropdown li:hover,
+.coastalynk-ddl-dropdown li:focus {
+    background-color: #f2f2f2;
+    border-radius: 4px;
+}
+
+.coastalynk-ddl-dropdown.hidden {
+    display: none;
+}
+.coastalynk-ddl-dropdown-wrapper.coastalynk-ddl-dropdown-wrapper-hidden {
+    display: none;
+}
+.coastalynk-ddl-button[aria-expanded="true"] .coastalynk-ddl-arrow {
+    transform: rotate(180deg);
+}
+/**********************************Popup************************************/
+
+.coastalynk-vessel-popup-content {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--wp--preset--color--logoblue);
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    width: 50%;
+    height: 80vh;
+}
+
+.coastalynk-vessel-popup-overlay {
+    display: none; /* Hidden by default */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+.coastalynk-vessel-popup-content h2{
+    background-image: url(../images/waves-separator.png);
+    background-repeat: no-repeat;
+    background-position: center bottom;
+    padding-bottom: 16px;
+    text-align: center;
+    font-size: 1.75rem;
+    font-weight: bold;
+    color: white;
+} 
+.coastalynk-vessel-popup-top-bar {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+}
+
+#coastalynk-vessel-popup-close{
+    cursor: pointer;
+    background-color: #F2F4F7;
+    color: var(--wp--preset--color--text-blue);
+    padding: 13px;
+    font-weight: bold;
+    border-radius: 5px;
+    margin-top: 10px;
+    border: none;
+    font-size: 1rem;
+}
+.coastalynk-vessel-popup-content-box{
+    padding-left: 20px;
+}
+.coastalynk-vessel-popup-content-box h3 {
+    font-size: 1.375rem;
+    color: var(--wp--preset--color--text-blue);
+    margin-top: 22px;
+    margin-bottom: 7px;
+}
+
+.coastalynk-vessel-popup-content-box-list{
+    list-style: none;
+    padding-left: 22px;
+}
+.coastalynk-vessel-popup-content-box-list li{
+    position: relative; /* Allows positioning of the icon */
+    margin-bottom: 0.5em; /* Spacing between list items */
+}
+
+
+#coastalynk-vessel-popup-close:hover{
+    background-color: #EDF0F4;
+    
+}
+.coastalynk-vessel-popup-top-bar-items {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    color: white;
+    font-size: 1rem;
+    padding: 20px 0;
+}
+.coastalynk-vessel-popup-top-bar-items  label,.coastalynk-vessel-popup-top-bar-items span{
+    color:white;
+    font-size: 1rem;
+    line-height: unset;
+    padding-right: 6px;
+}
+
+.coastalynk-vessel-popup-top-bar-country-flag {
+    width: 26px;
+}
+
+.coastalynk-vessel-popup-content-boxes{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    font-size: 1rem;
+    flex-wrap: wrap;
+    row-gap: 20px;
+}
+
+.coastalynk-vessel-popup-content-boxes > div{
+    background-color: white;
+    flex: 0 0 48.5%;
+    height: 181px;
+}
+/**********************************************************************/
+@media (max-width: 768px) {
+    .coastalynk-vessel-table-wrapper{
+        overflow-x: scroll;
+    }
+
+    .coastalynk-vessel-popup-content {
+        width: 80%;
+        height: 60vh;
+    }
+}
+@media (max-width: 480px) {
+    .coastalynk-vessel-table-wrapper{
+        overflow-x: scroll;
+    }
+
+    .coastalynk-vessel-popup-content-boxes{
+        flex-direction: column;
+    }
+    .coastalynk-vessel-popup-content-boxes > div{
+        flex: 0 0 100%;
+        height: 181px;
+    }
+
+    .coastalynk-vessel-popup-content {
+        width: 80%;
+        height: 87%;
+    }
+
+    .coastalynk-vessel-popup-top-bar {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        width: 100%;
+        align-items: flex-start;
+        flex-wrap: wrap;
+    }
+    .coastalynk-vessel-popup-top-bar-items {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        flex-wrap: nowrap;
+        color: white;
+        font-size: 1rem;
+        padding: 5px 0;
+        width: 100%;
+    }
+
+    .coastalynk-vessel-popup-content-box h3 {
+        margin-top: 5px;
+    }
+
+    .coastlynk-vessel-dashboard-menu {
+        z-index: 1002;
+    }
+    .coastalynk_vessel_search_options {
+        width: 100%;
+        flex-wrap: wrap;
+    }
+    .coastalynk-vessel-search-parent {
+        width: 100%;
+        margin: 10px 0;
+    }
+    .coastalynk-vessel-type-field, .coastalynk-vessel-country-field {
+        width: 45%;
+    }
+
+    .coastalynk-vessel-search-submit {
+        width: 100%;
+        margin-top: 10px;
+    }
+    .datalastic-container .controls{
+        margin-left: 0px;
+    }
+}

@@ -1,0 +1,338 @@
+<htmt>
+
+    <head></head>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+        const customSelects = document.querySelectorAll(".coastalynk-ddl-select");
+
+            customSelects.forEach((customSelect) => {
+                const selectButton = customSelect.querySelector(".coastalynk-ddl-button");
+                const dropdown = customSelect.querySelector(".coastalynk-ddl-dropdown");
+                const options = dropdown.querySelectorAll("li");
+                const selectedValue = selectButton.querySelector(".coastalynk-ddl-selected-value");
+                let drop_down_field = customSelect.querySelector(".coastalynk-ddl-dropdown-button-field");
+                let focusedIndex = -1;
+                
+                const toggleDropdown = (expand = null) => {
+                    const isOpen = expand !== null ? expand : dropdown.classList.contains("hidden");
+                    dropdown.classList.toggle("hidden", !isOpen);
+                    selectButton.setAttribute("aria-expanded", isOpen);
+
+                    if (isOpen) {
+                        focusedIndex = [...options].findIndex((option) =>
+                        option.classList.contains("selected")
+                        );
+                        focusedIndex = focusedIndex === -1 ? 0 : focusedIndex;
+                        updateFocus();
+                    } else {
+                        focusedIndex = -1;
+                        selectButton.focus();
+                    }
+                };
+
+                const updateFocus = () => {
+                    options.forEach((option, index) => {
+                        if (option) {
+                        option.setAttribute("tabindex", index === focusedIndex ? "0" : "-1");
+                        if (index === focusedIndex) option.focus();
+                        }
+                    });
+                };
+
+                const handleOptionSelect = (option) => {
+                    options.forEach((opt) => opt.classList.remove("selected"));
+                    option.classList.add("selected");
+                    selectedValue.textContent = option.textContent.trim(); // Update selected value
+                    drop_down_field.value = option.getAttribute("data-value");
+                    console.log(option.getAttribute("data-value"))
+                    console.log(drop_down_field)
+                    if (option.dataset.value === "clear") {
+                        // Reset to the default value
+                        selectedValue.textContent = "Open this select menu";
+                        drop_down_field.value = '';
+                        options.forEach((opt) => opt.classList.remove("selected"));
+                        return;
+                    }
+                };
+
+                options.forEach((option) => {
+                    option.addEventListener("click", () => {
+                        handleOptionSelect(option);
+                        toggleDropdown(false);
+                    });
+                });
+
+                selectButton.addEventListener("click", () => {
+                    toggleDropdown();
+                });
+
+                selectButton.addEventListener("keydown", (event) => {
+                    if (event.key === "ArrowDown") {
+                        event.preventDefault();
+                        toggleDropdown(true);
+                    } else if (event.key === "Escape") {
+                        toggleDropdown(false);
+                    }
+                });
+
+                dropdown.addEventListener("keydown", (event) => {
+                    if (event.key === "ArrowDown") {
+                        event.preventDefault();
+                        focusedIndex = (focusedIndex + 1) % options.length;
+                        updateFocus();
+                    } else if (event.key === "ArrowUp") {
+                        event.preventDefault();
+                        focusedIndex = (focusedIndex - 1 + options.length) % options.length;
+                        updateFocus();
+                    } else if (event.key === "Enter" || event.key === " ") {
+                        event.preventDefault();
+                        handleOptionSelect(options[focusedIndex]);
+                        toggleDropdown(false);
+                    } else if (event.key === "Escape") {
+                        toggleDropdown(false);
+                    }
+                });
+
+                document.addEventListener("click", (event) => {
+                    const isOutsideClick = !customSelect.contains(event.target);
+
+                    if (isOutsideClick) {
+                        toggleDropdown(false);
+                    }
+                });
+            });
+        });
+    </script>
+    <style>
+        .coastalynk-ddl-select {
+            margin-top: 3rem;
+            position: relative;
+            display: inline-block;
+            width: 300px;
+            max-width: 100%;
+        }
+
+        .coastalynk-ddl-button {
+            font-size: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            padding: 0.675em 1em;
+            border: 1px solid #caced1;
+            border-radius: 0.25rem;
+            background-color: white;
+            cursor: pointer;
+        }
+
+        .coastalynk-ddl-arrow {
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            border-top: 6px solid #000;
+            transition: transform ease-in-out 0.3s;
+        }
+
+        .coastalynk-ddl-dropdown {
+                position: absolute;
+                top: 100%;
+                left: 0;
+                width: 100%;
+                border: 1px solid #caced1;
+                border-radius: 0.25rem;
+                background-color: white;
+                list-style: none;
+                padding: 10px;
+                margin: 10px 0 0;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+                max-height: 200px;
+                overflow: visible;
+        }
+        .coastalynk-ddl-dropdown::before{
+            content: ' ';
+            width: 0px;
+            height: 0px;
+            border-bottom: 10px solid white;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            top: -10px;
+            position: absolute;
+            left: calc(25% - 15px);
+        }
+
+        .coastalynk-ddl-dropdown::-webkit-scrollbar {
+            width: 7px;
+        }
+        .coastalynk-ddl-dropdown::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 25px;
+        }
+
+        .coastalynk-ddl-dropdown::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 25px;
+        }
+
+        .coastalynk-ddl-dropdown li {
+            padding: 10px;
+            cursor: pointer;
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        /* Highlight the selected option */
+        .coastalynk-ddl-dropdown li.selected {
+            background-color: #f2f2f2;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .coastalynk-ddl-dropdown li:hover,
+        .coastalynk-ddl-dropdown li:focus {
+            background-color: #f2f2f2;
+            border-radius: 4px;
+        }
+
+        .coastalynk-ddl-dropdown.hidden {
+            display: none;
+        }
+
+        .coastalynk-ddl-button[aria-expanded="true"] .coastalynk-ddl-arrow {
+            transform: rotate(180deg);
+        }
+
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 15px;
+            color: #333;
+            display: grid;
+            place-items: center;
+        }
+
+        /* .arrow-up {
+            width: 0; 
+            height: 0; 
+            border-left: 5px solid transparent;
+            border-right: 5px solid transparent;
+            
+            border-bottom: 5px solid black;
+        }
+
+        .arrow-down {
+            width: 0; 
+            height: 0; 
+            border-left: 20px solid transparent;
+            border-right: 20px solid transparent;
+            
+            border-top: 20px solid #f00;
+        }
+
+        .arrow-right {
+            width: 0; 
+            height: 0; 
+            border-top: 60px solid transparent;
+            border-bottom: 60px solid transparent;
+            
+            border-left: 60px solid green;
+        }
+
+        .arrow-left {
+            width: 0; 
+            height: 0; 
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent; 
+            
+            border-right:10px solid blue; 
+        } */
+
+        .arrow-test{
+            width: 0px;
+            height: 0px;
+            border-top: 10px solid transparent;
+            border-left: 10px solid transparent;
+            border-right: 10px solid blue;
+        }
+        .coastalynk-img{
+            width: 100px;
+            height: 100px;
+            border-top: 100px solid blue;
+            border-left: 100px solid blue;
+            border-right: 100px solid blue;
+            border-bottom: 100px solid blue;
+        }
+        .coastalynk-img-div{
+            border: 1px solid;
+            display: inline-block;
+            background-color: blue;
+        }
+    </style>
+    <body>
+        <div class="coastalynk-img-div"><img src="https://www.netizenssoft.com/images/map-netizenssoft-1.png" class="coastalynk-img" /></div>
+        
+        <div class="arrow-test"></div>
+        <br><br><br>
+        <div class="arrow-up"></div>
+<div class="arrow-down"></div>
+<div class="arrow-left"></div>
+<div class="arrow-right"></div
+
+    <br><br><br>
+        <!-- Custom Dropdown Structure -->
+        <div class="coastalynk-ddl-select" id="coastalynk-ddl-select">
+            <button
+                id="coastalynk-ddl-dropdown-button"
+                class="coastalynk-ddl-button"
+                role="combobox" 
+                
+                aria-label="select button"
+                aria-haspopup="listbox"
+                aria-expanded="false"
+                aria-controls="coastalynk-ddl-dropdown">
+                <span class="coastalynk-ddl-selected-value">Open this select menu</span>
+                <span class="coastalynk-ddl-arrow"></span>
+            </button>
+            <input type="hidden" name="dropdown-button-field" id="coastalynk-ddl-dropdown-button-field" value="" class="coastalynk-ddl-dropdown-button-field" />
+            <ul class="coastalynk-ddl-dropdown hidden" role="listbox" id="coastalynk-ddl-dropdown" aria-labelledby="coastalynk-ddl-dropdown-button">
+                <li role="option" data-value="github"><i class="bx bxl-github"></i> GitHub</li>
+                <li role="option" data-value="instagram"><i class="bx bxl-instagram"></i> Instagram</li>
+                <li role="option" data-value="facebook"><i class="bx bxl-facebook-circle"></i> Facebook</li>
+                <li role="option" data-value="linkedin"><i class="bx bxl-linkedin-square"></i> LinkedIn</li>
+                <li role="option" data-value="twitter"><i class="bx bxl-twitter"></i> Twitter</li>
+                <li role="option" data-value="reddit"><i class="bx bxl-reddit"></i> Reddit</li>
+                <!-- Clear option to reset selection -->
+                <li role="option" data-value="clear">
+                    <span>Clear selection</span>
+                </li>
+            </ul>
+        </div>
+        <div class="coastalynk-ddl-select" id="coastalynk-ddl-select2">
+            <button
+                id="coastalynk-ddl-dropdown-button"
+                class="coastalynk-ddl-button"
+                role="combobox"
+                aria-label="select button"
+                aria-haspopup="listbox"
+                aria-expanded="false"
+                aria-controls="coastalynk-ddl-dropdown">
+                <span class="coastalynk-ddl-selected-value">Open this select menu</span>
+                <span class="coastalynk-ddl-arrow"></span>
+            </button>
+            <input type="hidden" name="dropdown-button-field" id="coastalynk-ddl-dropdown-button-field" value="" class="coastalynk-ddl-dropdown-button-field" />
+            
+            <ul class="coastalynk-ddl-dropdown hidden" role="listbox" id="coastalynk-ddl-dropdown" aria-labelledby="coastalynk-ddl-dropdown-button">
+                <li role="option" data-value="github"><i class="bx bxl-github"></i> GitHub</li>
+                <li role="option" data-value="instagram"><i class="bx bxl-instagram"></i> Instagram</li>
+                <li role="option" data-value="facebook"><i class="bx bxl-facebook-circle"></i> Facebook</li>
+                <li role="option" data-value="linkedin"><i class="bx bxl-linkedin-square"></i> LinkedIn</li>
+                <li role="option" data-value="twitter"><i class="bx bxl-twitter"></i> Twitter</li>
+                <li role="option" data-value="reddit"><i class="bx bxl-reddit"></i> Reddit</li>
+                <!-- Clear option to reset selection -->
+                <li role="option" data-value="clear">
+                    <span>Clear selection</span>
+                </li>
+            </ul>
+        </div>
+        <!-- <link  href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet"/> -->
+    </body>
+</htmt>

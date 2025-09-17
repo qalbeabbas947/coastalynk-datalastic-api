@@ -65,30 +65,36 @@ class Coastalynk_STS_Shortcode {
         $vessel_data = $wpdb->get_results("SELECT * FROM $table_name_sts");
 
         ?>
+        
         <div class="vessel-dashboard-container">
             <?php coastalynk_side_bar_menu();?>
             <div class="datalastic-container">
                 <header>
-                    
+                    <input type="image" class="coastlynk-menu-dashboard-open-close-burger" src="<?php echo CSM_IMAGES_URL;?>burger-port-page.png" />
+                            
+                    <div class="controls">
+                        <div class="coastalynk-port-menu-container">
+                            <button id="coastalynk-port-prev-btn">&lt;</button>
+                            <div class="port-selector coastalynk-port-selector coastalynk-port-scroll-menu">
+                                <button class="port-button active" data-port="all"><?php _e( "All Ports", "castalynkmap" );?></button>
+                                <?php
+                                    foreach( $ports as $port => $coords ) {
+                                        echo '<button class="port-button" data-port="'.$port.'">'.$port.'</button>';
+                                    }
+                                ?>
+                                
+                            </div>
+                            <button id="coastalynk-port-next-btn">&gt;</button>
+                        </div>
+                        <div class="view-options">
+                            <button class="view-button active" data-view="heatmap"><?php _e( "Heatmap", "castalynkmap" );?></button>
+                            <button class="view-button" data-view="vessels"><?php _e( "Vessels", "castalynkmap" );?></button>
+                            <button class="view-button" data-view="ports"><?php _e( "Ports", "castalynkmap" );?></button>
+                        </div>
+                    </div>
                 </header>
                 
-                <div class="controls">
-                    <div class="port-selector coastalynk-port-selector">
-                        <button class="port-button active" data-port="all"><?php _e( "All Ports", "castalynkmap" );?></button>
-                        <?php
-                            foreach( $ports as $port => $coords ) {
-                                echo '<button class="port-button" data-port="'.$port.'">'.$port.'</button>';
-                            }
-                        ?>
-                        
-                    </div>
-                    
-                    <div class="view-options mt-2">
-                        <button class="view-button active" data-view="heatmap"><?php _e( "Heatmap", "castalynkmap" );?></button>
-                        <button class="view-button" data-view="vessels"><?php _e( "Vessels", "castalynkmap" );?></button>
-                        <button class="view-button" data-view="ports"><?php _e( "Ports", "castalynkmap" );?></button>
-                    </div>
-                </div>
+                
                 
                 <div class="dashboard-sts">
 
@@ -293,8 +299,8 @@ class Coastalynk_STS_Shortcode {
                                 <td colspan="2" valign="top" class="coastalynk-sbm-marker-name-part">
                                     <table>
                                         <tr>
-                                            <td valign="top"><img src="${vessel.flag}" alt="${vessel.country_iso}" style="width: 50px; height: 50px;"></td>
-                                            <td valign="top">
+                                            <td valign="top" width="20%"><img src="${vessel.flag}" alt="${vessel.country_iso}" style="width: 50px; height: 50px;"></td>
+                                            <td valign="top" width="80%">
                                                 <h3>${vessel.name}</h3>
                                                 <div>${vessel.type}</div>
                                             </td>
@@ -514,6 +520,8 @@ class Coastalynk_STS_Shortcode {
                     });
                 });
             </script>
+
+            
         <?php
         $content = ob_get_contents();
         ob_get_clean();
@@ -525,7 +533,7 @@ class Coastalynk_STS_Shortcode {
     */
     function coastalynk_enqueue_scripts() : void {
         // Enqueue my styles.
-       wp_enqueue_style( 'coastalynk-sts-shortcode-style', CSM_CSS_URL.'sts-shortcode.css' );
+       wp_enqueue_style( 'coastalynk-sts-shortcode-style', CSM_CSS_URL.'sts-shortcode.css?'.time() );
        
         // Enqueue my scripts.
         wp_enqueue_script( 'coastalynk-sts-shortcode-front', CSM_JS_URL.'sts-shortcode.js', array("jquery"), time(), true );    

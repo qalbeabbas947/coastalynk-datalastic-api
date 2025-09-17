@@ -54,11 +54,11 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
         // 1. Define the center points (latitude, longitude) of our ports
         $ports = [
             'Apapa' => [6.45, 3.36],
-            // 'TinCanIsland' => [6.44, 3.34],
-            // 'Onne' => [4.71, 7.15],
-            // 'Calabar' => [4.95, 8.32],
-            // 'Lomé' => [6.1375, 1.2870],
-            // 'Tema' => [5.6167, 0.0167],
+            'TinCanIsland' => [6.44, 3.34],
+            'Onne' => [4.71, 7.15],
+            'Calabar' => [4.95, 8.32],
+            'Lomé' => [6.1375, 1.2870],
+            'Tema' => [5.6167, 0.0167],
         ];
 
         // 2. Define the search radius (in kilometers) around each port
@@ -227,8 +227,9 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
             <div class="datalastic-container">
                 <header>
                     <div class="controls">
+                        
                         <div class="port-selector coastalynk-port-selector">
-                            <input type="image" class="coastlynk-menu-toggle coastlynk-menu-toggle-open" src="<?php echo CSM_IMAGES_URL;?>burger-port-page.png" />
+                            <input type="image" class="coastlynk-menu-dashboard-open-close-burger" src="<?php echo CSM_IMAGES_URL;?>burger-port-page.png" />
                             <button class="port-button active" data-port="all"><?php _e( "All Ports", "castalynkmap" );?></button>
                             <button class="port-button" data-port="apapa"><?php _e( "Apapa", "castalynkmap" );?></button>
                             <button class="port-button" data-port="TinCanIsland"><?php _e( "Tin Can Island", "castalynkmap" );?></button>
@@ -295,7 +296,7 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                             </div>
                             <div class="port-stat coastlynk-port-stat-vessel">
                                 <span>Vessels:</span>
-                                <span id="tincan-vessels"><?php //echo $total_port_vessels["TinCanIsland"];?></span>
+                                <span id="tincan-vessels"><?php echo $total_port_vessels["TinCanIsland"];?></span>
                             </div>
                         </div>
                         
@@ -307,7 +308,7 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                             </div>
                             <div class="port-stat coastlynk-port-stat-vessel">
                                 <span>Vessels:</span>
-                                <span id="onne-vessels"><?php //echo $total_port_vessels["Onne"];?></span>
+                                <span id="onne-vessels"><?php echo $total_port_vessels["Onne"];?></span>
                             </div>
                         </div>
                         
@@ -319,7 +320,7 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                             </div>
                             <div class="port-stat coastlynk-port-stat-vessel">
                                 <span>Vessels:</span>
-                                <span id="calabar-vessels"><?php //echo $total_port_vessels["Calabar"];?></span>
+                                <span id="calabar-vessels"><?php echo $total_port_vessels["Calabar"];?></span>
                             </div>
                         </div>
 
@@ -331,7 +332,7 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                             </div>
                             <div class="port-stat coastlynk-port-stat-vessel">
                                 <span>Vessels:</span>
-                                <span id="calabar-vessels"><?php //echo $total_port_vessels["Lomé"];?></span>
+                                <span id="calabar-vessels"><?php echo $total_port_vessels["Lomé"];?></span>
                             </div>
                         </div>
 
@@ -343,7 +344,7 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                             </div>
                             <div class="port-stat coastlynk-port-stat-vessel">
                                 <span>Vessels:</span>
-                                <span id="calabar-vessels"><?php //echo $total_port_vessels["Tema"];?></span>
+                                <span id="calabar-vessels"><?php echo $total_port_vessels["Tema"];?></span>
                             </div>
                         </div>
 
@@ -488,8 +489,8 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                             <td colspan="2" valign="top" class="coastalynk-sbm-marker-name-part">
                                 <table width="100%">
                                     <tr>
-                                        <td valign="top" width="40%"><img src="${props.country_flag}" alt="${props.name}" style="width: 50px; height: 50px;"></td>
-                                        <td valign="top" width="60%">
+                                        <td valign="top" width="20%"><img src="${props.country_flag}" alt="${props.name}" style="width: 50px; height: 50px;"></td>
+                                        <td valign="top" width="80%">
                                             <h3>${props.name}</h3>
                                             <div>${props.type}</div>
                                         </td>

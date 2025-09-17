@@ -15,6 +15,22 @@
                 });
             },
             mark_active: function(){
+
+                
+
+                $('.coastlynk-menu-dashboard-open-close-burger').on('click', function() {
+                    $('#coastlynk-menu-toggle-close').css( 'display', 'none' );
+                    $('.coastlynk-menu-toggle-open').css( 'display', 'none' );
+
+                    if( $('#coastlynk-vessel-dashboard-menu').hasClass('coastalynk-expanded') ) {
+                        $('#coastlynk-vessel-dashboard-menu').removeClass('coastalynk-expanded').css( 'display', 'none' );
+                    } else {
+                        $('#coastlynk-vessel-dashboard-menu').addClass('coastalynk-expanded').css( 'display', 'block' );
+                        
+                    }
+                    
+                });
+
                 $('.coastlynk-menu-toggle-open').on('click', function() {
                     $('#coastlynk-vessel-dashboard-menu').addClass('coastalynk-expanded');
                     $('#coastlynk-menu-toggle-close').css( 'display', 'block' );
@@ -35,6 +51,9 @@
                 });
             },
             checkScreenSize: function () {
+                
+                
+
                 $('.coastlynk-menu-toggle').css( 'display', 'none' );
                 $('.coastalynk-expanded #coastlynk-menu-toggle-close').css( 'display', 'block' );
                 if (window.innerWidth > 768) {
@@ -44,8 +63,40 @@
                     $('#coastlynk-vessel-dashboard-menu').removeClass('coastalynk-expanded');
                     $('.coastlynk-menu-toggle-open').css( 'display', 'block' );
                 }
+
+               if( isMobile.any() ) {
+                    $('#coastlynk-vessel-dashboard-menu').removeClass('coastalynk-expanded').css( 'display', 'none' );
+                    $('.coastlynk-menu-toggle').css( 'display', 'none' );
+                    $('.coastlynk-menu-dashboard-open-close-burger').css( 'display', 'block' );
+               } else {
+                    $('.coastlynk-menu-toggle').css( 'display', 'block' );
+                    $('.coastlynk-menu-toggle-open').css( 'display', 'none' );
+                    $('.coastlynk-menu-dashboard-open-close-burger').css( 'display', 'none' );
+               }
+                    
             }
         }
+
+        const isMobile = {
+            Android: function() {
+                return navigator.userAgent.match(/Android/i);
+            },
+            BlackBerry: function() {
+                return navigator.userAgent.match(/BlackBerry/i);
+            },
+            iOS: function() {
+                return navigator.userAgent.match(/iPhone|iPad|iPod/i);
+            },
+            Opera: function() {
+                return navigator.userAgent.match(/Opera Mini/i);
+            },
+            Windows: function() {
+                return navigator.userAgent.match(/IEMobile/i) || navigator.userAgent.match(/WPDesktop/i);
+            },
+            any: function() {
+                return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Opera() || isMobile.Windows());
+            }
+        };
         coastalynk_Sbm.init();
     });
 })( jQuery, window );

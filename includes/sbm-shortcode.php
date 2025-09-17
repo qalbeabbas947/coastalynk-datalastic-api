@@ -74,8 +74,10 @@ class Coastalynk_SBM_Shortcode {
                 <div class="sbm-main-content">
                     <div class="sbm-sidebar">
                         <div class="sbm-card">
+                            <input type="image" class="coastlynk-menu-dashboard-open-close-burger" src="<?php echo CSM_IMAGES_URL;?>burger-port-page.png" />
                             <h2 class="sbm-card-title"><?php _e( "SBM Locations", "castalynkmap" );?></h2>
                             <ul class="sbm-list">
+                                
                                 <?php foreach( $port_data as $port ) { ?>
         
                                     <li class="sbm-item">
@@ -231,9 +233,9 @@ class Coastalynk_SBM_Shortcode {
                             <tr>
                                 <td colspan="2" valign="top" class="coastalynk-sbm-marker-name-part">
                                     <table>
-                                        <tr style="border-bottom: 1px solid #003366;">
-                                            <td valign="top"><img src="${vessel.flag}" alt="${vessel.country_iso}" style="width: 50px; height: 50px;"></td>
-                                            <td valign="top">
+                                        <tr>
+                                            <td valign="top" width="20%"><img src="${vessel.flag}" alt="${vessel.country_iso}" style="width: 50px; height: 50px;"></td>
+                                            <td valign="top" width="80%">
                                                 <h3>${vessel.name}</h3>
                                                 <div>${vessel.type}</div>
                                             </td>

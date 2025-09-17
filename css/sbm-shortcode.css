@@ -41,14 +41,16 @@
 }
 
 .sbm-item {
-    padding: 0.8rem;
-    margin-bottom: 0.8rem;
-    border-radius: 6px;
+    padding: 15px 0;
+    border-radius: 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    border-bottom: 1px solid #ddd;
 }
-
+.sbm-item span {
+    margin-bottom:0;
+}
 .sbm-name {
     font-weight: bold;
 }
@@ -70,13 +72,16 @@
 }
 
 .sbm-vessel-item {
-    padding: 0.8rem;
-    margin-bottom: 0.8rem;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-}
+    padding: 15px 0;
+    border-bottom: 1px solid #ddd;
 
+}
+.sbm-vessel-item span {
+    margin-bottom:0;
+}
 .sbm-vessel-name {
     font-weight: bold;
 }
@@ -176,7 +181,6 @@
     background: var(--wp--preset--color--text-blue);
     color: white;
     transition: all 0.4s ease;
-    overflow-x: hidden;
     position: relative;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
     z-index: 1000;
@@ -187,7 +191,7 @@
     height: auto;
 }
 
-.coastlynk-menu-toggle {
+.coastlynk-menu-toggle,.coastlynk-menu-dashboard-burger {
     position: absolute;
     top: 15px;
     right: 4px;
@@ -245,6 +249,9 @@
 }
 
 @media (max-width: 480px) {
+    .coastlynk-vessel-dashboard-menu.coastalynk-expanded{
+        width: 100%;
+    }
     .sbm-legend{
         position: relative;
         bottom: 20px;
