@@ -2,7 +2,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const customSelects = document.querySelectorAll(".coastalynk-ddl-select");
 
     customSelects.forEach((customSelect) => {
-        const selectButton = customSelect.querySelector(".coastalynk-ddl-button");
+        const selectButton = customSelect.querySelector(".coastalynk-ddl-button"); 
         const dropdown = customSelect.querySelector(".coastalynk-ddl-dropdown");
         const dropdown_wrapper = customSelect.querySelector(".coastalynk-ddl-dropdown-wrapper");
         const options = dropdown.querySelectorAll("li");

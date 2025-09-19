@@ -51,7 +51,7 @@ class Coastalynk_STS_Shortcode {
         $total_port_vessels = [];
         // 1. Define the center points (latitude, longitude) of our ports
         $table_name = $wpdb->prefix . 'coastalynk_ports';
-        $port_data = $wpdb->get_results("SELECT * FROM $table_name where port_type='Port'");
+        $port_data = $wpdb->get_results("SELECT * FROM $table_name where country_iso='NG' order by title");
         $ports = [];  
         $ports['Apapa'] = [6.45, 3.36];
         $ports['TinCanIsland'] = [6.44, 3.34];

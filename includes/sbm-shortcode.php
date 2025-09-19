@@ -52,7 +52,7 @@ class Coastalynk_SBM_Shortcode {
         $type_of_port = __( "Offshore Terminal", "castalynkmap" );
         // 1. Define the center points (latitude, longitude) of our ports
         $table_name = $wpdb->prefix . 'coastalynk_ports';
-        $port_data = $wpdb->get_results("SELECT * FROM $table_name where port_type='Offshore Terminal'");
+        $port_data = $wpdb->get_results("SELECT * FROM $table_name where country_iso='NG'"); // where port_type='Offshore Terminal'
         //echo '<pre>';print_r($port_data);echo '</pre>';
         $ports = [];  
         foreach( $port_data as $port ) {
@@ -142,7 +142,7 @@ class Coastalynk_SBM_Shortcode {
                     <?php 
                         $index = 0;
                         foreach( $port_data as $port ) { ?>
-                        <?php echo $index == 0 ? '' : ','; ?>{ name: '<?php echo $port->title; ?>', lat: '<?php echo $port->lat; ?>', lng: '<?php echo $port->lon; ?>', status: 'active' }
+                        <?php echo $index == 0 ? '' : ','; ?>{ name: '<?php echo $port->title; ?>', port_type: '<?php echo $port->port_type; ?>', lat: '<?php echo $port->lat; ?>', lng: '<?php echo $port->lon; ?>', status: 'active' }
                     <?php 
                             $index++;
                         } 
@@ -203,7 +203,7 @@ class Coastalynk_SBM_Shortcode {
                     marker.bindPopup(`
                         <div style="font-weight: bold; margin-bottom: 8px;">${location.name} <?php _e( "SBM", "castalynkmap" );?></div>
                         <div>Status: <span style="color: ${location.status === 'active' ? '#2e7d32' : '#d32f2f'}">${location.status === 'active' ? '<?php _e( "Active", "castalynkmap" );?>' : '<?php _e( "Maintenance", "castalynkmap" );?>'}</span></div>
-                        <div>Type: <?php echo $type_of_port;?></div>
+                        <div>Type: ${location.port_type}</div>
                     `);
                     
                     sbmMarkers.push(marker);

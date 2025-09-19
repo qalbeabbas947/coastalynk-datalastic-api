@@ -362,7 +362,7 @@ function coastalynk_vessel_types( ) {
 function coastalynk_display_dropdown( $field_id, $default='', $options = [] ) {
     ?>
         <div class="coastalynk-ddl-select" id="coastalynk-ddl-select">
-            <button
+            <button type="button" 
                 id="coastalynk-ddl-dropdown-button"
                 class="coastalynk-ddl-button"
                 role="combobox" 

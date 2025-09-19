@@ -39,6 +39,8 @@ class Coastalynk_Sea_Vessel_Map_Front {
         add_action('wp_ajax_nopriv_coastalynk_retrieve_tonnage', [ $this, 'coastalynk_retrieve_tonnage' ]);
     }
 
+    
+
     /**
      * show_vessels shortcode content.
      */
