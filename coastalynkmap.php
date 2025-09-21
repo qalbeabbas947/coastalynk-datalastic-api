@@ -109,7 +109,10 @@ class Coastalynk_Sea_Vessel_Map {
         if( file_exists( CSM_INCLUDES_DIR.'vessels-shortcode.php' ) ) {
             require_once( CSM_INCLUDES_DIR . 'vessels-shortcode.php' );
         }
-        
+
+        if( file_exists( CSM_INCLUDES_DIR.'port-congestion-home-shortcode.php' ) ) {
+            require_once( CSM_INCLUDES_DIR . 'port-congestion-home-shortcode.php' );
+        }
     }
 }
 

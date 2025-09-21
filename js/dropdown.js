@@ -42,15 +42,29 @@ document.addEventListener("DOMContentLoaded", () => {
             option.classList.add("selected");
             selectedValue.textContent = option.textContent.trim(); // Update selected value
             drop_down_field.value = option.getAttribute("data-value");
-            console.log(option.getAttribute("data-value"))
-            console.log(drop_down_field)
+            
+            let event = new CustomEvent('vessel_search_change', {
+                detail: {
+                    field_id: drop_down_field.getAttribute("id"),
+                    field_name: drop_down_field.getAttribute("name"),
+                    value: drop_down_field.value,
+                    label: selectedValue.textContent
+                },
+                bubbles: true,    // Event bubbles up through DOM
+                cancelable: true  // Event can be cancelled
+            });
+
             if (option.dataset.value === "clear") {
                 // Reset to the default value
-                selectedValue.textContent = selectedValue.getAttribute("data-default");;
+                selectedValue.textContent = selectedValue.getAttribute("data-default");
+
                 drop_down_field.value = '';
                 options.forEach((opt) => opt.classList.remove("selected"));
+                drop_down_field.dispatchEvent(event);
                 return;
             }
+
+            drop_down_field.dispatchEvent(event);
         };
 
         options.forEach((option) => {
@@ -91,12 +105,9 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
 
-        document.addEventListener("click", (event) => {
-            const isOutsideClick = !customSelect.contains(event.target);
-
-            if (isOutsideClick) {
-                toggleDropdown(false);
-            }
+        const customSelectsedLi = document.querySelectorAll( ".coastalynk-ddl-dropdown-selected-li" );
+        customSelectsedLi.forEach( ( SelectsedLi ) => {
+            SelectsedLi.click();
         });
     });
 });

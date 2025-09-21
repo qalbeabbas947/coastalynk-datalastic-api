@@ -359,7 +359,7 @@ function coastalynk_vessel_types( ) {
 /**
  * Renders the sidebar expandable menu
  */
-function coastalynk_display_dropdown( $field_id, $default='', $options = [] ) {
+function coastalynk_display_dropdown( $field_id, $default = '', $selected = '', $options = [] ) {
     ?>
         <div class="coastalynk-ddl-select" id="coastalynk-ddl-select">
             <button type="button" 
@@ -370,14 +370,21 @@ function coastalynk_display_dropdown( $field_id, $default='', $options = [] ) {
                 aria-haspopup="listbox"
                 aria-expanded="false"
                 aria-controls="coastalynk-ddl-dropdown">
-                <span data-default="<?php echo $default;?>" class="coastalynk-ddl-selected-value"><?php echo $default;?></span>
+                <span data-default="<?php echo $default;?>" data-selected="<?php echo $selected;?>" class="coastalynk-ddl-selected-value"><?php echo $default;?></span>
                 <span class="coastalynk-ddl-arrow"></span>
             </button>
-            <input type="hidden" name="<?php echo $field_id;?>" id="<?php echo $field_id;?>" value="" class="coastalynk-ddl-dropdown-button-field" />
+            
             <div class="coastalynk-ddl-dropdown-wrapper coastalynk-ddl-dropdown-wrapper-hidden">
                 <ul class="coastalynk-ddl-dropdown hidden" role="listbox" id="coastalynk-ddl-dropdown" aria-labelledby="coastalynk-ddl-dropdown-button">
-                    <?php foreach( $options as $key=>$option ) { ?>
-                        <li role="option" data-value="<?php echo $key;?>"><?php echo $option;?></li>
+                    <?php 
+                    $first = '';
+                    foreach( $options as $key => $option ) { 
+                        if( empty( $first ) ) {
+                            $first = $key;
+                        }
+                        
+                        ?>
+                        <li role="option" data-value="<?php echo $key;?>" class="<?php echo $selected == $key ? 'coastalynk-ddl-dropdown-selected-li' : '';?>" ><?php echo $option;?></li>
                     <?php } ?>
                     <!-- Clear option to reset selection -->
                     <li role="option" data-value="clear">
@@ -385,7 +392,7 @@ function coastalynk_display_dropdown( $field_id, $default='', $options = [] ) {
                     </li>
                 </ul>
             </div>
-            
+            <input type="hidden" name="<?php echo $field_id;?>" id="<?php echo $field_id;?>" value="" class="coastalynk-ddl-dropdown-button-field" />
         </div>
     <?php
 }

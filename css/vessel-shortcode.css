@@ -66,18 +66,18 @@
     color: #7C8FA8;
 }
 
-.coastalynk-vessel-search-field {
+.coastalynk_vessel_search_text {
     border-right: 1px solid #7C8FA8;
     border-bottom: none;
     border-top: none;
     border-left: none;
 }
 
-.coastalynk-vessel-search-field:hover, .coastalynk-vessel-search-field:focus {
+.coastalynk_vessel_search_text:hover, .coastalynk_vessel_search_text:focus {
     border-right: 1px solid #7C8FA8;
 }
 
-.coastalynk-vessel-search-field:focus, .coastalynk-vessel-search-parent select {
+.coastalynk_vessel_search_text:focus, .coastalynk-vessel-search-parent select {
   outline: none;
   box-shadow: none;
   border: none;

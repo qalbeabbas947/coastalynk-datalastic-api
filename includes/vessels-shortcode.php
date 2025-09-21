@@ -124,12 +124,111 @@ class Coastalynk_Vessel_Shortcode {
         global $wpdb;
 
         $vessel_data = [];
+
+        $search_field      = sanitize_text_field( $_REQUEST['coastalynk_vessel_search_text'] );
+        $field_type        = sanitize_text_field( $_REQUEST['coastalynk-vessel-search-ddl'] );
+        // $type_ddl          = sanitize_text_field( $_REQUEST['coastalynk_vessel_type_ddl'] );
+        // $country_ddl       = sanitize_text_field( $_REQUEST['coastalynk_vessel_country_ddl'] );
+
+        $api_key = get_option('coatalynk_datalastic_apikey');
         if ( ! isset( $_POST['coastalynk_vessel_search_field'] ) || ! wp_verify_nonce( $_POST['coastalynk_vessel_search_field'], 'coastalynk_vessel_search' ) ) {
             $table_name = $wpdb->prefix . 'coastalynk_vessels';
-            $vessel_data = $wpdb->get_results("SELECT * FROM $table_name");
+            $vessel_data = $wpdb->get_results("SELECT * FROM $table_name", ARRAY_A);
             
+        } elseif ( empty( $search_field ) ) {
+            $table_name = $wpdb->prefix . 'coastalynk_vessels';
+            $vessel_data = $wpdb->get_results("SELECT * FROM $table_name", ARRAY_A);
         } else {
-            print_r($_REQUEST);
+
+            switch( $field_type ) {
+                case "imo":
+                case "uuid":
+                case "mmsi":
+                    $url = sprintf(
+                        "https://api.datalastic.com/api/v0/vessel_pro?api-key=%s&%s=%s",
+                        urlencode($api_key),
+                        $field_type,
+                        $search_field
+                    );echo $url;
+                    // Fetch vessels in area
+                    $response = file_get_contents($url);
+                    $pro = json_decode($response, true);
+                    if( isset( $pro['data'] ) )
+                        $vessel_data[] = $pro['data'];
+                    break;
+                default:
+                    
+                    if( empty( $field_type ) ) {
+                        $field_type = 'name';
+                    }
+
+                    $url = sprintf(
+                        "https://api.datalastic.com/api/v0/vessel_find?api-key=%s",
+                        urlencode($api_key)
+                    );
+
+                    $is_filter_criteria = false;
+                    if( !empty( $field_type ) && !empty( $search_field ) ) {
+                        $url = sprintf(
+                            $url.'&%s=%s',
+                            $field_type,
+                            $search_field
+                        ); 
+
+                        $is_filter_criteria = true;
+                    }
+
+                    // if( !empty( $country_ddl ) ) {
+                    //     $url = sprintf(
+                    //         $url.'&country_iso=%s',
+                    //         $country_ddl
+                    //     ); 
+
+                    //     $is_filter_criteria = true;
+                    // }
+
+                    // if( !empty( $type_ddl ) ) {
+                    //     $url = sprintf(
+                    //         $url.'&type=%s',
+                    //         $type_ddl
+                    //     ); 
+
+                    //     $is_filter_criteria = true;
+                    // }
+
+                    // if( $is_filter_criteria == false ) {
+                    //      $url = $url.'&country_iso=ng';
+                    // }
+                    // echo $url;
+                    // Fetch vessels in area
+                    $response = file_get_contents($url);
+                    $pro = json_decode($response, true);
+                    if( isset( $pro['data'] ) ){
+                        $new_data = [];
+                        $vessel_data = $pro['data'];
+                        foreach(  $vessel_data as $vessel ) {
+                            $url = sprintf(
+                                "https://api.datalastic.com/api/v0/vessel_pro?api-key=%s&uuid=%s",
+                                urlencode($api_key),
+                                $vessel['uuid']
+                            );
+                            
+                            // Fetch vessels in area
+                            $response = file_get_contents($url);
+                            $vessel_pro = json_decode($response, true);
+                            if( isset( $vessel_pro['data'] ) ){
+                                $vessel_pro = $vessel_pro['data'];
+                                $new_data[] = array_merge($vessel_pro, $vessel);
+                            }
+                                
+                        }
+
+                        $vessel_data = $new_data;
+                        
+                    }
+                        
+                   break; 
+            }
         }
 
         ob_start();
@@ -160,7 +259,7 @@ class Coastalynk_Vessel_Shortcode {
                             <div class="coastalynk_vessel_search_options">
                                 <div class="coastalynk-vessel-search-parent">
                                     <i class="fa fa-search"></i>
-                                    <input type="text" name="coastalynk_vessel_search_field" placeholder="<?php _e( "Search...", "castalynkmap" );?>" id="coastalynk-vessel-search-field" class="coastalynk-vessel-search-field" />
+                                    <input type="text" name="coastalynk_vessel_search_text" value="<?php echo $search_field;?>" placeholder="<?php _e( "Search...", "castalynkmap" );?>" id="coastalynk_vessel_search_text" class="coastalynk_vessel_search_text" />
                                     <div class="coastalynk-vessel-filter-types">
                                         <?php
                                             $options = [];
@@ -168,31 +267,22 @@ class Coastalynk_Vessel_Shortcode {
                                             $options['uuid'] = 'UUID';
                                             $options['mmsi'] = 'MMSI';
                                             $options['imo'] = 'IMO';
-                                            $options['gross_tonnage_min'] = 'Min Gross Tonnage';
-                                            $options['gross_tonnage_max'] = 'Max Gross Tonnage';
-                                            $options['deadweight_min'] = 'Min Dead Weight';
-                                            $options['deadweight_max'] = 'Max Dead Weight';
-                                            $options['length_min'] = 'Min Length';
-                                            $options['length_max'] = 'Max Length';                                        
-                                            $options['breadth_min'] = 'Min Breadth';
-                                            $options['breadth_max'] = 'Max Breadth';
-                                            $options['year_built_min'] = 'Min Year Built';
-                                            $options['year_built_max'] = 'Max Year Built';
+                                            // $options['gross_tonnage_min'] = 'Min Gross Tonnage';
+                                            // $options['gross_tonnage_max'] = 'Max Gross Tonnage';
+                                            // $options['deadweight_min'] = 'Min Dead Weight';
+                                            // $options['deadweight_max'] = 'Max Dead Weight';
+                                            // $options['length_min'] = 'Min Length';
+                                            // $options['length_max'] = 'Max Length';                                        
+                                            // $options['breadth_min'] = 'Min Breadth';
+                                            // $options['breadth_max'] = 'Max Breadth';
+                                            // $options['year_built_min'] = 'Min Year Built';
+                                            // $options['year_built_max'] = 'Max Year Built';
 
-                                            coastalynk_display_dropdown( 'coastalynk-vessel-search-ddl', __( "Name", "castalynkmap" ), $options );
+                                            coastalynk_display_dropdown( 'coastalynk-vessel-search-ddl', __( "Name", "castalynkmap" ), $field_type, $options );
                                         ?>
                                     </div>
                                 </div>
-                                <div class="coastalynk-vessel-type-field">
-                                    <?php
-                                        coastalynk_display_dropdown( 'coastalynk_vessel_type_ddl', __( "Type", "castalynkmap" ), coastalynk_vessel_types() );
-                                    ?>
-                                </div>
-                                <div class="coastalynk-vessel-country-field">
-                                    <?php
-                                        coastalynk_display_dropdown( 'coastalynk_vessel_country_ddl', __( "Country", "castalynkmap" ), coastalynk_countries_list() );
-                                    ?>
-                                </div>
+                                
                                 <div class="coastalynk-vessel-search-submit">
                                     <input type="submit" id="coastalynk-vessel-search-submit-btn" value="<?php _e( "Search", "castalynkmap" );?>" class="coastalynk-vessel-search-submit-btn">
                                 </div>
@@ -232,20 +322,20 @@ class Coastalynk_Vessel_Shortcode {
                                 <tr>
                                     <td>
                                         <?php 
-                                            if( isset( $data->country_iso ) && !empty( $data->country_iso )) {
-                                                echo '<img src="'.CSM_IMAGES_URL."flags/".strtolower( $data->country_iso ).".jpg".'" class="coastalyn-flag-port-listing" alt="'.$data->name.'">';
+                                            if( isset( $data['country_iso'] ) && !empty( $data['country_iso'] )) {
+                                                echo '<img src="'.CSM_IMAGES_URL."flags/".strtolower( $data['country_iso'] ).".jpg".'" class="coastalyn-flag-port-listing" alt="'.$data['name'].'">';
                                             }
                                         ?>
                                     </td>
-                                    <td><?php echo $data->name; ?></td>
-                                    <td><?php echo $data->dest_port; ?></td>
-                                    <td><?php echo $data->mmsi; ?></td>
-                                    <td><?php echo $data->imo; ?></td>
-                                    <td><?php echo $data->destination; ?></td>
-                                    <td><?php echo $data->speed; ?></td>
-                                    <td><?php echo $data->atd_UTC; ?></td>
+                                    <td><?php echo $data['name']; ?></td>
+                                    <td><?php echo $data['dest_port']; ?></td>
+                                    <td><?php echo $data['mmsi']; ?></td>
+                                    <td><?php echo $data['imo']; ?></td>
+                                    <td><?php echo $data['destination']; ?></td>
+                                    <td><?php echo $data['speed']; ?></td>
+                                    <td><?php echo $data['atd_UTC']; ?></td>
                                     <td>
-                                        <input type="button" class="coastalynk-retrieve-popup-btn" data-name='<?php echo $data->name; ?>' data-uuid="<?php echo $data->uuid; ?>" value="<?php _e( "More", "castalynkmap" );?>">
+                                        <input type="button" class="coastalynk-retrieve-popup-btn" data-name='<?php echo $data['name']; ?>' data-uuid="<?php echo $data['uuid']; ?>" value="<?php _e( "More", "castalynkmap" );?>">
                                         <div id="coastalynk-column-loader" style="display:none;">
                                             <div id="coastalynk-column-blockG_1" class="coastalynk-column-blockG"></div>
                                             <div id="coastalynk-column-blockG_2" class="coastalynk-column-blockG"></div>
@@ -312,9 +402,7 @@ class Coastalynk_Vessel_Shortcode {
                         <ul class="coastalynk-vessel-popup-content-box-list">
                             <li><span class="fa-li"><i class="fas fa-angle-right"></i></span><?php _e( "Avg. Speed:", "castalynkmap" );?> <span class="coastalynk-vessel-popup-content-avg-speed"></span></li>
                             <li><span class="fa-li"><i class="fas fa-angle-right"></i></span><?php _e( "Max Speed:", "castalynkmap" );?> <span class="coastalynk-vessel-popup-content-max-speed"></span></li>
-                            
                             <li><span class="fa-li"><i class="fas fa-angle-right"></i></span><?php _e( "Speed:", "castalynkmap" );?> <span class="coastalynk-vessel-popup-content-speed"></span></li>
-
                             <li><span class="fa-li"><i class="fas fa-angle-right"></i></span><?php _e( "Departure Port:", "castalynkmap" );?> <span class="coastalynk-vessel-popup-content-dept-port"></span></li>
                             <li><span class="fa-li"><i class="fas fa-angle-right"></i></span><?php _e( "Destintion Port:", "castalynkmap" );?> <span class="coastalynk-vessel-popup-content-dest-port"></span></li>
                         </ul>
@@ -359,46 +447,48 @@ class Coastalynk_Vessel_Shortcode {
                     features: []
                 };
 
-                <?php foreach( $vessel_data as $feature ) { ?>
-                    vesselData.features.push({
-                        type: 'Feature',
-                        geometry: {
-                            type: 'Point',
-                            coordinates:[<?php echo $feature->lon;?>, <?php echo $feature->lat;?>]
-                        },
-                        properties: {
-                            uuid: "<?php echo $feature->uuid;?>",
-                            name: "<?php echo $feature->name;?>",
-                            mmsi: "<?php echo $feature->mmsi;?>",
-                            imo: "<?php echo $feature->imo;?>",
-                            country_iso: "<?php echo $feature->country_iso;?>",
-                            type: "<?php echo $feature->type;?>",
-                            type_specific: "<?php echo $feature->type_specific;?>",
-                            speed: "<?php echo $feature->speed;?>",
-                            navigation_status: "<?php echo $feature->navigation_status;?>",
-                            last_position_UTC: "<?php echo $feature->last_position_UTC;?>",
-                            name: "<?php echo $feature->name;?>",
-                            port: "<?php echo $feature->dest_port;?>",
-                            distance: "<?php echo number_format($feature->distance);?>",
-                            last_updated: "<?php echo $feature->last_updated;?>"
-                        }
-                    });
+                <?php 
+                    if( is_array( $vessel_data ) && count( $vessel_data ) > 0 ) {
+                        foreach( $vessel_data as $feature ) { ?>
+                            vesselData.features.push({
+                                type: 'Feature',
+                                geometry: {
+                                    type: 'Point',
+                                    coordinates:[<?php echo $feature['lon'];?>, <?php echo $feature['lat'];?>]
+                                },
+                                properties: {
+                                    uuid: "<?php echo $feature['uuid'];?>",
+                                    name: "<?php echo $feature['name'];?>",
+                                    mmsi: "<?php echo $feature['mmsi'];?>",
+                                    imo: "<?php echo $feature['imo'];?>",
+                                    country_iso: "<?php echo $feature['country_iso'];?>",
+                                    type: "<?php echo $feature['type'];?>",
+                                    type_specific: "<?php echo $feature['type_specific'];?>",
+                                    speed: "<?php echo $feature['speed'];?>",
+                                    navigation_status: "<?php echo $feature['navigation_status'];?>",
+                                    last_position_UTC: "<?php echo $feature['last_position_UTC'];?>",
+                                    port: "<?php echo $feature['dest_port'];?>",
+                                }
+                            });
 
+                <?php } } ?>
+                <?php  if( is_array( $vessel_data ) && count( $vessel_data ) > 0 ) { ?>
+                    // Convert to heatmap points
+                    const heatPoints = vesselData.features.map(feature => [
+                        feature.geometry.coordinates[1],
+                        feature.geometry.coordinates[0],
+                        0.5
+                    ]);
+
+                    // Create heatmap layer
+                    
+                    const heatLayer = L.heatLayer(heatPoints, {
+                        radius: 25,
+                        blur: 15,
+                        maxZoom: 17,
+                        gradient: {0.4: 'blue', 0.65: 'lime', 1: 'red'}
+                    }).addTo(map);
                 <?php } ?>
-            // Convert to heatmap points
-            const heatPoints = vesselData.features.map(feature => [
-                feature.geometry.coordinates[1],
-                feature.geometry.coordinates[0],
-                0.5
-            ]);
-
-            // Create heatmap layer
-            const heatLayer = L.heatLayer(heatPoints, {
-                radius: 25,
-                blur: 15,
-                maxZoom: 17,
-                gradient: {0.4: 'blue', 0.65: 'lime', 1: 'red'}
-            }).addTo(map);
                 // Create vessel markers layer
                 const vesselsLayer = L.layerGroup();
                 
@@ -421,25 +511,27 @@ class Coastalynk_Vessel_Shortcode {
 
                 // Vessel data structure
                 var vessels = {
-                    <?php foreach( $vessel_data as $feature ) { ?>
-                        '<?php echo $feature->uuid;?>': {
-                            id: '<?php echo $feature->uuid;?>',
-                            name: '<?php echo $feature->name;?>',
-                            type: '<?php echo $feature->type;?>',
-                            type_specific: '<?php echo $feature->type_specific;?>',
-                            position: [<?php echo $feature->lat;?>, <?php echo $feature->lon;?>],
-                            speed: "<?php echo $feature->speed;?>",
-                            current_draught: '<?php echo $feature->current_draught;?>',
-                            navigation_status: "<?php echo $feature->navigation_status;?>",
-                            country_iso: "<?php echo $feature->country_iso;?>",
-                            flag: "<?php echo CSM_IMAGES_URL."flags/".strtolower( $feature->country_iso ).".jpg"; ?>",
-                            lat: "<?php echo number_format($feature->lat,4);?>",
-                            lng: "<?php echo number_format($feature->lon,4);?>",
-                            port: "<?php echo $feature->dest_port;?>",
-                            distance: "<?php echo number_format($feature->distance);?>",
-                            last_updated: "<?php echo $feature->last_updated;?>",
-                        },
-                    <?php } ?>
+                    <?php 
+                        if( is_array( $vessel_data ) && count( $vessel_data ) > 0 ) {
+                            foreach( $vessel_data as $feature ) { 
+                                if( !empty( $feature['lat'] ) && !empty( $feature['lon'] ) && !empty( $feature['country_iso'] ) ) { 
+                                ?>
+                            '<?php echo $feature['uuid'];?>': {
+                                id: '<?php echo $feature['uuid'];?>',
+                                name: "<?php echo $feature['name'];?>",
+                                type: "<?php echo $feature['type'];?>",
+                                type_specific: "<?php echo $feature['type_specific'];?>",
+                                position: [<?php echo $feature['lat'];?>, <?php echo $feature['lon'];?>],
+                                speed: "<?php echo $feature['speed'];?>",
+                                current_draught: '<?php echo $feature['current_draught'];?>',
+                                navigation_status: "<?php echo $feature['navigation_status'];?>",
+                                country_iso: "<?php echo $feature['country_iso'];?>",
+                                flag: "<?php echo CSM_IMAGES_URL."flags/".strtolower( $feature['country_iso'] ).".jpg"; ?>",
+                                lat: "<?php echo number_format($feature['lat'],4);?>",
+                                lng: "<?php echo number_format($feature['lon'],4);?>",
+                                port: "<?php echo $feature['dest_port'];?>",
+                            },
+                    <?php } } } ?>
                     
                 };
 
@@ -475,21 +567,18 @@ class Coastalynk_Vessel_Shortcode {
                                 <td colspan="2" class="coastalynk-sbm-marker-middle-part">
                                     <table>
                                         <tr class="coastalynk-sbm-marker-first-row">
-                                            <td width="33%">
+                                            <td width="50%">
                                                 <b><?php _e( "Speed", "castalynkmap" );?></b><br>
                                                 ${vessel.speed}
                                             </td>
-                                            <td width="33%">
+                                            <td width="50%">
                                                 <b><?php _e( "Draught", "castalynkmap" );?></b><br>
                                                 ${vessel.current_draught}m
                                             </td>
-                                            <td width="33%">
-                                                <b><?php _e( "Distance", "castalynkmap" );?></b><br>
-                                                ${vessel.distance}m
-                                            </td>
+                                            
                                         </tr>
                                         <tr class="coastalynk-sbm-marker-second-row">
-                                            <td colspan="3">
+                                            <td colspan="2">
                                                 <b><?php _e( "Type Specific", "castalynkmap" );?></b><br>
                                                 ${vessel.type_specific}
                                             </td>
@@ -549,7 +638,7 @@ class Coastalynk_Vessel_Shortcode {
             };
 
             const overlayMaps = {
-                "Heatmap": heatLayer,
+                <?php  if( is_array( $vessel_data ) && count( $vessel_data ) > 0 ) { ?>"Heatmap": heatLayer, <?php } ?>
                 "Vessels": vesselsLayer,
                 "Ports": portsLayer
             };
@@ -584,15 +673,15 @@ class Coastalynk_Vessel_Shortcode {
                         
                         // Toggle layers based on view
                         if (view === 'heatmap') {
-                            map.addLayer(heatLayer);
+                            <?php  if( is_array( $vessel_data ) && count( $vessel_data ) > 0 ) { ?>map.addLayer(heatLayer);<?php } ?>
                             map.removeLayer(vesselsLayer);
                             map.addLayer(portsLayer);
                         } else if (view === 'vessels') {
-                            map.removeLayer(heatLayer);
+                            <?php  if( is_array( $vessel_data ) && count( $vessel_data ) > 0 ) { ?>map.removeLayer(heatLayer);<?php } ?>
                             map.addLayer(vesselsLayer);
                             map.addLayer(portsLayer);
                         } else if (view === 'ports') {
-                            map.removeLayer(heatLayer);
+                            <?php  if( is_array( $vessel_data ) && count( $vessel_data ) > 0 ) { ?>map.removeLayer(heatLayer);<?php } ?>
                             map.removeLayer(vesselsLayer);
                             map.addLayer(portsLayer);
                         }
