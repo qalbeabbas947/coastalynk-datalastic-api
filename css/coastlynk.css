@@ -1,0 +1,582 @@
+.datalastic-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+.coastlynk-port-card{
+    cursor: pointer;
+}
+.datalastic-container .stats-panel h3 {
+    margin-bottom: 5px;
+    padding-bottom: 5px;
+    font-size: 1.2rem;
+}
+
+.datalastic-container header {
+    text-align: center;
+    padding: 20px 0;
+    background: linear-gradient(135deg, #1a6fb0 0%, #0088FF 100%);
+    color: white;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.datalastic-container h1 {
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+.datalastic-container .subtitle {
+    font-size: 1.1rem;
+    /* opacity: 0.9; */
+    color: #fff;
+}
+
+.datalastic-container .dashboard {
+    display: grid;
+    grid-template-columns: 1fr 3fr;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.datalastic-container .stats-panel {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    height: 600px;
+    max-height: 100%;
+}
+.coastalynk-retrieve-tonnage-btn{
+    border: none;
+    border-radius: 5px;
+    padding: 6px;
+    background-color: #0088FF;
+    color: white;
+    cursor: pointer;
+}
+
+.coastalyn-flag-port-listing{
+    width:80px;
+}
+
+.datalastic-container .stats-panel h2 {
+    margin-bottom: 15px;
+    /* color: #0088FF;
+    border-bottom: 2px solid #f0f0f0; */
+    padding-bottom: 10px;
+    font-size: 2rem;
+}
+
+.datalastic-container .stat-item {
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.datalastic-container .stat-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.datalastic-container .stat-label {
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 5px;
+    font-size: 1rem;
+}
+
+.datalastic-container .stat-value {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #0088FF;
+}
+
+.coastalynk-congestion-data .stat-item {
+    margin-bottom: 15px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.coastalynk-congestion-data .stat-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.coastalynk-congestion-data .stat-label {
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 5px;
+    font-size: 1rem;
+}
+
+.coastalynk-congestion-data .stat-value {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #0088FF;
+}
+.coastalynk-congestion-data{
+    overflow: scroll;
+    height: 60%;
+}
+.datalastic-container .progress-bar {
+    height: 8px;
+    background-color: #e9ecef;
+    border-radius: 4px;
+    margin-top: 5px;
+    overflow: hidden;
+}
+
+.datalastic-container .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #4CAF50 0%, #8BC34A 100%);
+    border-radius: 4px;
+}
+
+.datalastic-container .map-container {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    height: 600px;
+}
+
+.datalastic-container #map {
+    height: 100%;
+    width: 100%;
+}
+
+.datalastic-container .controls {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    background: white;
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.datalastic-container .port-selector {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.datalastic-container .port-button {
+    padding: 8px 15px;
+    background-color: #e9ecef;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.datalastic-container .port-button:hover {
+    background-color: #d8dfe6;
+}
+
+.port-button.active {
+    background-color: #0088FF;
+    color: white;
+}
+
+.datalastic-container .view-options {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.datalastic-container .view-button {
+    padding: 8px 15px;
+    background-color: #e9ecef;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.datalastic-container .view-button:hover {
+    background-color: #d8dfe6;
+}
+
+.datalastic-container .view-button.active {
+    background-color: #0088FF;
+    color: white;
+}
+
+.datalastic-container .info-panel {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.datalastic-container .info-panel h2 {
+    margin-bottom: 15px;
+    /* color: #0088FF;
+    border-bottom: 2px solid #f0f0f0; */
+    padding-bottom: 10px;
+    font-size: 2rem;
+}
+
+.datalastic-container .port-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(268px, 1fr));
+    gap: 20px;
+}
+
+#coastalynk-table {
+    font-size: 1rem; /* Adjust this value to your preference */
+}
+
+/* Or, be more specific to target just the cell data */
+#coastalynk-table tbody td {
+    font-size: 1rem;
+}
+
+/* Optional: Adjust the header font size separately */
+#coastalynk-table thead th {
+    font-size: 1rem;
+    font-weight: bold;
+}
+#coastalynk-table_info{
+    font-size: 1rem;
+
+}
+.wp-block-post-title{
+    display: none;
+}
+.datalastic-container .port-card {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 15px;
+    border-left: 4px solid #0088FF;
+}
+
+.datalastic-container .port-card h3 {
+    margin-bottom: 10px;
+    color: #0088FF;
+    font-size: 1.2rem;
+}
+
+.datalastic-container .port-stat {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 1rem;
+}
+
+.datalastic-container .port-stat:last-child {
+    margin-bottom: 0;
+}
+
+.datalastic-container .loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 400px;
+    flex-direction: column;
+}
+
+.datalastic-container .spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid #f3f3f3;
+    border-top: 5px solid #0088FF;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+.subtitlelastupdate{
+    color: #fff;
+    /* font-size: .75rem; */
+    text-align: right;
+    padding-right: 20px;
+    font-weight: 700;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.datalastic-container footer {
+    text-align: center;
+    margin-top: 30px;
+    padding: 20px;
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+.table-responsive, #coastalynk-table_wrapper .dt-layout-cell {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+}
+
+/****************************/
+#coastalynk-column-loader{
+	width:110px;
+	height: 25px;
+	display: block;
+	position: relative;
+	margin:auto;
+}
+
+.coastalynk-column-blockG{
+	background-color:rgb(255,255,255);
+	border:3px solid #0088FF;
+	float:left;
+	height:20px;
+	margin-left:7px;
+	width:23px;
+	opacity:0.1;
+	animation-name:bounceG;
+		-o-animation-name:bounceG;
+		-ms-animation-name:bounceG;
+		-webkit-animation-name:bounceG;
+		-moz-animation-name:bounceG;
+	animation-duration:1.5s;
+		-o-animation-duration:1.5s;
+		-ms-animation-duration:1.5s;
+		-webkit-animation-duration:1.5s;
+		-moz-animation-duration:1.5s;
+	animation-iteration-count:infinite;
+		-o-animation-iteration-count:infinite;
+		-ms-animation-iteration-count:infinite;
+		-webkit-animation-iteration-count:infinite;
+		-moz-animation-iteration-count:infinite;
+	animation-direction:normal;
+		-o-animation-direction:normal;
+		-ms-animation-direction:normal;
+		-webkit-animation-direction:normal;
+		-moz-animation-direction:normal;
+	transform:scale(0.7);
+		-o-transform:scale(0.7);
+		-ms-transform:scale(0.7);
+		-webkit-transform:scale(0.7);
+		-moz-transform:scale(0.7);
+}
+
+#coastalynk-column-blockG_1{
+	animation-delay:0.45s;
+		-o-animation-delay:0.45s;
+		-ms-animation-delay:0.45s;
+		-webkit-animation-delay:0.45s;
+		-moz-animation-delay:0.45s;
+}
+
+#coastalynk-column-blockG_2{
+	animation-delay:0.6s;
+		-o-animation-delay:0.6s;
+		-ms-animation-delay:0.6s;
+		-webkit-animation-delay:0.6s;
+		-moz-animation-delay:0.6s;
+}
+
+#coastalynk-column-blockG_3{
+	animation-delay:0.75s;
+		-o-animation-delay:0.75s;
+		-ms-animation-delay:0.75s;
+		-webkit-animation-delay:0.75s;
+		-moz-animation-delay:0.75s;
+}
+
+/************************************/
+
+@keyframes bounceG{
+	0%{
+		transform:scale(1.2);
+		opacity:1;
+	}
+
+	100%{
+		transform:scale(0.7);
+		opacity:0.1;
+	}
+}
+
+@-o-keyframes bounceG{
+	0%{
+		-o-transform:scale(1.2);
+		opacity:1;
+	}
+
+	100%{
+		-o-transform:scale(0.7);
+		opacity:0.1;
+	}
+}
+
+@-ms-keyframes bounceG{
+	0%{
+		-ms-transform:scale(1.2);
+		opacity:1;
+	}
+
+	100%{
+		-ms-transform:scale(0.7);
+		opacity:0.1;
+	}
+}
+
+@-webkit-keyframes bounceG{
+	0%{
+		-webkit-transform:scale(1.2);
+		opacity:1;
+	}
+
+	100%{
+		-webkit-transform:scale(0.7);
+		opacity:0.1;
+	}
+}
+
+@-moz-keyframes bounceG{
+	0%{
+		-moz-transform:scale(1.2);
+		opacity:1;
+	}
+
+	100%{
+		-moz-transform:scale(0.7);
+		opacity:0.1;
+	}
+}
+/****************************/
+
+
+@media (max-width: 768px) {
+    .datalastic-container .dashboard {
+        grid-template-columns: 1fr;
+    }
+    
+    .datalastic-container .controls {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .datalastic-container .port-selector {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .datalastic-container .view-options {
+        justify-content: center;
+    }
+}
+
+
+@media (max-width: 768px) {
+    
+    .datalastic-container .info-panel, .datalastic-container .stats-panel {
+        padding: 20px 0;
+        box-shadow: inherit;
+        height: 100%;
+        max-height: 100%;
+    }
+    .datalastic-container .map-container {
+        height: 60vh;
+        min-height: 400px;
+    }
+    .datalastic-container header .section-title {
+        margin: 10px;
+    }
+    .datalastic-container .dashboard {
+        grid-template-columns: 1fr;
+    }
+    
+    .datalastic-container .controls {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .datalastic-container .port-selector {
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    
+    .datalastic-container .view-options {
+        justify-content: center;
+    }
+    #coastalynk-table .content {
+        padding: 1rem;
+    }
+    
+    #coastalynk-table th, #coastalynk-table td {
+        padding: 0.75rem 0.5rem;
+    }
+    
+    #coastalynk-table .table-info {
+        flex-direction: column;
+        align-items: center;
+    }
+}
+
+@media (max-width: 480px) {
+    
+/* Force horizontal scrolling on small screens */
+    #coastalynk-table .table-container {
+        width: 100%;
+        overflow-x: auto;
+        display: block;
+    }
+    
+    #coastalynk-table table {
+        min-width: 550px; /* Force table to be wider than viewport */
+    }
+    
+    #coastalynk-table th, #coastalynk-table td {
+        padding: 0.6rem 0.4rem;
+        font-size: 0.9rem;
+    }
+    
+    #coastalynk-table .pagination button {
+        padding: 6px 10px;
+        font-size: 0.9rem;
+    }
+    
+    #coastalynk-table .search-input {
+        padding: 10px 15px 10px 40px;
+        font-size: 0.9rem;
+    }
+    
+    #coastalynk-table .search-icon {
+        left: 12px;
+        font-size: 1.1rem;
+    }
+
+    /* #coastalynk-table th:nth-child(n+4), #coastalynk-table td:nth-child(n+4) {
+        display: none;
+    } */
+}
+
+/* Even smaller devices */
+@media (max-width: 360px) {
+    .logo-text {
+        font-size: 1.3rem;
+    }
+    
+    #coastalynk-table h1 {
+        font-size: 1.3rem;
+    }
+    
+    #coastalynk-table table {
+        min-width: 500px;
+    }
+    
+    #coastalynk-table th, #coastalynk-table td {
+        padding: 0.5rem 0.3rem;
+        font-size: 0.85rem;
+    }
+    /* #coastalynk-table th:nth-child(n+4), #coastalynk-table td:nth-child(n+4) {
+        display: none;
+    } */
+
+}

@@ -40,12 +40,13 @@ class Coastalynk_Maps_Settings {
         /**
          * Add Setting Page
          */
-        add_menu_page(
+        add_submenu_page(
+            'coastalynk',
             __( 'Coastalynk Settings', "castalynkmap" ),
             __( 'Coastalynk Settings', "castalynkmap" ),
             'manage_options',
-            'coastalynk-map-settngs',
-            [ $this, 'load_setting_menu' ]
+            'coastalynk-settngs',
+             [ $this, 'load_setting_menu' ]
         );
     }
 	

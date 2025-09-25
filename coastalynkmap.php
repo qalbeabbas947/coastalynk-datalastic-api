@@ -67,6 +67,14 @@ class Coastalynk_Sea_Vessel_Map {
          * plugin Version
          */
         define( 'CSM_VERSION', self::VERSION );
+        
+        define( 'ADMIN_USER', 'administrator' );
+        define( 'GENERAL_USER', 'pmpro_role_1' );
+        define( 'SHIPLINE_USER', 'pmpro_role_2' );
+        define( 'PORT_OPERATOR_USER', 'pmpro_role_3' );
+        define( 'REGULATOR_USER', 'pmpro_role_4' );
+
+
     }
 
     /**
@@ -82,10 +90,23 @@ class Coastalynk_Sea_Vessel_Map {
             require_once( CSM_INCLUDES_DIR . 'helper.php' );
         }
 
-        if( file_exists( CSM_INCLUDES_DIR.'settings.php' ) ) {
-            require_once( CSM_INCLUDES_DIR . 'settings.php' );
-        }
+        if( is_admin() ) {
+            if( file_exists( CSM_INCLUDES_DIR.'settings.php' ) ) {
+                require_once( CSM_INCLUDES_DIR . 'settings.php' );
+            }
 
+            if( file_exists( CSM_INCLUDES_DIR.'admin.php' ) ) {
+                require_once( CSM_INCLUDES_DIR . 'admin.php' );
+            }
+
+            if( file_exists( CSM_INCLUDES_DIR . 'admin/darkships/class-menu.php' ) ) {
+                require_once CSM_INCLUDES_DIR . 'admin/darkships/class-menu.php';
+            }
+
+            if( file_exists( CSM_INCLUDES_DIR . 'admin/darkships/class-darkships.php' ) ) {
+                require_once CSM_INCLUDES_DIR . 'admin/darkships/class-darkships.php';
+            }
+        }
         if( file_exists( CSM_INCLUDES_DIR.'front.php' ) ) {
             require_once CSM_INCLUDES_DIR . 'front.php';
         }

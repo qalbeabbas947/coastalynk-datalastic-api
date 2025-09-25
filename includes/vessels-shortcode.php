@@ -125,12 +125,13 @@ class Coastalynk_Vessel_Shortcode {
 
         $vessel_data = [];
 
-        $search_field      = sanitize_text_field( $_REQUEST['coastalynk_vessel_search_text'] );
-        $field_type        = sanitize_text_field( $_REQUEST['coastalynk-vessel-search-ddl'] );
+        $search_field      = isset( $_REQUEST['coastalynk_vessel_search_text'] ) ? sanitize_text_field( $_REQUEST['coastalynk_vessel_search_text'] ):'';
+        $field_type        = isset( $_REQUEST['coastalynk-vessel-search-ddl'] ) ? sanitize_text_field( $_REQUEST['coastalynk-vessel-search-ddl'] ):'';
         // $type_ddl          = sanitize_text_field( $_REQUEST['coastalynk_vessel_type_ddl'] );
         // $country_ddl       = sanitize_text_field( $_REQUEST['coastalynk_vessel_country_ddl'] );
 
         $api_key = get_option('coatalynk_datalastic_apikey');
+        $user_type = coastalynk_user_type();
         if ( ! isset( $_POST['coastalynk_vessel_search_field'] ) || ! wp_verify_nonce( $_POST['coastalynk_vessel_search_field'], 'coastalynk_vessel_search' ) ) {
             $table_name = $wpdb->prefix . 'coastalynk_vessels';
             $vessel_data = $wpdb->get_results("SELECT * FROM $table_name", ARRAY_A);
@@ -264,9 +265,12 @@ class Coastalynk_Vessel_Shortcode {
                                         <?php
                                             $options = [];
                                             $options['name'] = 'Name';
-                                            $options['uuid'] = 'UUID';
-                                            $options['mmsi'] = 'MMSI';
-                                            $options['imo'] = 'IMO';
+                                            if( in_array( $user_type, [REGULATOR_USER, SHIPLINE_USER, PORT_OPERATOR_USER, ADMIN_USER] ) ) {
+                                                $options['uuid'] = 'UUID';
+                                                $options['mmsi'] = 'MMSI';
+                                                $options['imo'] = 'IMO';
+                                            }
+                                            
                                             // $options['gross_tonnage_min'] = 'Min Gross Tonnage';
                                             // $options['gross_tonnage_max'] = 'Max Gross Tonnage';
                                             // $options['deadweight_min'] = 'Min Dead Weight';
@@ -299,57 +303,59 @@ class Coastalynk_Vessel_Shortcode {
                     
                     <div id="map" style="height: 80vh; width: 100%; min-width:100%;"></div>
                 </div>
-                <div class="coastalynk-vessel-table-wrapper">
-                    <table id="coastalynk-vessel-table" class="display" class="cell-border hover stripe">
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th><?php _e( "Name", "castalynkmap" );?></th>
-                                <th><?php _e( "Port", "castalynkmap" );?></th>
-                                <th><?php _e( "MMSI", "castalynkmap" );?></th>
-                                <th><?php _e( "IMO", "castalynkmap" );?></th>
-                                <th><?php _e( "Destination", "castalynkmap" );?></th>
-                                <th><?php _e( "Speed", "castalynkmap" );?></th>
-                                <th><?php _e( "ATA", "castalynkmap" );?></th>
-                                <th><?php _e( "More", "castalynkmap" );?></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php 
-                            foreach( $vessel_data as $data ) { 
-                                                                
-                                ?>
+                <?php if( in_array( $user_type, [REGULATOR_USER, SHIPLINE_USER, PORT_OPERATOR_USER, ADMIN_USER] ) ) { ?>
+                    <div class="coastalynk-vessel-table-wrapper">
+                        <table id="coastalynk-vessel-table" class="display" class="cell-border hover stripe">
+                            <thead>
                                 <tr>
-                                    <td>
-                                        <?php 
-                                            if( isset( $data['country_iso'] ) && !empty( $data['country_iso'] )) {
-                                                echo '<img src="'.CSM_IMAGES_URL."flags/".strtolower( $data['country_iso'] ).".jpg".'" class="coastalyn-flag-port-listing" alt="'.$data['name'].'">';
-                                            }
-                                        ?>
-                                    </td>
-                                    <td><?php echo $data['name']; ?></td>
-                                    <td><?php echo $data['dest_port']; ?></td>
-                                    <td><?php echo $data['mmsi']; ?></td>
-                                    <td><?php echo $data['imo']; ?></td>
-                                    <td><?php echo $data['destination']; ?></td>
-                                    <td><?php echo $data['speed']; ?></td>
-                                    <td><?php echo $data['atd_UTC']; ?></td>
-                                    <td>
-                                        <input type="button" class="coastalynk-retrieve-popup-btn" data-name='<?php echo $data['name']; ?>' data-uuid="<?php echo $data['uuid']; ?>" value="<?php _e( "More", "castalynkmap" );?>">
-                                        <div id="coastalynk-column-loader" style="display:none;">
-                                            <div id="coastalynk-column-blockG_1" class="coastalynk-column-blockG"></div>
-                                            <div id="coastalynk-column-blockG_2" class="coastalynk-column-blockG"></div>
-                                            <div id="coastalynk-column-blockG_3" class="coastalynk-column-blockG"></div>
-                                        </div>
-                                    </td>
+                                    <th></th>
+                                    <th><?php _e( "Name", "castalynkmap" );?></th>
+                                    <th><?php _e( "Port", "castalynkmap" );?></th>
+                                    <th><?php _e( "MMSI", "castalynkmap" );?></th>
+                                    <th><?php _e( "IMO", "castalynkmap" );?></th>
+                                    <th><?php _e( "Destination", "castalynkmap" );?></th>
+                                    <th><?php _e( "Speed", "castalynkmap" );?></th>
+                                    <th><?php _e( "ATA", "castalynkmap" );?></th>
+                                    <th><?php _e( "More", "castalynkmap" );?></th>
                                 </tr>
-                            <?php } ?>
-                        </tbody>
-                        <tfoot>
-                            
-                        </tfoot>
-                    </table>
-                </div>    
+                            </thead>
+                            <tbody>
+                                <?php 
+                                foreach( $vessel_data as $data ) { 
+                                                                    
+                                    ?>
+                                    <tr>
+                                        <td>
+                                            <?php 
+                                                if( isset( $data['country_iso'] ) && !empty( $data['country_iso'] )) {
+                                                    echo '<img src="'.CSM_IMAGES_URL."flags/".strtolower( $data['country_iso'] ).".jpg".'" class="coastalyn-flag-port-listing" alt="'.$data['name'].'">';
+                                                }
+                                            ?>
+                                        </td>
+                                        <td><?php echo $data['name']; ?></td>
+                                        <td><?php echo $data['dest_port']; ?></td>
+                                        <td><?php echo $data['mmsi']; ?></td>
+                                        <td><?php echo $data['imo']; ?></td>
+                                        <td><?php echo $data['destination']; ?></td>
+                                        <td><?php echo $data['speed']; ?></td>
+                                        <td><?php echo $data['atd_UTC']; ?></td>
+                                        <td>
+                                            <input type="button" class="coastalynk-retrieve-popup-btn" data-name='<?php echo $data['name']; ?>' data-uuid="<?php echo $data['uuid']; ?>" value="<?php _e( "More", "castalynkmap" );?>">
+                                            <div id="coastalynk-column-loader" style="display:none;">
+                                                <div id="coastalynk-column-blockG_1" class="coastalynk-column-blockG"></div>
+                                                <div id="coastalynk-column-blockG_2" class="coastalynk-column-blockG"></div>
+                                                <div id="coastalynk-column-blockG_3" class="coastalynk-column-blockG"></div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                <?php } ?>
+                            </tbody>
+                            <tfoot>
+                                
+                            </tfoot>
+                        </table>
+                    </div> 
+                <?php } ?>   
             </div>
             <div class="coastalynk-vessel-popup-overlay"></div>
             <div class="coastalynk-vessel-popup-content">
