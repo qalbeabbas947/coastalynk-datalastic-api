@@ -31,9 +31,43 @@ class CSM_Dark_Ships_Menu {
 
         add_action( 'admin_menu',                           [ $this, 'admin_menu_page' ] );
 		add_action( 'wp_ajax_csm_dark_ships_display', 		[ $this, 'csm_dark_ships_display' ], 100 );
+		add_action( 'wp_ajax_csm_dark_ships_delete', 		[ $this, 'csm_dark_ships_delete_callback' ], 100 );
         add_action( 'admin_enqueue_scripts',                [ $this, 'admin_enqueue_scripts_callback' ] );
 	}
 	
+    /**
+     * Action wp_ajax for fetching the first time table structure
+     */
+    public function csm_dark_ships_delete_callback() {
+        
+        global $wpdb;
+
+        if( ! wp_verify_nonce( $_GET['security'], 'csm_dark_ships_load' ) ) {
+            exit;
+        }
+
+        $id     = sanitize_text_field( $_REQUEST[ 'id' ] );
+        $imo    = sanitize_text_field( $_REQUEST[ 'imo' ] );
+
+        $table_name = $wpdb->prefix . 'coastalynk_dark_ships';
+        
+        $result = $wpdb->delete(
+            $table_name,
+            array( 'uuid' => $id ),
+            array( '%s' )
+        );
+
+        if ( false === $result ) {
+            echo json_encode( [ 'type' => 'failed', 'message' => sprintf( __( 'Error deleting row: %s', 'castalynkmap' ), $wpdb->last_error ) ] );
+        } else if ( 0 === $result ) {
+            echo json_encode( [ 'type' => 'failed', 'message' => sprintf( __( 'No row found with ID: %s', 'castalynkmap' ), $id ) ] );
+        } else {
+            echo json_encode( [ 'type' => 'success', 'message' => sprintf( __( '%s deleted successfully.', 'castalynkmap' ), $id ) ] );
+        }
+
+        exit;
+    }
+
     /**
      * Action wp_ajax for fetching the first time table structure
      */
@@ -113,9 +147,9 @@ class CSM_Dark_Ships_Menu {
             
             $option = 'per_page';
             $args = [
-                    'label' => 'Customers Per Page',
+                    'label' => 'Dark Ships Per Page',
                     'default' => 20,
-                    'option' => 'customers_per_page'
+                    'option' => 'dark_ships_per_page'
                 ];
             add_screen_option( $option, $args );
             $csmDarkshipListTable = new CSM_Dark_Ships();
@@ -135,7 +169,7 @@ class CSM_Dark_Ships_Menu {
         if( is_null( $wpdb->get_var( "SHOW TABLES LIKE '$table_name'" ) ) ) {
             ?> 
                 <div class="wrap">
-                    <h2><?php _e( 'Customers', 'castalynkmap' ); ?></h2>
+                    <h2><?php _e( 'Dark Ships', 'castalynkmap' ); ?></h2>
                     <p id="csm-dat-not-imported-message"><?php _e( 'Darkships data is not imported yet. Please, run the cron for the first time.', 'castalynkmap' ); ?></p>
                 </div>
             <?php
@@ -157,12 +191,12 @@ class CSM_Dark_Ships_Menu {
 		
         ?>
             <div class="wrap">
-                <h2><?php _e( 'Customers', 'castalynkmap' ); ?></h2>
+                <h2><?php _e( 'Dark Ships', 'castalynkmap' ); ?></h2>
                 
                 <!-- Forms are NOT created automatically, so you need to wrap the table in one to use features like bulk actions -->
                 
                     <div class="csm_filters_top">
-                        <form id="csm-customer-filter" method="post">
+                        <form id="csm-dark-ships-filter" method="post">
                             <div class="csm-filter-handler alignleft actions bulkactions">
                                 <span class="csm_filter_labels"><?php _e( 'Filters:', 'castalynkmap' ); ?></span>
                                 <select name="csm_ports_filter" class="csm-ports-filter csm_ports_filter" >

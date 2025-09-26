@@ -122,6 +122,13 @@ class Coastalynk_Vessel_Shortcode {
      */
     public function coastalynk_shortcode( $atts ) {
         global $wpdb;
+        $table_name = $wpdb->prefix.'coastalynk_dark_ships'; 
+        $dark_ships = $wpdb->get_results( "SELECT uuid, name, last_position_UTC, reason FROM $table_name", ARRAY_A );
+        $ship_array = [];
+        foreach( $dark_ships as $dship ) {
+            $ship_array[ $dship['uuid'] ] = $dship['reason'];
+        } 
+
 
         $vessel_data = [];
 
@@ -303,6 +310,30 @@ class Coastalynk_Vessel_Shortcode {
                     
                     <div id="map" style="height: 80vh; width: 100%; min-width:100%;"></div>
                 </div>
+                <div class="coastlynk-darkship-ticker-container">
+                    <div class="coastlynk-darkship-ticker-wrapper">
+                        <div class="coastallynk-darkship-ticker" id="coastallynk-darkship-ticker">
+                            <?php
+                            foreach( $dark_ships as $dship ) {
+                                ?>
+                                    <div class="coastalynk-darkship-ticker-item">
+                                        <span class="coastalynk-darkship-news-time"><?php echo date('m/d/Y H:i', strtotime( $dship['last_position_UTC']));?></span>
+                                        <?php echo $dship['name'];?>: <?php echo $dship['reason'];?>
+                                    </div>
+                                <?php
+                            }
+                            ?>
+                            
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="coastalynk-darkship-controls">
+                        <button id="coastalynk-darkship-pause-btn"><?php _e( "Pause", "castalynkmap" );?></button>
+                        <button id="coastalynk-darkship-resume-btn"><?php _e( "Resume", "castalynkmap" );?></button>
+                    </div>
+                    
+                </div>
                 <?php if( in_array( $user_type, [REGULATOR_USER, SHIPLINE_USER, PORT_OPERATOR_USER, ADMIN_USER] ) ) { ?>
                     <div class="coastalynk-vessel-table-wrapper">
                         <table id="coastalynk-vessel-table" class="display" class="cell-border hover stripe">
@@ -313,6 +344,7 @@ class Coastalynk_Vessel_Shortcode {
                                     <th><?php _e( "Port", "castalynkmap" );?></th>
                                     <th><?php _e( "MMSI", "castalynkmap" );?></th>
                                     <th><?php _e( "IMO", "castalynkmap" );?></th>
+                                    <th><?php _e( "Dark Ship?", "castalynkmap" );?></th>
                                     <th><?php _e( "Destination", "castalynkmap" );?></th>
                                     <th><?php _e( "Speed", "castalynkmap" );?></th>
                                     <th><?php _e( "ATA", "castalynkmap" );?></th>
@@ -321,8 +353,10 @@ class Coastalynk_Vessel_Shortcode {
                             </thead>
                             <tbody>
                                 <?php 
+
+                               
                                 foreach( $vessel_data as $data ) { 
-                                                                    
+                                                                 
                                     ?>
                                     <tr>
                                         <td>
@@ -336,6 +370,7 @@ class Coastalynk_Vessel_Shortcode {
                                         <td><?php echo $data['dest_port']; ?></td>
                                         <td><?php echo $data['mmsi']; ?></td>
                                         <td><?php echo $data['imo']; ?></td>
+                                        <td style="color:red"><?php echo isset( $ship_array[ $data['uuid'] ] ) ? $ship_array[ $data['uuid'] ] : ''; ?></td>
                                         <td><?php echo $data['destination']; ?></td>
                                         <td><?php echo $data['speed']; ?></td>
                                         <td><?php echo $data['atd_UTC']; ?></td>
@@ -470,6 +505,8 @@ class Coastalynk_Vessel_Shortcode {
                                     country_iso: "<?php echo $feature['country_iso'];?>",
                                     type: "<?php echo $feature['type'];?>",
                                     type_specific: "<?php echo $feature['type_specific'];?>",
+                                    reason: "<?php echo isset( $ship_array[ $feature['uuid'] ] ) ? $ship_array[ $feature['uuid'] ] : ''; ?>",
+                                    
                                     speed: "<?php echo $feature['speed'];?>",
                                     navigation_status: "<?php echo $feature['navigation_status'];?>",
                                     last_position_UTC: "<?php echo $feature['last_position_UTC'];?>",
@@ -532,6 +569,7 @@ class Coastalynk_Vessel_Shortcode {
                                 current_draught: '<?php echo $feature['current_draught'];?>',
                                 navigation_status: "<?php echo $feature['navigation_status'];?>",
                                 country_iso: "<?php echo $feature['country_iso'];?>",
+                                reason: "<tr><td colspan='2' valign='top' class='coastalynk-sbm-marker-name-part'><b><?php _e( 'Dark Ship?', "castalynkmap" );?></b><br><?php echo isset( $ship_array[ $feature['uuid'] ] ) ? $ship_array[ $feature['uuid'] ] : ''; ?></td></tr>",
                                 flag: "<?php echo CSM_IMAGES_URL."flags/".strtolower( $feature['country_iso'] ).".jpg"; ?>",
                                 lat: "<?php echo number_format($feature['lat'],4);?>",
                                 lng: "<?php echo number_format($feature['lon'],4);?>",
@@ -568,6 +606,7 @@ class Coastalynk_Vessel_Shortcode {
                                     </table>
                                 </td>
                             </tr>
+                            ${vessel.reason}
                             
                             <tr>
                                 <td colspan="2" class="coastalynk-sbm-marker-middle-part">
@@ -711,6 +750,8 @@ class Coastalynk_Vessel_Shortcode {
        wp_enqueue_style( 'coastalynk-vessels-shortcode-style', CSM_CSS_URL.'vessel-shortcode.css?'.time() );
        
         // Enqueue my scripts.
+        wp_enqueue_script( 'coastlynk-ticker-js', CSM_JS_URL.'ticker.js', array( 'jquery' ), time(), true );
+
         wp_enqueue_script( 'coastalynk-vessels-shortcode-front', CSM_JS_URL.'vessel-shortcode.js', array("jquery"), time(), true ); 
         wp_enqueue_script( 'coastalynk-vessels-dropdown-front', CSM_JS_URL.'dropdown.js', array("jquery"), time(), true ); 
         wp_localize_script( 'coastalynk-vessels-shortcode-front', 'COSTALYNK_VESSEL_VARS', [          

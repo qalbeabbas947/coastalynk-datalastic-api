@@ -50,10 +50,10 @@ class Coastalynk_SBM_Shortcode {
         $apiKey 	= get_option( 'coatalynk_datalastic_apikey' );
         $total_port_vessels = [];
         $type_of_port = __( "Offshore Terminal", "castalynkmap" );
-        // 1. Define the center points (latitude, longitude) of our ports
+
         $table_name = $wpdb->prefix . 'coastalynk_ports';
         $port_data = $wpdb->get_results("SELECT * FROM $table_name where country_iso='NG'"); // where port_type='Offshore Terminal'
-        //echo '<pre>';print_r($port_data);echo '</pre>';
+
         $ports = [];  
         foreach( $port_data as $port ) {
             $ports[$port->title] = [$port->lat, $port->lon];

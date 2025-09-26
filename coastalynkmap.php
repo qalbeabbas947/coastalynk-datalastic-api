@@ -111,28 +111,32 @@ class Coastalynk_Sea_Vessel_Map {
             require_once CSM_INCLUDES_DIR . 'front.php';
         }
 
-        if( file_exists( CSM_INCLUDES_DIR.'menu-shortcode.php' ) ) {
-            require_once( CSM_INCLUDES_DIR . 'menu-shortcode.php' );
+        if( file_exists( CSM_INCLUDES_DIR.'shortcodes/leavy_calculator.php' ) ) {
+            require_once( CSM_INCLUDES_DIR . 'shortcodes/leavy_calculator.php' );
         }
 
-        if( file_exists( CSM_INCLUDES_DIR.'sts-shortcode.php' ) ) {
-            require_once( CSM_INCLUDES_DIR . 'sts-shortcode.php' );
+        // if( file_exists( CSM_INCLUDES_DIR.'menu-shortcode.php' ) ) {
+        //     require_once( CSM_INCLUDES_DIR . 'menu-shortcode.php' );
+        // }
+
+        if( file_exists( CSM_INCLUDES_DIR.'shortcodes/sts-shortcode.php' ) ) {
+            require_once( CSM_INCLUDES_DIR . 'shortcodes/sts-shortcode.php' );
         }
 
-        if( file_exists( CSM_INCLUDES_DIR.'sbm-shortcode.php' ) ) {
-            require_once( CSM_INCLUDES_DIR . 'sbm-shortcode.php' );
+        if( file_exists( CSM_INCLUDES_DIR.'shortcodes/sbm-shortcode.php' ) ) {
+            require_once( CSM_INCLUDES_DIR . 'shortcodes/sbm-shortcode.php' );
         }
 
-        if( file_exists( CSM_INCLUDES_DIR.'port-congestion-shortcode.php' ) ) {
-            require_once( CSM_INCLUDES_DIR . 'port-congestion-shortcode.php' );
+        if( file_exists( CSM_INCLUDES_DIR.'shortcodes/port-congestion-shortcode.php' ) ) {
+            require_once( CSM_INCLUDES_DIR . 'shortcodes/port-congestion-shortcode.php' );
         }
 
-        if( file_exists( CSM_INCLUDES_DIR.'vessels-shortcode.php' ) ) {
-            require_once( CSM_INCLUDES_DIR . 'vessels-shortcode.php' );
+        if( file_exists( CSM_INCLUDES_DIR.'shortcodes/vessels-shortcode.php' ) ) {
+            require_once( CSM_INCLUDES_DIR . 'shortcodes/vessels-shortcode.php' );
         }
 
-        if( file_exists( CSM_INCLUDES_DIR.'port-congestion-home-shortcode.php' ) ) {
-            require_once( CSM_INCLUDES_DIR . 'port-congestion-home-shortcode.php' );
+        if( file_exists( CSM_INCLUDES_DIR.'shortcodes/port-congestion-home-shortcode.php' ) ) {
+            require_once( CSM_INCLUDES_DIR . 'shortcodes/port-congestion-home-shortcode.php' );
         }
     }
 }

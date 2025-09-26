@@ -43,6 +43,11 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
      * Create shortcode for slideshow
      */
     public function shortcode_body( $atts ) {
+        
+        global $wpdb;
+        $table_name = $wpdb->prefix.'coastalynk_dark_ships'; 
+        $dark_ships = $wpdb->get_results( "SELECT uuid, name, last_position_UTC, reason FROM $table_name", ARRAY_A );
+
         $apiKey 	= get_option( 'coatalynk_datalastic_apikey' );
 
         $searchfield = isset( $_REQUEST['searchfield']  ) ? sanitize_text_field( $_REQUEST['searchfield'] ): "";
@@ -194,6 +199,17 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                             $flag = $vessel['country_iso'];
                         }
                         // Create a GeoJSON feature for each vessel
+                        $is_dark_ship = false;
+                        $color = "#008000";
+                        $reason = '';
+                        foreach( $dark_ships as $dship ) {
+                            if( $vessel['uuid'] == $dship['uuid'] ) {
+                                $is_dark_ship = true;
+                                $reason = $dship['reason'];
+                                $color = "#ff0000";
+                            }
+                        }
+
                         $features[] = [
                             'type' => 'Feature',
                             'geometry' => [
@@ -212,7 +228,8 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                                 'timestamp' => $vessel['last_position_epoch'] ?? '',
                                 'type' => $vessel['type'] ?? '',
                                 'type_specific' => $vessel['type_specific'] ?? '',
-                                
+                                'reason' => $reason ?? '',
+                                'color' => $color ?? '',
 
                             ]
                         ];
@@ -270,7 +287,30 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                         <div id="map"></div>
                     </div>
                 </div>
-                
+                <div class="coastlynk-darkship-ticker-container">
+                    <div class="coastlynk-darkship-ticker-wrapper">
+                        <div class="coastallynk-darkship-ticker" id="coastallynk-darkship-ticker">
+                            <?php
+                            foreach( $dark_ships as $dship ) {
+                                ?>
+                                    <div class="coastalynk-darkship-ticker-item">
+                                        <span class="coastalynk-darkship-news-time"><?php echo date('m/d/Y H:i', strtotime( $dship['last_position_UTC']));?></span>
+                                        <?php echo $dship['name'];?>: <?php echo $dship['reason'];?>
+                                    </div>
+                                <?php
+                            }
+                            ?>
+                            
+                            
+                        </div>
+                    </div>
+                    
+                    <div class="coastalynk-darkship-controls">
+                        <button id="coastalynk-darkship-pause-btn"><?php _e( "Pause", "castalynkmap" );?></button>
+                        <button id="coastalynk-darkship-resume-btn"><?php _e( "Resume", "castalynkmap" );?></button>
+                    </div>
+                    
+                </div>
                 <div class="info-panel">
                     <div class="section-title d-flex justify-content-between mb-0 leftalign">
                         <h2><?php _e( "Port Information", "castalynkmap" );?></h2>               
@@ -358,6 +398,7 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                             <th><?php _e( "Port", "castalynkmap" );?></th>
                             <th><?php _e( "MMSI", "castalynkmap" );?></th>
                             <th><?php _e( "IMO", "castalynkmap" );?></th>
+                            <th><?php _e( "Darkship?", "castalynkmap" );?></th>
                             <th><?php _e( "Destination", "castalynkmap" );?></th>
                             <th><?php _e( "Speed", "castalynkmap" );?></th>
                             <th><?php _e( "UTC", "castalynkmap" );?></th>
@@ -378,6 +419,7 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                                 <td><?php echo $feature['properties']['port']; ?></td>
                                 <td><?php echo $feature['properties']['mmsi']; ?></td>
                                 <td><?php echo $feature['properties']['imo']; ?></td>
+                                <td><?php echo $feature['properties']['reason']; ?></td>
                                 <td><?php echo $feature['properties']['destination']; ?></td>
                                 <td><?php echo $feature['properties']['speed']; ?></td>
                                 <td><?php echo $feature['properties']['timestamp'] ? date('Y-m-d H:i:s', $feature['properties']['timestamp']) : 'N/A'; ?></td>
@@ -441,6 +483,9 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                             mmsi: "<?php echo $feature['properties']['mmsi'];?>",
                             type: "<?php echo $feature['properties']['type'];?>",
                             type_specific: "<?php echo $feature['properties']['type_specific'];?>",
+                            reason: "<?php echo $feature['properties']['reason'];?>",
+                            color: "<?php echo $feature['properties']['color'];?>",
+                                
                             port: "<?php echo $feature['properties']['port'];?>",
                             timestamp: "<?php echo $feature['properties']['timestamp'];?>",
                             lat: "<?php echo $feature['geometry']['coordinates'][0];?>",
@@ -475,7 +520,7 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                     feature.geometry.coordinates[0]
                 ], {
                     radius: 4,
-                    fillColor: "#ff7800",
+                    fillColor: feature.properties.color,
                     color: "#000",
                     weight: 1,
                     opacity: 1,
@@ -534,6 +579,12 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                                 
                                 <b><?php _e( "Lon:", "castalynkmap" );?></b>
                                 ${props.lng}
+                            </td>
+                        </tr>
+                        
+                        <tr class="coastalynk-sbm-marker-bottom-part">
+                            <td colspan="2">
+                                <b><?php _e( "Reason(If Darkship):", "castalynkmap" );?></b> ${props.reason}
                             </td>
                         </tr>
                         <tr class="coastalynk-sbm-marker-bottom-part">
@@ -664,6 +715,7 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
 
         wp_enqueue_script( 'leaflet', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js', array( 'jquery' ) );
         wp_enqueue_script( 'markercluster', 'https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js', array( 'jquery' ) );
+        wp_enqueue_script( 'coastlynk-ticker-js', CSM_JS_URL.'ticker.js', array( 'jquery' ), time(), true );
 
         wp_enqueue_script( 'coastlynk-map-js', CSM_JS_URL.'port-congestion-shortcode.js', array( 'jquery' ), time(), true );
         wp_localize_script( 'coastlynk-map-js', 'COSTALUNKVARS', [          

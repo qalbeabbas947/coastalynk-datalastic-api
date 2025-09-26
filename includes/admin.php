@@ -82,7 +82,7 @@ class Coastalynk_Admin {
         //      [ $this, 'dark_ships' ]
         // );
 
-        remove_submenu_page( 'coastalynk','coastalynk' );
+        
     }
 
     

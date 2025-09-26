@@ -133,7 +133,67 @@ table.dataTable tbody tr:nth-child(even) {
     transition: border 0.4s ease-in;
     cursor: pointer;
 }
+/**********************************************************************/
+/****************************/
+.coastlynk-darkship-ticker-container {
+    background-color: #F2F4F7;
+    border-radius: 1px;
+    padding: 15px;
+    margin: 30px 20px;
+    overflow: hidden;
+    position: relative;
+}
 
+.coastlynk-darkship-ticker-wrapper {
+    overflow: hidden;
+    position: relative;
+    height: 40px;
+    display: flex;
+    align-items: center;
+}
+
+.coastallynk-darkship-ticker {
+    display: flex;
+    position: absolute;
+    white-space: nowrap;
+}
+
+.coastalynk-darkship-ticker-item {
+    padding: 8px 15px;
+    margin-right: 30px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 4px;
+    border-left: 3px solid #4CAF50;
+    flex-shrink: 0;
+}
+        
+.coastalynk-darkship-ticker-item .coastalynk-darkship-news-time {
+    font-size: 0.8rem;
+    opacity: 0.7;
+    margin-right: 8px;
+}
+
+.coastalynk-darkship-controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+#coastalynk-darkship-pause-btn, #coastalynk-darkship-resume-btn {
+    background-color: #0088FF;
+    color: white;
+    border: none;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+#coastalynk-darkship-pause-btn:hover, #coastalynk-darkship-resume-btn:hover {
+    background: #0088F0;
+}
 /******************************Drop Down fancy*************************/
 .coastalynk-ddl-select {
     position: relative;

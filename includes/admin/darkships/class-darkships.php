@@ -20,7 +20,7 @@ class CSM_Dark_Ships extends WP_List_Table {
     public $csm_ports_filter;
 
     /**
-     * Customer Seach
+     * Darkship Search
      */
     public $selected_search;
 
@@ -45,8 +45,8 @@ class CSM_Dark_Ships extends WP_List_Table {
          * Set parent defaults
          */
         parent::__construct( [
-            'singular'      => 'csm_customer',
-            'plural'        => 'csm_customer',
+            'singular'      => 'csm_dark_ships',
+            'plural'        => 'csm_dark_ships',
             'ajax'          => true
         ] );
         
@@ -131,12 +131,25 @@ class CSM_Dark_Ships extends WP_List_Table {
             'port_id'                       => __( 'Port Id', 'castalynkmap' ),
             'distance'                      => __( 'Distance', 'castalynkmap' ),
             'last_position_UTC'             => __( 'Last Position', 'castalynkmap' ),
-            'last_updated'                  => __( 'Last Updated', 'castalynkmap' )
+            'last_updated'                  => __( 'Last Updated', 'castalynkmap' ),
+            'view'                          => __( 'Delete', 'ldninjas-freemius-toolkit' ),
         ];
 
         return $columns;
     }
 
+    /**
+     * Will display a link to show popup for the subscription detail.
+     */
+    public function column_view( $item ){
+        
+        if( !empty( strip_tags( $item['uuid'] ) ) ) {
+ 
+            return '<a data-action="csm_delete_dark_ship" data-uuid="'.$item['uuid'].'"  data-imo="'.$item['imo'].'" class="csm_delete_dark_ship" href="javascript:;">'.__( 'Delete', 'ldninjas-freemius-toolkit' ).'</a>';
+        } else {
+            return Coastalynk_Admin::get_bar_preloader();
+        }    
+    }
 
     /** ************************************************************************
      * Optional. If you want one or more columns to be sortable (ASC/DESC toggle), 
@@ -265,7 +278,8 @@ class CSM_Dark_Ships extends WP_List_Table {
                     'port_id'                       => Coastalynk_Admin::get_bar_preloader(), 
                     'distance'                      => Coastalynk_Admin::get_bar_preloader(), 
                     'last_position_UTC'             => Coastalynk_Admin::get_bar_preloader(), 
-                    'last_updated'                  => Coastalynk_Admin::get_bar_preloader()
+                    'last_updated'                  => Coastalynk_Admin::get_bar_preloader(),
+                    'view'                          => Coastalynk_Admin::get_bar_preloader(),  
                 ]
             ];
 

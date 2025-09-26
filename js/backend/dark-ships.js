@@ -10,6 +10,7 @@
                 CSM_Dark_Ships.display_dark_ships_onchange();
                 CSM_Dark_Ships.display_dark_ships_search_submit();
                 CSM_Dark_Ships.display_dark_ships();
+                CSM_Dark_Ships.remove_dark_ship();
             },
 
             /**
@@ -22,7 +23,7 @@
             },
 
             /**
-             * displays customers on pagination clicks
+             * displays dark ships on pagination clicks
              */
 			display_new_page_darkships: function() { 
 
@@ -51,7 +52,7 @@
             },
 
             /**
-             * Show customers based on filters
+             * Show dark_ships based on filters
              */
 			display_dark_ships_onchange: function() {
                 
@@ -63,7 +64,7 @@
             },
 
             /**
-             * Show customers based on filters
+             * Show dark_ships based on filters
              */
             display_dark_ships_search_submit: function() {
 
@@ -76,9 +77,42 @@
                 });
                 
             },
-
             /**
-             * Display the customers data based on ajax calls
+             * Display subscription details via popup
+             */
+            remove_dark_ship: function() {
+
+                $( '#csm_darkships_data' ).on( 'click', '.csm_delete_dark_ship', function( e ) {
+
+                    e.preventDefault();
+                    if( confirm('Are you sure?')) {
+                        var lnk = $( this );
+                        let uuid = lnk.data('uuid');
+                        let imo = lnk.data('imo');
+
+                        $.ajax({
+                            url: ajaxurl,
+                            dataType: 'json',
+                            data: {
+                                action: 'csm_dark_ships_delete', 
+                                security: CSM_ADMIN.security,
+                                id:  uuid,
+                                imo: imo
+                            },
+                            success: function ( response ) {
+                                if( response.type == 'success' ) {
+                                    alert(response.message);
+                                    location.reload();
+                                } else {
+                                    alert(response.message);
+                                }
+                            }
+                        });
+                    }
+                });
+            },
+            /**
+             * Display the Dark ships data based on ajax calls
              */
             display_dark_ships: function() {
 				

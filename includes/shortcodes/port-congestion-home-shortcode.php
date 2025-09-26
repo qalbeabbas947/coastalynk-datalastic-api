@@ -43,6 +43,8 @@ class Coastalynk_Dashboard_Port_Congestion_Home_Shortcode {
      * Create shortcode for slideshow
      */
     public function shortcode_body( $atts ) {
+
+
         $apiKey 	= get_option( 'coatalynk_datalastic_apikey' );
 
         $searchfield = isset( $_REQUEST['searchfield']  ) ? sanitize_text_field( $_REQUEST['searchfield'] ): "";
@@ -358,6 +360,7 @@ class Coastalynk_Dashboard_Port_Congestion_Home_Shortcode {
                             <th><?php _e( "Port", "castalynkmap" );?></th>
                             <th><?php _e( "MMSI", "castalynkmap" );?></th>
                             <th><?php _e( "IMO", "castalynkmap" );?></th>
+                            <th><?php _e( "Darkship?", "castalynkmap" );?></th>
                             <th><?php _e( "Destination", "castalynkmap" );?></th>
                             <th><?php _e( "Speed", "castalynkmap" );?></th>
                             <th><?php _e( "UTC", "castalynkmap" );?></th>
@@ -378,6 +381,7 @@ class Coastalynk_Dashboard_Port_Congestion_Home_Shortcode {
                                 <td><?php echo $feature['properties']['port']; ?></td>
                                 <td><?php echo $feature['properties']['mmsi']; ?></td>
                                 <td><?php echo $feature['properties']['imo']; ?></td>
+                                <td><?php echo $feature['properties']['reason']; ?></td>
                                 <td><?php echo $feature['properties']['destination']; ?></td>
                                 <td><?php echo $feature['properties']['speed']; ?></td>
                                 <td><?php echo $feature['properties']['timestamp'] ? date('Y-m-d H:i:s', $feature['properties']['timestamp']) : 'N/A'; ?></td>
