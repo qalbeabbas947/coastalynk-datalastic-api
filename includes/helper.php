@@ -450,7 +450,7 @@ function coastalynk_side_bar_menu() {
     $coatalynk_vessels_page             = get_option( 'coatalynk_vessels_page' );
     $coatalynk_sbm_page 	            = get_option( 'coatalynk_sbm_page' );
     $coatalynk_sts_page 	            = get_option( 'coatalynk_sts_page' );
-    $coatalynk_leavy_calculator_page 	= get_option( 'coatalynk_leavy_calculator_page' );
+    $coatalynk_levy_calculator_page 	= get_option( 'coatalynk_levy_calculator_page' );
     ?>
         <div class="coastlynk-vessel-dashboard-menu" id="coastlynk-vessel-dashboard-menu">
             <ul class="coastlynk-vessel-menu-items">
@@ -461,7 +461,7 @@ function coastalynk_side_bar_menu() {
                         </div>
                         <div class="coastlynk-vessel-menu-text"><a href="<?php echo get_permalink($coatalynk_ports_page);?>"><?php _e( "Ports", "castalynkmap" );?></a></div>
                         <div class="coastlynk-menu-toggle" id="coastlynk-menu-toggle-close">
-                            <a href="<?php echo get_permalink($coatalynk_ports_page);?>"><i class="fa-regular fa-circle-xmark"></i></a>                    
+                            <a href="javascript:;"><i class="fa-regular fa-circle-xmark"></i></a>                    
                         </div>
                         <div class="coastlynk-menu-toggle coastlynk-menu-toggle-open" style="display: none;">
                             <i class="fa-solid fa-angle-right"></i>                       
@@ -513,11 +513,11 @@ function coastalynk_side_bar_menu() {
                     </li>
                 <?php } ?>
                 <?php if( in_array( $user_type, [REGULATOR_USER, ADMIN_USER]) ) { ?>
-                    <li class="coastlynk-vessel-menu-item <?php echo $post->ID==$coatalynk_leavy_calculator_page?'active':'';?>">
+                    <li class="coastlynk-vessel-menu-item <?php echo $post->ID==$coatalynk_levy_calculator_page?'active':'';?>">
                         <div class="coastlynk-vessel-menu-icon">
-                            <a href="<?php echo get_permalink($coatalynk_leavy_calculator_page);?>"><i class="fa-solid fa-calculator"></i></a>
+                            <a href="<?php echo get_permalink($coatalynk_levy_calculator_page);?>"><i class="fa-solid fa-calculator"></i></a>
                         </div>
-                        <div class="coastlynk-vessel-menu-text"><a href="<?php echo get_permalink($coatalynk_leavy_calculator_page);?>"><?php _e( "Leavy Calculator", "castalynkmap" );?></a></div>
+                        <div class="coastlynk-vessel-menu-text"><a href="<?php echo get_permalink($coatalynk_levy_calculator_page);?>"><?php _e( "Levy Calculator", "castalynkmap" );?></a></div>
                     </li>
                 <?php } ?>
                 

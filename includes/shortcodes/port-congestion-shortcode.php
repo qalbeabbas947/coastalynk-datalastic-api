@@ -171,7 +171,9 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
             $data = json_decode( $response, true );
 
             if (isset($data['data']['vessels'])) {
+
                 foreach ( $data['data']['vessels'] as $vessel ) {
+
                     if ( isset( $vessel['lat'] ) && isset( $vessel['lon'] ) ) {
                         $lat = (float) $vessel['lat'];
                         $lon = (float) $vessel['lon'];
@@ -255,7 +257,8 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                             <button class="port-button" data-port="lomé"><?php _e( "Lomé", "castalynkmap" );?>Lomé</button>
                             <button class="port-button" data-port="tema"><?php _e( "Tema", "castalynkmap" );?></button>
                         </div>
-                        
+                        <button class="coastalynk-port-history"><?php _e( "History", "castalynkmap" );?></button>
+                            
                         <div class="view-options">
                             <button class="view-button coastalynk-map-view-button-first active" data-view="heatmap"><?php _e( "Heatmap", "castalynkmap" );?></button>
                             <button class="view-button" data-view="vessels"><?php _e( "Vessels", "castalynkmap" );?></button>
@@ -440,6 +443,21 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                 </table>
             </div>
         </div>
+        <div class="coastalynk-history-popup-overlay"></div>
+        <div class="coastalynk-history-popup-content">
+            <h2>History</h2>
+            <div class="coastalynk-history-popup-content-boxes">
+                <div class="caostalynk-history-header-buttons">
+                    <button class="coastalynk-history-button coastalynk-history-button1" data-id = "coastalynk-history-button-1">Week 1</button>
+                    <button class="coastalynk-history-button coastalynk-history-button2" data-id = "coastalynk-history-button-2">Week 2</button>
+                </div>
+                <div class="caostalynk-history-header-images">
+                    <img class="coastalynk-history-image coastalynk-history-button-1" src="<?php echo CSM_IMAGES_URL; ?>history1.png" alt="Congestion 1">
+                    <img class="coastalynk-history-image coastalynk-history-button-2" src="<?php echo CSM_IMAGES_URL; ?>history2.png" alt="Congestion 2">
+                </div>
+            </div>
+            <button id="coastalynk-history-popup-close"><?php _e( "Back to Results", "castalynkmap" );?></button>
+        </div>
         <!-- Leaflet JS -->
         <script>
             // Initialize the map centered on Nigeria
@@ -485,7 +503,6 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                             type_specific: "<?php echo $feature['properties']['type_specific'];?>",
                             reason: "<?php echo $feature['properties']['reason'];?>",
                             color: "<?php echo $feature['properties']['color'];?>",
-                                
                             port: "<?php echo $feature['properties']['port'];?>",
                             timestamp: "<?php echo $feature['properties']['timestamp'];?>",
                             lat: "<?php echo $feature['geometry']['coordinates'][0];?>",

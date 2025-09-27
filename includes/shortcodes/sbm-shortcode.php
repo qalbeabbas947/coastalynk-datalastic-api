@@ -178,7 +178,7 @@ class Coastalynk_SBM_Shortcode {
                             $total += $env_leavy;
                             $leavy_data .= '<b>Environmental levy:</b> $'. $env_leavy.'/ton<br>';
 
-                            $polution_leavy = ( $draught * 0.10 );
+                            $polution_ = ( $draught * 0.10 );
                             $total += $polution_leavy;
                             $leavy_data .= '<b>NIMASA pollution levy:</b> $'.$polution_leavy.'/ton<br>';
                             $leavy_data .= '<b>NIMASA wet cargo levy:</b> 3% of freight value<br>';
@@ -276,7 +276,7 @@ class Coastalynk_SBM_Shortcode {
                             </tr>
                             <tr>
                                 <td colspan="2">
-                                    <h3><?php _e( "Leavy Data", "castalynkmap" );?></h3>
+                                    <h3><?php _e( "Levy Data", "castalynkmap" );?></h3>
                                 </td>
                             </tr>    
                             <tr>

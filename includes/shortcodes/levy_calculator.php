@@ -1,6 +1,6 @@
 <?php
 /**
- * Leavy Calculation shortcode page
+ * Levy Calculation shortcode page
  *
  * Do not allow directly accessing this file.
  */
@@ -8,9 +8,9 @@
 if( ! defined( 'ABSPATH' ) ) exit;
 
 /**
- * Class Coastalynk_Leavy_Calculator_Shortcode
+ * Class Coastalynk_Levy_Calculator_Shortcode
  */
-class Coastalynk_Leavy_Calculator_Shortcode {
+class Coastalynk_Levy_Calculator_Shortcode {
 
     private static $instance = null;
 
@@ -20,7 +20,7 @@ class Coastalynk_Leavy_Calculator_Shortcode {
      */
     public static function instance() {
 
-        if ( is_null( self::$instance ) && ! ( self::$instance instanceof Coastalynk_Leavy_Calculator_Shortcode ) ) {
+        if ( is_null( self::$instance ) && ! ( self::$instance instanceof Coastalynk_Levy_Calculator_Shortcode ) ) {
 
             self::$instance = new self;
 
@@ -31,10 +31,10 @@ class Coastalynk_Leavy_Calculator_Shortcode {
     }
 
     /**
-     * Coastalynk_Leavy_Calculator_Shortcode hooks
+     * Coastalynk_Levy_Calculator_Shortcode hooks
      */
     private function hooks() {
-        add_shortcode( 'Coastalynk_Leavy_Calculator', [ $this, 'shortcode_body' ] );
+        add_shortcode( 'Coastalynk_Levy_Calculator', [ $this, 'shortcode_body' ] );
         add_action( 'wp_enqueue_scripts', [ $this, 'coastalynk_enqueue_scripts' ] );
     }
     
@@ -44,14 +44,14 @@ class Coastalynk_Leavy_Calculator_Shortcode {
     public function shortcode_body( $atts ) {
         global $wpdb;
         
-        $coatalynk_leavy_calculator_page_rate1 	= get_option( 'coatalynk_leavy_calculator_page_rate1' );
-        if( floatval( $coatalynk_leavy_calculator_page_rate1 ) <= 0 ) {
-             $coatalynk_leavy_calculator_page_rate1 	= 0.5;
+        $coatalynk_levy_calculator_page_rate1 	= get_option( 'coatalynk_levy_calculator_page_rate1' );
+        if( floatval( $coatalynk_levy_calculator_page_rate1 ) <= 0 ) {
+             $coatalynk_levy_calculator_page_rate1 	= 0.5;
         }
 
-        $coatalynk_leavy_calculator_page_rate2 	= get_option( 'coatalynk_leavy_calculator_page_rate2' );
-        if( floatval( $coatalynk_leavy_calculator_page_rate2 ) <= 0 ) {
-             $coatalynk_leavy_calculator_page_rate2 	= 0.3;
+        $coatalynk_levy_calculator_page_rate2 	= get_option( 'coatalynk_levy_calculator_page_rate2' );
+        if( floatval( $coatalynk_levy_calculator_page_rate2 ) <= 0 ) {
+             $coatalynk_levy_calculator_page_rate2 	= 0.3;
         }
 
         ob_start();
@@ -88,7 +88,7 @@ class Coastalynk_Leavy_Calculator_Shortcode {
                         <button class="coastalynk-calculator-reset-btn" id="coastalynk-calculator-reset-btn"><?php _e( "Reset", "castalynkmap" );?></button>
                         <div class="coastalynk-calculator-formula-info">
                             <strong><?php _e( "Formula:", "castalynkmap" );?></strong> <?php _e( "Levy = (GT X Rate1) + (NT X Rate2)", "castalynkmap" );?><br>
-                            <small><?php _e( "Current rates: Rate1 =", "castalynkmap" );?> <?php echo $coatalynk_leavy_calculator_page_rate1;?>, <?php _e( "Rate2 =", "castalynkmap" );?> <?php echo $coatalynk_leavy_calculator_page_rate2;?></small>
+                            <small><?php _e( "Current rates: Rate1 =", "castalynkmap" );?> <?php echo $coatalynk_levy_calculator_page_rate1;?>, <?php _e( "Rate2 =", "castalynkmap" );?> <?php echo $coatalynk_levy_calculator_page_rate2;?></small>
                         </div>
                         
                     </div>
@@ -107,16 +107,16 @@ class Coastalynk_Leavy_Calculator_Shortcode {
     function coastalynk_enqueue_scripts() : void {
         
         // Enqueue my styles.
-        wp_enqueue_style( 'coastalynk-leavy-calculator-shortcode-style', CSM_CSS_URL.'frontend/leavy-calculator-shortcode.css?'.time() );
+        wp_enqueue_style( 'coastalynk-levy-calculator-shortcode-style', CSM_CSS_URL.'frontend/levy-calculator-shortcode.css?'.time() );
 
         // Enqueue my scripts.
-        wp_enqueue_script( 'coastalynk-leavy-calculator-shortcode-script', CSM_JS_URL.'frontend/leavy-calculator-shortcode.js', array("jquery"), time(), true ); 
+        wp_enqueue_script( 'coastalynk-levy-calculator-shortcode-script', CSM_JS_URL.'frontend/levy-calculator-shortcode.js', array("jquery"), time(), true ); 
         
-        $coatalynk_leavy_calculator_page_rate1 	= get_option( 'coatalynk_leavy_calculator_page_rate1' )??"0.5";
-        $coatalynk_leavy_calculator_page_rate2 	= get_option( 'coatalynk_leavy_calculator_page_rate2' )??"0.3";
-        wp_localize_script( 'coastalynk-leavy-calculator-shortcode-script', 'COSTALYNK_CALC_VARS', [          
-                'rate1' => floatval($coatalynk_leavy_calculator_page_rate1), 
-                'rate2' => floatval($coatalynk_leavy_calculator_page_rate2),
+        $coatalynk_levy_calculator_page_rate1 	= get_option( 'coatalynk_levy_calculator_page_rate1' )??"0.5";
+        $coatalynk_levy_calculator_page_rate2 	= get_option( 'coatalynk_levy_calculator_page_rate2' )??"0.3";
+        wp_localize_script( 'coastalynk-levy-calculator-shortcode-script', 'COSTALYNK_CALC_VARS', [          
+                'rate1' => floatval($coatalynk_levy_calculator_page_rate1), 
+                'rate2' => floatval($coatalynk_levy_calculator_page_rate2),
             ] );
         
     }
@@ -125,4 +125,4 @@ class Coastalynk_Leavy_Calculator_Shortcode {
 /**
  * Class instance.
  */
-Coastalynk_Leavy_Calculator_Shortcode::instance();
+Coastalynk_Levy_Calculator_Shortcode::instance();

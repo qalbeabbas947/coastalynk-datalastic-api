@@ -8,6 +8,37 @@
                 this.load_port_data();
                 this.ajax_retrieve_tonnage();
                 this.load_ajax_port_congestion();
+                this.load_popup();
+                this.close_popup();
+                this.switchHisttory();
+            },
+            switchHisttory: function() {
+                $('.coastalynk-history-button').on('click', function(e) {
+                    $('.coastalynk-history-image').css('display', 'none');
+
+                    $('.'+$(this).data('id')).css('display', 'block');
+                });
+            },
+            close_popup: function() {
+                document.querySelector('#coastalynk-history-popup-close').addEventListener( 'click', (event) => {
+                
+                document.querySelector(".coastalynk-history-popup-overlay").style.display = 'none';
+                document.querySelector(".coastalynk-history-popup-content").style.display = 'none';
+                });
+
+                document.querySelector('.coastalynk-history-popup-overlay').addEventListener( 'click', () => {
+                    document.querySelector(".coastalynk-history-popup-overlay").style.display = 'none';
+                    document.querySelector(".coastalynk-history-popup-content").style.display = 'none';
+                });
+            },
+            load_popup: function() { 
+
+                $('.coastalynk-port-history').on('click', function(event) {
+                    event.preventDefault();
+                    document.querySelector(".coastalynk-history-popup-overlay").style.display = 'block';
+                    document.querySelector(".coastalynk-history-popup-content").style.display = 'block';
+                    $('.coastalynk-history-button1').trigger('click');
+                });
             },
             ajax_retrieve_tonnage: function() {
                 // Example: Trigger the AJAX call on a button click

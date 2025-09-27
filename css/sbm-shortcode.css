@@ -169,12 +169,6 @@
     }
 }
 
-
-
-
-
-
-
 /* Sidebar Styles */
 .coastlynk-vessel-dashboard-menu {
     width: 80px;
@@ -183,7 +177,7 @@
     transition: all 0.4s ease;
     position: relative;
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
+    z-index: 1001;
 }
 
 .coastlynk-vessel-dashboard-menu.coastalynk-expanded {

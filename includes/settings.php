@@ -69,18 +69,18 @@ class Coastalynk_Maps_Settings {
             $coatalynk_vessels_page = isset( $_POST['coatalynk_vessels_page'] ) ? sanitize_textarea_field( stripslashes_deep( $_POST['coatalynk_vessels_page'] ) ) : '';
             $coatalynk_sbm_page = isset( $_POST['coatalynk_sbm_page'] ) ? sanitize_textarea_field( stripslashes_deep( $_POST['coatalynk_sbm_page'] ) ) : '';
             $coatalynk_sts_page = isset( $_POST['coatalynk_sts_page'] ) ? sanitize_textarea_field( stripslashes_deep( $_POST['coatalynk_sts_page'] ) ) : '';
-            $coatalynk_leavy_calculator_page = isset( $_POST['coatalynk_leavy_calculator_page'] ) ? sanitize_textarea_field( stripslashes_deep( $_POST['coatalynk_leavy_calculator_page'] ) ) : '';
-            $coatalynk_leavy_calculator_page_rate1 = isset( $_POST['coatalynk_leavy_calculator_page_rate1'] ) ? sanitize_textarea_field( stripslashes_deep( $_POST['coatalynk_leavy_calculator_page_rate1'] ) ) : '0.5';
-            $coatalynk_leavy_calculator_page_rate2 = isset( $_POST['coatalynk_leavy_calculator_page_rate2'] ) ? sanitize_textarea_field( stripslashes_deep( $_POST['coatalynk_leavy_calculator_page_rate2'] ) ) : '0.3';
+            $coatalynk_levy_calculator_page = isset( $_POST['coatalynk_levy_calculator_page'] ) ? sanitize_textarea_field( stripslashes_deep( $_POST['coatalynk_levy_calculator_page'] ) ) : '';
+            $coatalynk_levy_calculator_page_rate1 = isset( $_POST['coatalynk_levy_calculator_page_rate1'] ) ? sanitize_textarea_field( stripslashes_deep( $_POST['coatalynk_levy_calculator_page_rate1'] ) ) : '0.5';
+            $coatalynk_levy_calculator_page_rate2 = isset( $_POST['coatalynk_levy_calculator_page_rate2'] ) ? sanitize_textarea_field( stripslashes_deep( $_POST['coatalynk_levy_calculator_page_rate2'] ) ) : '0.3';
 
-            update_option( 'coatalynk_leavy_calculator_page_rate1',              $coatalynk_leavy_calculator_page_rate1 );
-            update_option( 'coatalynk_leavy_calculator_page_rate2',              $coatalynk_leavy_calculator_page_rate2 );
+            update_option( 'coatalynk_levy_calculator_page_rate1',              $coatalynk_levy_calculator_page_rate1 );
+            update_option( 'coatalynk_levy_calculator_page_rate2',              $coatalynk_levy_calculator_page_rate2 );
             update_option( 'coatalynk_ports_page',              $coatalynk_ports_page );
             update_option( 'coatalynk_vessels_page',            $coatalynk_vessels_page );
             update_option( 'coatalynk_sbm_page',                $coatalynk_sbm_page );
             update_option( 'coatalynk_sts_page',                $coatalynk_sts_page );
             update_option( 'coatalynk_datalastic_apikey',       $coatalynk_datalastic_apikey );
-            update_option( 'coatalynk_leavy_calculator_page',   $coatalynk_leavy_calculator_page );
+            update_option( 'coatalynk_levy_calculator_page',   $coatalynk_levy_calculator_page );
             $url = add_query_arg( 'tab', 'general', $url );
         }
 

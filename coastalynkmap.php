@@ -111,8 +111,8 @@ class Coastalynk_Sea_Vessel_Map {
             require_once CSM_INCLUDES_DIR . 'front.php';
         }
 
-        if( file_exists( CSM_INCLUDES_DIR.'shortcodes/leavy_calculator.php' ) ) {
-            require_once( CSM_INCLUDES_DIR . 'shortcodes/leavy_calculator.php' );
+        if( file_exists( CSM_INCLUDES_DIR.'shortcodes/levy_calculator.php' ) ) {
+            require_once( CSM_INCLUDES_DIR . 'shortcodes/levy_calculator.php' );
         }
 
         // if( file_exists( CSM_INCLUDES_DIR.'menu-shortcode.php' ) ) {

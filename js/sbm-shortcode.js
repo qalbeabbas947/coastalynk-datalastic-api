@@ -68,6 +68,10 @@
                     $('#coastlynk-vessel-dashboard-menu').removeClass('coastalynk-expanded').css( 'display', 'none' );
                     $('.coastlynk-menu-toggle').css( 'display', 'none' );
                     $('.coastlynk-menu-dashboard-open-close-burger').css( 'display', 'block' );
+               } else if( isTablet() ) {
+                    $('#coastlynk-vessel-dashboard-menu').removeClass('coastalynk-expanded').css( 'display', 'none' );
+                    $('.coastlynk-menu-toggle').css( 'display', 'none' );
+                    $('.coastlynk-menu-dashboard-open-close-burger').css( 'display', 'block' );alert('')
                } else {
                     $('.coastlynk-menu-toggle').css( 'display', 'block' );
                     $('.coastlynk-menu-toggle-open').css( 'display', 'none' );
@@ -75,6 +79,15 @@
                }
                     
             }
+        }
+
+        function  isTablet(){
+            const userAgent = navigator.userAgent.toLowerCase();
+            const isiPad = /ipad/.test(userAgent);
+            const isAndroidTablet = /android/.test(userAgent) && !/mobile/.test(userAgent);
+            const isWindowsTablet = /windows/.test(userAgent) && /touch/.test(userAgent);
+            
+            return isiPad || isAndroidTablet || isWindowsTablet;
         }
 
         const isMobile = {
