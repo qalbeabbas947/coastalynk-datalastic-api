@@ -6,11 +6,22 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-$coatalynk_datalastic_apikey 	= get_option( 'coatalynk_datalastic_apikey' );
-$coatalynk_ports_page 	= get_option( 'coatalynk_ports_page' );
-$coatalynk_vessels_page = get_option( 'coatalynk_vessels_page' );
-$coatalynk_sbm_page 	= get_option( 'coatalynk_sbm_page' );
-$coatalynk_sts_page 	= get_option( 'coatalynk_sts_page' );
+$coatalynk_datalastic_apikey 	    = get_option( 'coatalynk_datalastic_apikey' );
+$coatalynk_ports_page 	            = get_option( 'coatalynk_ports_page' );
+$coatalynk_vessels_page             = get_option( 'coatalynk_vessels_page' );
+$coatalynk_sbm_page 	            = get_option( 'coatalynk_sbm_page' );
+$coatalynk_sts_page 	            = get_option( 'coatalynk_sts_page' );
+$coatalynk_leavy_calculator_page 	= get_option( 'coatalynk_leavy_calculator_page' );
+$coatalynk_leavy_calculator_page_rate1 	= get_option( 'coatalynk_leavy_calculator_page_rate1' );
+$coatalynk_leavy_calculator_page_rate2 	= get_option( 'coatalynk_leavy_calculator_page_rate2' );
+
+if( floatval( $coatalynk_leavy_calculator_page_rate1 ) <= 0 ) {
+    $coatalynk_leavy_calculator_page_rate1 	= 0.5;
+}
+
+if( floatval( $coatalynk_leavy_calculator_page_rate2 ) <= 0 ) {
+    $coatalynk_leavy_calculator_page_rate2 	= 0.3;
+}
 ?>
 <div id="general_settings" class="cs_ld_tabs"> 
     <form method="post" action="<?php echo admin_url('admin-post.php'); ?>">
@@ -70,7 +81,42 @@ $coatalynk_sts_page 	= get_option( 'coatalynk_sts_page' );
                             <?php echo __('Select the STS page.', "castalynkmap" ); ?>
                         </p>
                     </td>    
-                </tr>       
+                </tr>   
+                <tr> 
+                    <td align="left" valign="top">
+						<strong><label align="left" for="coatalynk_leavy_calculator_page"><?php _e( 'Leavy Calculator Page', 'castalynkmap' ); ?></label></strong>
+					</td>
+                    <td>
+                        <?php wp_dropdown_pages( ['selected' => $coatalynk_leavy_calculator_page, 'name' => 'coatalynk_leavy_calculator_page', 'show_option_none' => __('Select Leavy Calculator Page', 'castalynkmap'), 'sort_column' => 'post_title'] );?>
+                        <p class="description">
+                            <?php echo __('Select the Leavy Calculator page.', "castalynkmap" ); ?>
+                        </p>
+                    </td>    
+                </tr>  
+                <tr> 
+                    <td align="left" valign="top">
+						<strong><label align="left" for="coatalynk_leavy_calculator_page_rate1"><?php _e( 'Leavy Calculator Rate 1', 'castalynkmap' ); ?></label></strong>
+					</td>
+                    <td>
+                        <input type="number" step="0.1" id="coatalynk_leavy_calculator_page_rate1" size="40" name="coatalynk_leavy_calculator_page_rate1" value="<?php echo $coatalynk_leavy_calculator_page_rate1; ?>">
+                           
+                        <p class="description">
+                            <?php echo __('Select the Leavy Calculator Rate 1.', "castalynkmap" ); ?>
+                        </p>
+                    </td>    
+                </tr>
+                <tr> 
+                    <td align="left" valign="top">
+						<strong><label align="left" for="coatalynk_leavy_calculator_page_rate2"><?php _e( 'Leavy Calculator Rate 1', 'castalynkmap' ); ?></label></strong>
+					</td>
+                    <td>
+                        <input type="number" step="0.1" id="coatalynk_leavy_calculator_page_rate2" size="40" name="coatalynk_leavy_calculator_page_rate2" value="<?php echo $coatalynk_leavy_calculator_page_rate2; ?>">
+                           
+                        <p class="description">
+                            <?php echo __('Select the Leavy Calculator Rate 2.', "castalynkmap" ); ?>
+                        </p>
+                    </td>    
+                </tr>
             </tbody>
         </table>
         

@@ -112,7 +112,7 @@ class Coastalynk_Sea_Vessel_Map_Front {
             wp_die();
         }
 
-        $apiKey = '15df4420-d28b-4b26-9f01-13cca621d55e'; // Replace with your actual API key.
+        $apiKey 	= get_option( 'coatalynk_datalastic_apikey' );
         $endpoint = 'https://api.datalastic.com/api/v0/vessel_find';
         $params = array(
             'api-key' => $apiKey,

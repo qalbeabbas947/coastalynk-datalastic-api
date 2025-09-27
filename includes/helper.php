@@ -446,11 +446,11 @@ function coastalynk_side_bar_menu() {
     
     global $post;
     
-    $coatalynk_ports_page 	= get_option( 'coatalynk_ports_page' );
-    $coatalynk_vessels_page = get_option( 'coatalynk_vessels_page' );
-    $coatalynk_sbm_page 	= get_option( 'coatalynk_sbm_page' );
-    $coatalynk_sts_page 	= get_option( 'coatalynk_sts_page' );
-
+    $coatalynk_ports_page 	            = get_option( 'coatalynk_ports_page' );
+    $coatalynk_vessels_page             = get_option( 'coatalynk_vessels_page' );
+    $coatalynk_sbm_page 	            = get_option( 'coatalynk_sbm_page' );
+    $coatalynk_sts_page 	            = get_option( 'coatalynk_sts_page' );
+    $coatalynk_leavy_calculator_page 	= get_option( 'coatalynk_leavy_calculator_page' );
     ?>
         <div class="coastlynk-vessel-dashboard-menu" id="coastlynk-vessel-dashboard-menu">
             <ul class="coastlynk-vessel-menu-items">
@@ -512,6 +512,15 @@ function coastalynk_side_bar_menu() {
                         <div class="coastlynk-vessel-menu-text"><a href="<?php echo get_permalink($coatalynk_sts_page);?>"><?php _e( "STS MAP", "castalynkmap" );?></a></div>
                     </li>
                 <?php } ?>
+                <?php if( in_array( $user_type, [REGULATOR_USER, ADMIN_USER]) ) { ?>
+                    <li class="coastlynk-vessel-menu-item <?php echo $post->ID==$coatalynk_leavy_calculator_page?'active':'';?>">
+                        <div class="coastlynk-vessel-menu-icon">
+                            <a href="<?php echo get_permalink($coatalynk_leavy_calculator_page);?>"><i class="fa-solid fa-calculator"></i></a>
+                        </div>
+                        <div class="coastlynk-vessel-menu-text"><a href="<?php echo get_permalink($coatalynk_leavy_calculator_page);?>"><?php _e( "Leavy Calculator", "castalynkmap" );?></a></div>
+                    </li>
+                <?php } ?>
+                
                 <?php if( in_array( $user_type, [REGULATOR_USER, ADMIN_USER]) ) { ?>
                     <li class="coastlynk-vessel-menu-item">
                         <div class="coastlynk-vessel-menu-icon">
