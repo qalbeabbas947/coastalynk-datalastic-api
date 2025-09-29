@@ -79,7 +79,7 @@
     font-weight: bold;color: var(--wp--preset--color--text-blue);
 }
 
-.coastalynk-calculator-calculate-btn {
+.coastalynk-calculator-calculate-btn, .coastalynk-calculator-Download-Receipt-btn {
     background-color: #3498db;
     color: white;
     border: none;
@@ -97,7 +97,7 @@
 
 }
 
-.coastalynk-calculator-calculate-btn:hover {
+.coastalynk-calculator-calculate-btn:hover, .coastalynk-calculator-Download-Receipt-btn:hover {
     background-color: #2980b9;
 }
 

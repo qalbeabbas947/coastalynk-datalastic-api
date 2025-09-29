@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
         gtInput: document.getElementById('coastalynk-calculator-gt'),
         ntInput: document.getElementById('coastalynk-calculator-nt'),
         calculateBtn: document.getElementById('coastalynk-calculator-calculate'),
+        downloadBtn: document.getElementById('coastalynk-calculator-Download-Receipt-btn'),
         resetBtn: document.getElementById('coastalynk-calculator-reset-btn'),
         resultElement: document.getElementById('coastalynk-calculator-result-value'),
         gtError: document.getElementById('coastalynk-calculator-gt-error'),
@@ -32,7 +33,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 isValid = false;
             }
             
-            if (!isValid) {
+            if (!isValid) { 
                 coastalynk_leavy_calculator.resultElement.textContent = '-';
                 return;
             }
@@ -41,7 +42,17 @@ document.addEventListener('DOMContentLoaded', function() {
             const levy = (gt * coastalynk_leavy_calculator.rate1) + (nt * coastalynk_leavy_calculator.rate2);
             
             // Display result with formatting
-            coastalynk_leavy_calculator.resultElement.textContent = '₦' + levy.toFixed(2);
+            if( COSTALYNK_CALC_VARS.calculator_type == 'dwt' ) {
+                let min_dwt = 2000000;
+                if( levy < min_dwt ) {
+                    coastalynk_leavy_calculator.resultElement.textContent = '₦' + min_dwt;
+                } else {
+                    coastalynk_leavy_calculator.resultElement.textContent = '₦' + ( Math.ceil(levy / 10000) * 10000 )
+                }
+            } else {
+                coastalynk_leavy_calculator.resultElement.textContent = '₦' + levy.toFixed(2);
+            }
+            
         },
         resetForm: function() {
             coastalynk_leavy_calculator.gtInput.value = '';
@@ -49,6 +60,50 @@ document.addEventListener('DOMContentLoaded', function() {
             coastalynk_leavy_calculator.resultElement.textContent = '-';
             coastalynk_leavy_calculator.gtError.style.display = 'none';
             coastalynk_leavy_calculator.ntError.style.display = 'none';
+        },
+        downloadForm: function() {
+            // Reset error messages
+            coastalynk_leavy_calculator.gtError.style.display = 'none';
+            coastalynk_leavy_calculator.ntError.style.display = 'none';
+            
+            // Get input values
+            const gt = parseFloat(coastalynk_leavy_calculator.gtInput.value);
+            const nt = parseFloat(coastalynk_leavy_calculator.ntInput.value);
+            
+            // Validate inputs
+            let isValid = true;
+            
+            if (isNaN(gt) || gt < 0) {
+                coastalynk_leavy_calculator.gtError.style.display = 'block';
+                isValid = false;
+            }
+            
+            if (isNaN(nt) || nt < 0) {
+                coastalynk_leavy_calculator.ntError.style.display = 'block';
+                isValid = false;
+            }
+            
+            if (!isValid) { 
+                coastalynk_leavy_calculator.resultElement.textContent = '-';
+                return;
+            }
+            
+            // Calculate levy
+            const levy = (gt * coastalynk_leavy_calculator.rate1) + (nt * coastalynk_leavy_calculator.rate2);
+            
+            // Display result with formatting
+            if( COSTALYNK_CALC_VARS.calculator_type == 'dwt' ) {
+                let min_dwt = 2000000;
+                if( levy < min_dwt ) {
+                    coastalynk_leavy_calculator.resultElement.textContent = '₦' + min_dwt;
+                } else {
+                    coastalynk_leavy_calculator.resultElement.textContent = '₦' + ( Math.ceil(levy / 10000) * 10000 )
+                }
+            } else {
+                coastalynk_leavy_calculator.resultElement.textContent = '₦' + levy.toFixed(2);
+            }
+
+            document.getElementById('coastalynk-download-levy-receipt').submit();
         },
         init: function() {
 
@@ -62,6 +117,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             this.calculateBtn.addEventListener('click', coastalynk_leavy_calculator.calculateLevy);
             this.resetBtn.addEventListener('click', coastalynk_leavy_calculator.resetForm);
+            this.downloadBtn.addEventListener('click', coastalynk_leavy_calculator.downloadForm);
             
             // Allow Enter key to trigger calculation
             document.addEventListener('keypress', function(e) {

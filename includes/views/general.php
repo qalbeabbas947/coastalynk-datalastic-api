@@ -6,12 +6,14 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit;
 }
 
-$coatalynk_datalastic_apikey 	    = get_option( 'coatalynk_datalastic_apikey' );
-$coatalynk_ports_page 	            = get_option( 'coatalynk_ports_page' );
-$coatalynk_vessels_page             = get_option( 'coatalynk_vessels_page' );
-$coatalynk_sbm_page 	            = get_option( 'coatalynk_sbm_page' );
-$coatalynk_sts_page 	            = get_option( 'coatalynk_sts_page' );
-$coatalynk_levy_calculator_page 	= get_option( 'coatalynk_levy_calculator_page' );
+$coatalynk_datalastic_apikey 	        = get_option( 'coatalynk_datalastic_apikey' );
+$coatalynk_ports_page 	                = get_option( 'coatalynk_ports_page' );
+$coatalynk_vessels_page                 = get_option( 'coatalynk_vessels_page' );
+$coatalynk_sbm_page 	                = get_option( 'coatalynk_sbm_page' );
+$coatalynk_sts_page 	                = get_option( 'coatalynk_sts_page' );
+$coatalynk_levy_calculator_page 	    = get_option( 'coatalynk_levy_calculator_page' );
+
+$coatalynk_levy_calculator_type 	    = get_option( 'coatalynk_levy_calculator_type' );
 $coatalynk_levy_calculator_page_rate1 	= get_option( 'coatalynk_levy_calculator_page_rate1' );
 $coatalynk_levy_calculator_page_rate2 	= get_option( 'coatalynk_levy_calculator_page_rate2' );
 
@@ -93,6 +95,21 @@ if( floatval( $coatalynk_levy_calculator_page_rate2 ) <= 0 ) {
                         </p>
                     </td>    
                 </tr>  
+
+                <tr> 
+                    <td align="left" valign="top">
+						<strong><label align="left" for="coatalynk_levy_calculator_page_rate1"><?php _e( 'Levy Calculator Type', 'castalynkmap' ); ?></label></strong>
+					</td>
+                    <td>
+                        <select id="coatalynk_levy_calculator_type" name="coatalynk_levy_calculator_type">
+                            <option value="normal" selected><?php echo __('Type A', "castalynkmap" ); ?></option>
+                            <option value="dwt" <?php echo $coatalynk_levy_calculator_type=="dwt"?"selected":"";?>><?php echo __('Type B', "castalynkmap" ); ?></option>
+                        </select>   
+                        <p class="description">
+                            <?php echo __('Select the Levy Calculator Type.', "castalynkmap" ); ?>
+                        </p>
+                    </td>    
+                </tr>
                 <tr> 
                     <td align="left" valign="top">
 						<strong><label align="left" for="coatalynk_levy_calculator_page_rate1"><?php _e( 'Levy Calculator Rate 1', 'castalynkmap' ); ?></label></strong>

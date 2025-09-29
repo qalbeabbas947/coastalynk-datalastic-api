@@ -53,7 +53,7 @@ class Coastalynk_Sea_Vessel_Map {
         define( 'CSM_DIR', plugin_dir_path ( __FILE__ ) );
         define( 'CSM_DIR_FILE', CSM_DIR . basename ( __FILE__ ) );
         define( 'CSM_INCLUDES_DIR', trailingslashit ( CSM_DIR . 'includes' ) );
-        define( 'CSM_TEMPLATES_DIR', trailingslashit ( CSM_DIR . 'templates' ) );
+        define( 'CSM_LIB_DIR', trailingslashit ( CSM_DIR . 'lib' ) );
         define( 'CSM_BASE_DIR', plugin_basename(__FILE__));
 
         /**

@@ -35,9 +35,36 @@
 
                 $('.coastalynk-port-history').on('click', function(event) {
                     event.preventDefault();
-                    document.querySelector(".coastalynk-history-popup-overlay").style.display = 'block';
-                    document.querySelector(".coastalynk-history-popup-content").style.display = 'block';
-                    $('.coastalynk-history-button1').trigger('click');
+
+                    const data = new URLSearchParams();
+                    data.append('nonce', COSTALYNKVARS.nonce);
+                    data.append('action', 'coastalynk_congestion_history_ports_data');
+                    fetch(COSTALYNKVARS.ajaxURL, {
+                        method: 'POST',
+                        body: data // Or new URLSearchParams(data) for form data
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json(); // Or response.text() for plain text
+                    })
+                    .then( data => {
+
+                        
+                        console.log(data);
+                        
+                        document.querySelector(".coastalynk-history-popup-overlay").style.display = 'block';
+                        document.querySelector(".coastalynk-history-popup-content").style.display = 'block';
+                        $('.coastalynk-history-button1').trigger('click');
+                    })
+                    .catch(error => {
+                        console.error('There was a problem with the fetch operation:', error);
+                        document.querySelector(".coastalynk-history-popup-overlay").style.display = 'none';
+                        document.querySelector(".coastalynk-history-popup-content").style.display = 'none';
+                    });
+
+                    
                 });
             },
             ajax_retrieve_tonnage: function() {
@@ -53,10 +80,10 @@
                         type: 'POST',
                         aSync: false,
                         dataType: "html",
-                        url: COSTALUNKVARS.ajaxURL, // URL from our localized variable
+                        url: COSTALYNKVARS.ajaxURL, // URL from our localized variable
                         data: {
                             action: 'coastalynk_retrieve_tonnage', // The WordPress hook to trigger
-                            nonce: COSTALUNKVARS.nonce,     // The nonce value
+                            nonce: COSTALYNKVARS.nonce,     // The nonce value
                             selected_uuid: uuid,
                             selected_name: name
                         },
@@ -75,7 +102,7 @@
             
             load_ajax_port_congestion: function() {
                 // Example: Trigger the AJAX call on a button click
-                $('.coastalynk-port-selector button').on('click', function(e) {
+                $('.coastalynk-port-selector button.port-button').on('click', function(e) {
                     e.preventDefault();
                     let port  = $(this).data( "port" );
                     if( port == 'all' ) {
@@ -89,10 +116,10 @@
                         type: 'POST',
                         aSync: false,
                         dataType: "html",
-                        url: COSTALUNKVARS.ajaxURL, // URL from our localized variable
+                        url: COSTALYNKVARS.ajaxURL, // URL from our localized variable
                         data: {
                             action: 'coastalynk_load_port_congestion', // The WordPress hook to trigger
-                            nonce: COSTALUNKVARS.nonce,     // The nonce value
+                            nonce: COSTALYNKVARS.nonce,     // The nonce value
                             selected_port: port
                         },
                         success: function(response) {

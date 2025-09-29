@@ -22,10 +22,10 @@
                         type: 'POST',
                         aSync: false,
                         dataType: "html",
-                        url: COSTALUNKVARS.ajaxURL, // URL from our localized variable
+                        url: COSTALYNKVARS.ajaxURL, // URL from our localized variable
                         data: {
                             action: 'coastalynk_retrieve_tonnage', // The WordPress hook to trigger
-                            nonce: COSTALUNKVARS.nonce,     // The nonce value
+                            nonce: COSTALYNKVARS.nonce,     // The nonce value
                             selected_uuid: uuid,
                             selected_name: name
                         },
@@ -44,7 +44,7 @@
             
             load_ajax_port_congestion: function() {
                 // Example: Trigger the AJAX call on a button click
-                $('.coastalynk-port-selector button').on('click', function(e) {
+                $('.coastalynk-port-selector button.port-button').on('click', function(e) {
                     e.preventDefault();
                     let port  = $(this).data( "port" );
                     if( port == 'all' ) {
@@ -58,10 +58,10 @@
                         type: 'POST',
                         aSync: false,
                         dataType: "html",
-                        url: COSTALUNKVARS.ajaxURL, // URL from our localized variable
+                        url: COSTALYNKVARS.ajaxURL, // URL from our localized variable
                         data: {
                             action: 'coastalynk_load_port_congestion', // The WordPress hook to trigger
-                            nonce: COSTALUNKVARS.nonce,     // The nonce value
+                            nonce: COSTALYNKVARS.nonce,     // The nonce value
                             selected_port: port
                         },
                         success: function(response) {

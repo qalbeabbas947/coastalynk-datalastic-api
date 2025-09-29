@@ -248,6 +248,7 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                     <div class="controls">
                         
                         <div class="port-selector coastalynk-port-selector">
+                            <button class="coastalynk-port-history"><?php _e( "History", "castalynkmap" );?></button>
                             <input type="image" class="coastlynk-menu-dashboard-open-close-burger" src="<?php echo CSM_IMAGES_URL;?>burger-port-page.png" />
                             <button class="port-button active" data-port="all"><?php _e( "All Ports", "castalynkmap" );?></button>
                             <button class="port-button" data-port="apapa"><?php _e( "Apapa", "castalynkmap" );?></button>
@@ -257,7 +258,7 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                             <button class="port-button" data-port="lomé"><?php _e( "Lomé", "castalynkmap" );?>Lomé</button>
                             <button class="port-button" data-port="tema"><?php _e( "Tema", "castalynkmap" );?></button>
                         </div>
-                        <button class="coastalynk-port-history"><?php _e( "History", "castalynkmap" );?></button>
+                        
                             
                         <div class="view-options">
                             <button class="view-button coastalynk-map-view-button-first active" data-view="heatmap"><?php _e( "Heatmap", "castalynkmap" );?></button>
@@ -452,8 +453,10 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                     <button class="coastalynk-history-button coastalynk-history-button2" data-id = "coastalynk-history-button-2">Week 2</button>
                 </div>
                 <div class="caostalynk-history-header-images">
+
                     <img class="coastalynk-history-image coastalynk-history-button-1" src="<?php echo CSM_IMAGES_URL; ?>history1.png" alt="Congestion 1">
                     <img class="coastalynk-history-image coastalynk-history-button-2" src="<?php echo CSM_IMAGES_URL; ?>history2.png" alt="Congestion 2">
+
                 </div>
             </div>
             <button id="coastalynk-history-popup-close"><?php _e( "Back to Results", "castalynkmap" );?></button>
@@ -735,7 +738,7 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
         wp_enqueue_script( 'coastlynk-ticker-js', CSM_JS_URL.'ticker.js', array( 'jquery' ), time(), true );
 
         wp_enqueue_script( 'coastlynk-map-js', CSM_JS_URL.'port-congestion-shortcode.js', array( 'jquery' ), time(), true );
-        wp_localize_script( 'coastlynk-map-js', 'COSTALUNKVARS', [          
+        wp_localize_script( 'coastlynk-map-js', 'COSTALYNKVARS', [          
                 'ajaxURL' => admin_url( 'admin-ajax.php' ),
                 'nonce'    => wp_create_nonce('coastalynk_secure_ajax_nonce') // Create nonce
             ] );
