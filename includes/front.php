@@ -43,14 +43,102 @@ class Coastalynk_Sea_Vessel_Map_Front {
         
         add_action('admin_post_coastalynk_leavy_form_download_pdf_submit', [ $this, 'download_pdf_submit' ]);
         add_action('admin_post_nopriv_coastalynk_leavy_form_download_pdf_submit', [ $this, 'download_pdf_submit' ]);
+
+        
+        add_action('admin_post_coastalynk_congestion_history_load_action', [ $this, 'coastalynk_congestion_history_load_action_callback' ]);
+        add_action('admin_post_nopriv_coastalynk_congestion_history_load_action', [ $this, 'coastalynk_congestion_history_load_action_callback' ]);
+
+        add_action('admin_post_coastalynk_congestion_history_export_action', [ $this, 'coastalynk_congestion_history_export_action_callback' ]);
+        add_action('admin_post_nopriv_coastalynk_congestion_history_export_action', [ $this, 'coastalynk_congestion_history_export_action_callback' ]);
+
+    }
+
+    /**
+     * show_vessels shortcode content.
+     */
+    function coastalynk_congestion_history_export_action_callback( ) {
+        
+        global $wpdb;
+        if (!isset($_POST['coastalynk_congestion_history_load_nonce']) || !wp_verify_nonce($_POST['coastalynk_congestion_history_load_nonce'], 'coastalynk_congestion_history_load')) {
+            $error_url = add_query_arg('form_error', 'Security verification failed', wp_get_referer());
+            wp_redirect($error_url);
+            exit;
+        }
+
+        $port      = sanitize_text_field( $_REQUEST['caostalynk_history_ddl_ports'] );
+        $date_range = sanitize_text_field( $_REQUEST['caostalynk_congestion_history_range'] );
+        $date       = sanitize_text_field( $_REQUEST['caostalynk_history_ddl_dates'] );
+        $time      = sanitize_text_field( $_REQUEST['caostalynk_history_ddl_times'] );
+
+        if( ( ! empty( $date ) && ! empty( $time ) ) || !empty( $date_range ) ) {
+
+            $where = '';
+            if( ! empty( $port ) ) {
+                $where = " and port = '".$port."' ";
+            }
+
+            if( ! empty( $date ) && ! empty( $time ) ) {
+                $date_time = strtotime( date('Y-m-d H:i:s', strtotime( $date.' '.$time ) ));
+                $results = $wpdb->get_results( $wpdb->prepare( "select id, port from ".$wpdb->prefix."coastalynk_port_congestion where Hour(updated_at) = %s and Minute(updated_at) = %s and Date(updated_at) = %s", date('H', $date_time ), date('i', $date_time ), date('Y-m-d', $date_time ) ).$where );
+            } else {
+                $start_date = '';
+                $end_date = '';
+                if( !empty( $date_range ) ) {
+                    $explode = explode( '-', $date_range );
+                    $start_date = date( 'Y-m-d H:i:s', strtotime( trim( $explode[0] ) ) );
+                    $end_date = date( 'Y-m-d H:i:s', strtotime( trim( $explode[1] ) ) );
+                } else {
+                    $start_date = date( 'Y-m-d' );
+                    $end_date = date( 'Y-m-d', strtotime('-6 Days'));
+                }
+
+                $results = $wpdb->get_results( $wpdb->prepare( "select id, port from ".$wpdb->prefix."coastalynk_port_congestion where updated_at BETWEEN %s AND %s", $start_date, $end_date).$where );
+        
+            }
+            $array = [];
+            $vessle_recs = [];
+            foreach( $results as $result ) {
+                $sql = "SELECT uuid,`name`,`mmsi`,`eni`,`imo`, '".$result->port."' as port,`type`,`type_specific`,`country_iso`, `navigation_status`, `lat`, `lon`, `speed`, `course`, `heading`, `current_draught`, `dest_port_uuid`, `dest_port`, `dest_port_unlocode`, `dep_port`, `dep_port_uuid`, `dep_port_unlocode`, `last_position_epoch`, `last_position_UTC`, `atd_epoch`, `atd_UTC`, `eta_epoch`, `eta_UTC`, `destination` FROM `staging_coastalynk_port_congestion_vessels` WHERE `congestion_id`=%d;"; 
+                $array = $wpdb->get_results( $wpdb->prepare( $sql, $result->id ), ARRAY_A  );
+                $vessle_recs = array_merge( $vessle_recs, $array );
+            }
+
+            $headers = [];
+            if( ! empty( $vessle_recs ) && is_array( $vessle_recs ) ) {
+                $headers = array_keys( $vessle_recs[0] );
+            }
+            
+            $fp = fopen('php://output', 'w'); 
+            if ($fp && $vessle_recs){     
+                header('Content-Type: text/csv');
+                header('Content-Disposition: attachment; filename="port-congestions.csv"');
+                header('Pragma: no-cache');    
+                header('Expires: 0');
+                fputcsv($fp, $headers); 
+                foreach( $vessle_recs as $vessle_row ) {
+                    fputcsv($fp, array_values($vessle_row)); 
+                }
+            }
+        }
+        exit;
+    }
+
+    /**
+     * show_vessels shortcode content.
+     */
+    function coastalynk_congestion_history_load_action_callback( ) {
+        $port_code = sanitize_text_field( $_POST['port_code'] );
+        $start_date = sanitize_text_field( $_POST['start_date'] );
+        $end_date = sanitize_text_field( $_POST['end_date'] );
+
+        echo 'coastalynk_congestion_history_load_action_callback:'.$port_code.' '. $start_date.' '.$end_date;exit;
     }
 
     /**
      * show_vessels shortcode content.
      */
     function download_pdf_submit( ) {
-ini_set( "display_errors", "On" );
-error_reporting(E_ALL);
+
         // if (!isset($_POST['coastalynk_leavy_form_download_pdf_submit_nonce']) || !wp_verify_nonce($_POST['coastalynk_leavy_form_download_pdf_submit_nonce'], 'coastalynk_leavy_form_download_pdf_submit_form')) {
         //     $error_url = add_query_arg('form_error', 'Security verification failed', wp_get_referer());
         //     wp_redirect($error_url);
@@ -84,13 +172,13 @@ error_reporting(E_ALL);
         if( $coatalynk_levy_calculator_type == 'dwt' ) {
             $min_dwt = 2000000;
             if( $levy < $min_dwt ) {
-                $levystr = number_format( $min_dwt, 2 ).' '.'<span class="currency">&#x20A6;</span>';
+                $levystr = '<span class="currency">&#x20A6;</span>'.number_format( $min_dwt, 2 );
             } else {
-                $levystr = number_format( ceil($levy / 10000) * 10000 , 2).' '.'<span class="currency">&#x20A6;</span>';
+                $levystr = '<span class="currency">&#x20A6;</span>'.number_format( ceil($levy / 10000) * 10000 , 2);
             }
             $second_param_str = __( "Dead Weight Tonnage (DWT)", "castalynkmap" );
         } else {
-            $levystr = number_format($levy, 2).' '.'<span class="currency">&#x20A6;</span>';
+            $levystr = '<span class="currency">&#x20A6;</span>'.number_format($levy, 2);
             $second_param_str = __( "Net Tonnage (NT)", "castalynkmap" );
         }
 
@@ -130,7 +218,7 @@ error_reporting(E_ALL);
                 
                     <tr style="background-color:#317ec6;">
                         <td width="35%" style="background-color:#317ec6;"><img width=""171px src="'.$base64Image.'" /></td>
-                        <td width="65%" valign="" style="background-color:#317ec6;color:white;"><h2>'.__( "CoastaLynk", "castalynkmap" ).'</h2><p>Coastalynk is a Nigerian-based maritime platform aiming to provide tracking services, business directories, port schedules, and logistics news, serving B2B and government clients.</p></td>
+                        <td width="65%" valign="" style="background-color:#317ec6;color:white;"><h2>'.__( "Coastalynk", "castalynkmap" ).'</h2><span style="font-size:13px; color: white;">'.__( "Digital Maritime Intelligence Platform", "castalynkmap" ).'</span></td>
                     </tr>
                     <tr>
                         <td>&nbsp;</td>
@@ -142,12 +230,12 @@ error_reporting(E_ALL);
                     </tr>
                     <tr>
                         <td class="header-td">'.__( "Gross Tonnage (GT)", "castalynkmap" ).'</td>
-                        <td class="data-td">'.$coastalynk_calculator_gt.' '.__( "tons", "castalynkmap" ).'</td>
+                        <td class="data-td">'.number_format($coastalynk_calculator_gt,2).' '.__( "tons", "castalynkmap" ).'</td>
                     </tr>
                     
                     <tr>
                         <td class="header-td">'.$second_param_str.'</td>
-                        <td class="data-td">'.$coastalynk_calculator_nt.' '.__( "tons", "castalynkmap" ).'</td>
+                        <td class="data-td">'.number_format($coastalynk_calculator_nt,2).' '.__( "tons", "castalynkmap" ).'</td>
                     </tr>
                     
                     <tr>
@@ -160,7 +248,7 @@ error_reporting(E_ALL);
                     </tr>
                 </table>
             </div>
-            <footer>Generated by Coastalynk Levy Calculator - Demo.</footer>
+            <footer>Generated by Coastalynk Levy Calculator - Pilot Version.</footer>
         </body>
         </html>';
 
@@ -179,7 +267,7 @@ error_reporting(E_ALL);
         exit;
     }
     /**
-     * show_vessels shortcode content.
+     * ports data.
      */
     function congestion_history_ports_data( ) {
         global $wpdb;
@@ -189,7 +277,40 @@ error_reporting(E_ALL);
             wp_die();
         }
 
-        echo json_encode($_REQUEST);
+        $port = sanitize_text_field( $_REQUEST['port'] );
+        $dates = sanitize_text_field( $_REQUEST['dates'] );
+        $start_date = '';
+        $end_date = '';
+        if( !empty( $dates ) ) {
+            $explode = explode( '-', $dates );
+            $start_date = date( 'Y-m-d H:i:s', strtotime( trim( $explode[0] ) ) );
+            $end_date = date( 'Y-m-d H:i:s', strtotime( trim( $explode[1] ) ) );
+        } else {
+            $start_date = date( 'Y-m-d' );
+            $end_date = date( 'Y-m-d', strtotime('-6 Days'));
+        }
+
+        $where = '';
+        if( !empty( $port ) ) {
+            $where = " and port = '".$port."' ";
+        }
+
+        $results = $wpdb->get_results( $wpdb->prepare( "select updated_at from ".$wpdb->prefix."coastalynk_port_congestion where updated_at BETWEEN %s AND %s", $start_date, $end_date).$where );
+        $array = [];
+        
+        foreach( $results as $result ) {
+            $date = date( 'Y-m-d', strtotime( $result->updated_at ) );
+            $time = date( 'h:i A', strtotime( $result->updated_at ) );
+            
+            if( array_key_exists( $date, $array ) ) {
+               if( ! in_array( $time, $array[$date] ) ) {
+                    $array[$date][] = $time;
+                }
+            } else {
+                $array[$date] = [$time];
+            }
+        }
+        echo wp_send_json_success(['date_all'=>__( "All Dates", "castalynkmap" ), 'time_all'=>__( "All Times", "castalynkmap" ), 'options'=>$array]);
         exit;
     }
 
@@ -197,9 +318,9 @@ error_reporting(E_ALL);
      * show_vessels shortcode content.
      */
     function coastalynk_show_port_congestion( ) {
-
+        
         global $wpdb;
-
+ 
         if ( ! check_ajax_referer( 'coastalynk_secure_ajax_nonce', 'nonce', false ) ) {
             wp_send_json_error( __( 'Security nonce check failed. Please refresh the page.', "castalynkmap" ) );
             wp_die();
@@ -207,32 +328,41 @@ error_reporting(E_ALL);
 
         $port_name = sanitize_text_field( $_REQUEST['selected_port'] );
         if( empty( $port_name ) || $port_name == 'all' ) {
-            $port_name = 'Apapa';
+            $port_name = 'WARRI';
         }  
 
         ob_start();
-        $types = [ "Cargo", "Tanker", "Passenger", "Tug", "Pilot", "Dredger", "Fishing", "Law Enforcement", "Other" ];
         ?>
             <div class="section-title d-flex justify-content-between mb-0 leftalign">
                 <h3><?php echo  __( ucwords( $port_name ) . ' Port Congestion', "castalynkmap" );?></h3>               
             </div>
         <?php
-        $updated_at = $wpdb->get_var( "select updated_at from ".$wpdb->prefix."port_congestion limit 1" );
+        $updated_at = '';
+        $congestion_id = 0;
+        $congestion = $wpdb->get_row( "select id, updated_at from ".$wpdb->prefix."coastalynk_port_congestion where port like '%" . $wpdb->esc_like( $port_name ) . "%' order by id desc limit 1" );
+        if( $congestion ) {
+            $updated_at = $congestion->updated_at;
+            $congestion_id = $congestion->id;
+        }
+        
         ?>
         <div class="coastalynk-stat-main-wrapper">
             <div class="coastalynk-stat-item-wrapper">
                 <?php
-                foreach( $types as $type  ) {
-                    $total = $wpdb->get_var( "select sum(total) as total from ".$wpdb->prefix."port_congestion where port like '%" . $wpdb->esc_like( $port_name ) . "%'  and vessel_type like '%" . $wpdb->esc_like( $type ) . "%'" );
-                    if( intval($total) > 0 ) {
-                        ?>
-                            <div class="stat-item">
-                                <div class="stat-label"><?php _e( ucwords( $type ), "castalynkmap" );?></div>
-                                <div class="stat-value" id="total-vessels">
-                                    <?php echo $total;?> <?php if(intval( $total ) > 1 ) { echo __( "vessel(s)", "castalynkmap" ); } else { echo __( "vessel", "castalynkmap" ); } ?>
+                $columns = $wpdb->get_col( "select distinct(type) as type from ".$wpdb->prefix."coastalynk_port_congestion_vessels where congestion_id='" .$congestion_id."'" );
+                foreach( $columns as $type  ) {
+                    if( !empty( $type ) ) {
+                        $total = $wpdb->get_var( "select count(id) as total from ".$wpdb->prefix."coastalynk_port_congestion_vessels where congestion_id='" .$congestion_id."' and type like '%" . $wpdb->esc_like( $type ) . "%'" );
+                        if( intval($total) > 0 ) {
+                            ?>
+                                <div class="stat-item">
+                                    <div class="stat-label"><?php _e( ucwords( $type ), "castalynkmap" );?></div>
+                                    <div class="stat-value" id="total-vessels">
+                                        <?php echo $total;?> <?php if(intval( $total ) > 1 ) { echo __( "vessel(s)", "castalynkmap" ); } else { echo __( "vessel", "castalynkmap" ); } ?>
+                                    </div>
                                 </div>
-                            </div>
-                        <?php
+                            <?php
+                        }
                     }
                 }
                 ?>

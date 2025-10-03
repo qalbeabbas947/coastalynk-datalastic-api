@@ -56,11 +56,11 @@ class Coastalynk_Dashboard_Port_Congestion_Home_Shortcode {
         // 1. Define the center points (latitude, longitude) of our ports
         $ports = [
             'Apapa' => [6.45, 3.36],
-            'TinCanIsland' => [6.44, 3.34],
-            'Onne' => [4.71, 7.15],
-            'Calabar' => [4.95, 8.32],
-            'Lomé' => [6.1375, 1.2870],
-            'Tema' => [5.6167, 0.0167],
+            // 'TinCanIsland' => [6.44, 3.34],
+            // 'Onne' => [4.71, 7.15],
+            // 'Calabar' => [4.95, 8.32],
+            // 'Lomé' => [6.1375, 1.2870],
+            // 'Tema' => [5.6167, 0.0167],
         ];
 
         // 2. Define the search radius (in kilometers) around each port

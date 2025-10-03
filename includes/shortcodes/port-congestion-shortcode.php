@@ -56,15 +56,13 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
         // Your Datalastic API Key
         
         $total_port_vessels = [];
-        // 1. Define the center points (latitude, longitude) of our ports
-        $ports = [
-            'Apapa' => [6.45, 3.36],
-            'TinCanIsland' => [6.44, 3.34],
-            'Onne' => [4.71, 7.15],
-            'Calabar' => [4.95, 8.32],
-            'Lomé' => [6.1375, 1.2870],
-            'Tema' => [5.6167, 0.0167],
-        ];
+        $table_name = $wpdb->prefix . 'coastalynk_ports';
+        $port_data = $wpdb->get_results("SELECT * FROM $table_name where country_iso='NG' and port_type='Port'");
+
+        $ports = [];  
+        foreach( $port_data as $port ) {
+            $ports[$port->title] = [$port->lat, $port->lon];
+        }
 
         // 2. Define the search radius (in kilometers) around each port
         $searchRadiusKm = 10; // Search 10 km around each port center
@@ -248,18 +246,19 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                     <div class="controls">
                         
                         <div class="port-selector coastalynk-port-selector">
-                            <button class="coastalynk-port-history"><?php _e( "History", "castalynkmap" );?></button>
                             <input type="image" class="coastlynk-menu-dashboard-open-close-burger" src="<?php echo CSM_IMAGES_URL;?>burger-port-page.png" />
-                            <button class="port-button active" data-port="all"><?php _e( "All Ports", "castalynkmap" );?></button>
-                            <button class="port-button" data-port="apapa"><?php _e( "Apapa", "castalynkmap" );?></button>
-                            <button class="port-button" data-port="TinCanIsland"><?php _e( "Tin Can Island", "castalynkmap" );?></button>
-                            <button class="port-button" data-port="onne"><?php _e( "Onne", "castalynkmap" );?></button>
-                            <button class="port-button" data-port="calabar"><?php _e( "Calabar", "castalynkmap" );?></button>
-                            <button class="port-button" data-port="lomé"><?php _e( "Lomé", "castalynkmap" );?>Lomé</button>
-                            <button class="port-button" data-port="tema"><?php _e( "Tema", "castalynkmap" );?></button>
+                            <!-- <button class="coastalynk-port-history"><?php _e( "History", "castalynkmap" );?></button> -->
+                            <div class="coastalynk-port-menu-container">
+                                <button id="coastalynk-port-prev-btn">&lt;</button>
+                                <div class="port-selector coastalynk-port-selector coastalynk-port-scroll-menu">
+                                    <button class="port-button active" data-port="all"><?php _e( "All Ports", "castalynkmap" );?></button>
+                                    <?php foreach( $ports as $port => $coords ) { ?>
+                                        <button class="port-button" data-port="<?php echo $port;?>"><?php _e( $port, "castalynkmap" );?></button>
+                                    <?php } ?>
+                                </div>
+                                <button id="coastalynk-port-next-btn">&gt;</button>
+                            </div>
                         </div>
-                        
-                            
                         <div class="view-options">
                             <button class="view-button coastalynk-map-view-button-first active" data-view="heatmap"><?php _e( "Heatmap", "castalynkmap" );?></button>
                             <button class="view-button" data-view="vessels"><?php _e( "Vessels", "castalynkmap" );?></button>
@@ -291,6 +290,7 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                         <div id="map"></div>
                     </div>
                 </div>
+
                 <div class="coastlynk-darkship-ticker-container">
                     <div class="coastlynk-darkship-ticker-wrapper">
                         <div class="coastallynk-darkship-ticker" id="coastallynk-darkship-ticker">
@@ -304,8 +304,6 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                                 <?php
                             }
                             ?>
-                            
-                            
                         </div>
                     </div>
                     
@@ -313,87 +311,80 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                         <button id="coastalynk-darkship-pause-btn"><?php _e( "Pause", "castalynkmap" );?></button>
                         <button id="coastalynk-darkship-resume-btn"><?php _e( "Resume", "castalynkmap" );?></button>
                     </div>
-                    
                 </div>
+
+                <form method="post" id="coastalynk-port-congestion-history-form" action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" name="coastalynk-port-congestion-history-form">
+                    <div class="section-title d-flex justify-content-between mb-0 leftalign">
+                        <h2><?php _e( "Congestion History", "castalynkmap" );?></h2>               
+                    </div>
+                    <div class="caostalynk-history-header-buttons">
+                        <div class="coastalynk-congestion-history-ports">
+                            <select id="caostalynk_history_ddl_ports" class="coastalynk-select2-js" name="caostalynk_history_ddl_ports">
+                                <option value=""><?php _e( "All Ports", "castalynkmap" );?></option>
+                                <?php foreach( $port_data as $port ) { ?>
+                                    <option value="<?php echo $port->port_id;?>"><?php echo $port->title;?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                        <div class="coastalynk-congestion-history-date-range">
+                            <input id="caostalynk_congestion_history_range" type="text" class="coastalynk-date-range-js" name="caostalynk_congestion_history_range">
+                        </div>
+                        <div class="coastalynk-congestion-history-dates" style="display: none;">
+                            <select id="caostalynk_history_ddl_dates" class="caostalynk_history_ddl_dates" name="caostalynk_history_ddl_dates">
+                                <option value=""><?php _e( "All Dates", "castalynkmap" );?></option>
+                            </select>
+                        </div>
+                        <div class="coastalynk-congestion-history-times" style="display: none;">
+                            <select id="caostalynk-history-ddl-times" class="caostalynk_history_ddl_times" name="caostalynk_history_ddl_times">
+                                <option value=""><?php _e( "All Times", "castalynkmap" );?></option>
+                            </select>
+                        </div>
+                        <div class="coastalynk-congestion-history-buttons">
+                            <button class="coastalynk-history-button">
+                                <?php _e( "Sub Dates/Times", "castalynkmap" );?>
+                                <div id="coastalynk-column-loader" class="coastalynk-column-loader" style="display:none;">
+                                    <div id="coastalynk-column-blockG_1" class="coastalynk-column-blockG"></div>
+                                    <div id="coastalynk-column-blockG_2" class="coastalynk-column-blockG"></div>
+                                    <div id="coastalynk-column-blockG_3" class="coastalynk-column-blockG"></div>
+                                </div>
+                            </button>
+                            <button class="coastalynk-history-button-export-csv">
+                                <?php _e( "Export", "castalynkmap" );?>
+                                <div id="coastalynk-column-loader" class="coastalynk-column-loader" style="display:none;">
+                                    <div id="coastalynk-column-blockG_1" class="coastalynk-column-blockG"></div>
+                                    <div id="coastalynk-column-blockG_2" class="coastalynk-column-blockG"></div>
+                                    <div id="coastalynk-column-blockG_3" class="coastalynk-column-blockG"></div>
+                                </div>
+                            </button>
+                        </div>
+                        <?php wp_nonce_field( 'coastalynk_congestion_history_load', 'coastalynk_congestion_history_load_nonce' ); ?>
+                        <input type="hidden" id="coastalynk_congestion_history_load_action_ctrl" name="action" value="coastalynk_congestion_history_load_action" />
+                    </div>
+                </form>
+                
                 <div class="info-panel">
                     <div class="section-title d-flex justify-content-between mb-0 leftalign">
                         <h2><?php _e( "Port Information", "castalynkmap" );?></h2>               
                     </div>
                     <div class="port-info">
-                        <div class="port-card coastlynk-port-card" data-port="apapa">
-                            <h3>Apapa Port</h3>
-                            <div class="port-stat coastlynk-port-stat-code"> 
-                                <div>UN/LOCODE:</div>
-                                <span>NGAPP</span>
-                            </div>
-                            <div class="port-stat coastlynk-port-stat-vessel">
-                                <span>Vessels:</span>
-                                <span id="apapa-vessels"><?php echo $total_port_vessels["Apapa"];?></span> 
-                            </div>
-                            
-                        </div>
-                        <div class="port-card coastlynk-port-card" data-port="TinCanIsland">
-                            <h3>Tin Can Island Port</h3>
-                            <div class="port-stat coastlynk-port-stat-code">
-                                <span>UN/LOCODE:</span>
-                                <span>NGTIN</span>
-                            </div>
-                            <div class="port-stat coastlynk-port-stat-vessel">
-                                <span>Vessels:</span>
-                                <span id="tincan-vessels"><?php echo $total_port_vessels["TinCanIsland"];?></span>
-                            </div>
-                        </div>
                         
-                        <div class="port-card coastlynk-port-card" data-port="onne">
-                            <h3>Onne Port</h3>
-                            <div class="port-stat coastlynk-port-stat-code">
-                                <span>UN/LOCODE:</span>
-                                <span>NGONN</span>
+                        <?php foreach( $port_data as $port ) { ?>
+                            <div class="port-card coastlynk-port-card" data-port="<?php echo $port->title;?>">
+                                <h3><?php echo $port->title;?> <?php _e( "Port", "castalynkmap" );?></h3>
+                                <div class="port-stat coastlynk-port-stat-code"> 
+                                    <div><?php _e( "Lat/Lon", "castalynkmap" );?>:</div>
+                                    <span>[<?php echo number_format( $port->lat, 2);?>, <?php echo number_format( $port->lon, 2);?>]</span>
+                                </div>
+                                <div class="port-stat coastlynk-port-stat-vessel">
+                                    <span><?php _e( "Vessels", "castalynkmap" );?>:</span>
+                                    <span id="apapa-vessels"><?php echo $total_port_vessels[$port->title];?></span> 
+                                </div>
+                                
                             </div>
-                            <div class="port-stat coastlynk-port-stat-vessel">
-                                <span>Vessels:</span>
-                                <span id="onne-vessels"><?php echo $total_port_vessels["Onne"];?></span>
-                            </div>
-                        </div>
-                        
-                        <div class="port-card coastlynk-port-card" data-port="calabar">
-                            <h3>Calabar Port</h3>
-                            <div class="port-stat coastlynk-port-stat-code">
-                                <span>UN/LOCODE:</span>
-                                <span>NGCBQ</span>
-                            </div>
-                            <div class="port-stat coastlynk-port-stat-vessel">
-                                <span>Vessels:</span>
-                                <span id="calabar-vessels"><?php echo $total_port_vessels["Calabar"];?></span>
-                            </div>
-                        </div>
-
-                        <div class="port-card coastlynk-port-card" data-port="lomé">
-                            <h3>Lomé Port</h3>
-                            <div class="port-stat coastlynk-port-stat-code">
-                                <span>UN/LOCODE:</span>
-                                <span>TGLFW</span>
-                            </div>
-                            <div class="port-stat coastlynk-port-stat-vessel">
-                                <span>Vessels:</span>
-                                <span id="calabar-vessels"><?php echo $total_port_vessels["Lomé"];?></span>
-                            </div>
-                        </div>
-
-                        <div class="port-card coastlynk-port-card" data-port="tema">
-                            <h3>Tema Port</h3>
-                            <div class="port-stat coastlynk-port-stat-code">
-                                <span>UN/LOCODE:</span>
-                                <span>GHTEM</span>
-                            </div>
-                            <div class="port-stat coastlynk-port-stat-vessel">
-                                <span>Vessels:</span>
-                                <span id="calabar-vessels"><?php echo $total_port_vessels["Tema"];?></span>
-                            </div>
-                        </div>
-
+                        <?php } ?>
                     </div>
                 </div>
+                
                 <table id="coastalynk-table" class="display" class="cell-border hover stripe">
                     <thead>
                         <tr>
@@ -429,7 +420,7 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                                 <td><?php echo $feature['properties']['timestamp'] ? date('Y-m-d H:i:s', $feature['properties']['timestamp']) : 'N/A'; ?></td>
                                 <td>
                                     <input type="button" class="coastalynk-retrieve-tonnage-btn" data-name="<?php echo $feature['properties']['name']; ?>" data-uuid="<?php echo $feature['properties']['uuid']; ?>" value="<?php _e( "Retrieve Tonnage", "castalynkmap" );?>">
-                                    <div id="coastalynk-column-loader" style="display:none;">
+                                    <div id="coastalynk-column-loader" class="coastalynk-column-loader" style="display:none;">
                                         <div id="coastalynk-column-blockG_1" class="coastalynk-column-blockG"></div>
                                         <div id="coastalynk-column-blockG_2" class="coastalynk-column-blockG"></div>
                                         <div id="coastalynk-column-blockG_3" class="coastalynk-column-blockG"></div>
@@ -449,13 +440,27 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
             <h2>History</h2>
             <div class="coastalynk-history-popup-content-boxes">
                 <div class="caostalynk-history-header-buttons">
-                    <button class="coastalynk-history-button coastalynk-history-button1" data-id = "coastalynk-history-button-1">Week 1</button>
-                    <button class="coastalynk-history-button coastalynk-history-button2" data-id = "coastalynk-history-button-2">Week 2</button>
+                    <!-- <div class="coastalynk-congestion-history-ports">
+                        <?php
+                            $results = $wpdb->get_results( "select distinct(port) as port from ".$wpdb->prefix."coastalynk_port_congestion" );
+                        ?>
+                        <select id="caostalynk-history-ddl-ports" class="coastalynk-select2-js" name="caostalynk-history-ddl-ports">
+                            <option value=""><?php _e( "All Ports", "castalynkmap" );?></option>
+                            <?php foreach( $results as $result ) { ?>
+                                <option value="<?php echo $result->port;?>"><?php echo $result->port;?></option>
+                            <?php } ?>
+                        </select>
+                    </div>
+                    <div class="coastalynk-congestion-history-date-range">
+                        <input id="caostalynk_congestion_history_range" type="text" class="coastalynk-date-range-js" name="caostalynk_congestion_history_range">
+                    </div> 
+                    
+                    <button class="coastalynk-history-button"><?php _e( "Filter", "castalynkmap" );?></button>-->
                 </div>
                 <div class="caostalynk-history-header-images">
 
-                    <img class="coastalynk-history-image coastalynk-history-button-1" src="<?php echo CSM_IMAGES_URL; ?>history1.png" alt="Congestion 1">
-                    <img class="coastalynk-history-image coastalynk-history-button-2" src="<?php echo CSM_IMAGES_URL; ?>history2.png" alt="Congestion 2">
+                    <div id="caostalynk-history-congestion-data-container"></div>
+                    <div id="caostalynk-history-congestion-pagination-links"></div>
 
                 </div>
             </div>
@@ -477,12 +482,10 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
 
             // Define port locations
             const ports = {
-                'Apapa': { coords: [6.45, 3.36], vessels: 18 },
-                'TinCanIsland': { coords: [6.44, 3.34], vessels: 15 },
-                'Onne': { coords: [4.71, 7.15], vessels: 7 },
-                'Calabar': { coords: [4.95, 8.32], vessels: 2 },
-                'Lomé': { coords: [6.1375, 1.2870], vessels: 2 },
-                'Tema': { coords: [5.6167, 0.0167], vessels: 2 },
+                <?php foreach ($ports as $portName => $portCoords) {
+                    list($portLat, $portLon) = $portCoords;
+                    echo "'".$portName."': { coords: [$portLat, $portLon] },";
+                } ?>
             };
 
             // Simulated vessel data (in a real scenario, this would come from the Datalastic API)
@@ -730,21 +733,25 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
     * Load custom CSS and JavaScript.
     */
     function coastalynk_enqueue_scripts() : void {
-        wp_enqueue_style( 'coastlynk-map-dataTables-css', '//cdn.datatables.net/2.3.3/css/dataTables.dataTables.min.css' );
-        wp_enqueue_script( 'coastlynk-map-dataTables-js', '//cdn.datatables.net/2.3.3/js/dataTables.min.js', array( 'jquery' ) );
 
+        wp_enqueue_style( 'coastlynk-daterangepicker-css', 'https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css' );
+        wp_enqueue_style( 'coastlynk-map-dataTables-css', '//cdn.datatables.net/2.3.3/css/dataTables.dataTables.min.css' );
+        wp_enqueue_style( 'coastlynk-select2.min.css', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css' );
+        wp_enqueue_style( 'coastlynk-map-leaflet-css', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css', array(), time() );
+        wp_enqueue_style( 'coastlynk-map-css', CSM_CSS_URL.'/frontend/port-congestion-shortcode.css', array(), time() );
+
+        wp_enqueue_script( 'coastlynk-map-dataTables-js', '//cdn.datatables.net/2.3.3/js/dataTables.min.js', array( 'jquery' ) );
+        wp_enqueue_script( 'coastlynk-moment', 'https://cdn.jsdelivr.net/momentjs/latest/moment.min.js', array( 'jquery' ) );
+        wp_enqueue_script( 'coastlynk-daterangepicker', 'https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js', array( 'jquery' ) );
         wp_enqueue_script( 'leaflet', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js', array( 'jquery' ) );
+        wp_enqueue_script( 'coastlynk-select2.min.js', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', array( 'jquery' ) );
         wp_enqueue_script( 'markercluster', 'https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js', array( 'jquery' ) );
         wp_enqueue_script( 'coastlynk-ticker-js', CSM_JS_URL.'ticker.js', array( 'jquery' ), time(), true );
-
-        wp_enqueue_script( 'coastlynk-map-js', CSM_JS_URL.'port-congestion-shortcode.js', array( 'jquery' ), time(), true );
+        wp_enqueue_script( 'coastlynk-map-js', CSM_JS_URL.'/frontend/port-congestion-shortcode.js', array( 'jquery' ), time(), true );
         wp_localize_script( 'coastlynk-map-js', 'COSTALYNKVARS', [          
                 'ajaxURL' => admin_url( 'admin-ajax.php' ),
                 'nonce'    => wp_create_nonce('coastalynk_secure_ajax_nonce') // Create nonce
             ] );
-
-        wp_enqueue_style( 'coastlynk-map-leaflet-css', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css', array(), time() );
-        wp_enqueue_style( 'coastlynk-map-css', CSM_CSS_URL.'port-congestion-shortcode.css', array(), time() );
     }
 }
 

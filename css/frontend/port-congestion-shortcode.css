@@ -29,6 +29,51 @@
     border-bottom: 1px solid var(--wp--preset--color--logoblue);
 
 }
+.caostalynk-history-header-buttons > div {
+    padding: 3px;
+}
+.caostalynk-history-header-buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+}
+
+#coastalynk-port-congestion-history-form{
+    background-color: #F2F4F7;
+    border-radius: 1px;
+    padding: 15px;
+    margin: 30px 20px;
+    overflow: hidden;
+    position: relative; 
+}
+#coastalynk-port-congestion-history-form h2 {
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    font-size: 2rem;
+}
+
+#coastalynk-port-congestion-history-form button {
+    background-color: #0088FF;
+    color: white;
+    border: none;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+.coastalynk-congestion-history-buttons {
+    padding-left: 10px;
+}
+input#caostalynk_congestion_history_range {
+    padding: 6px;
+    background-color: #fff;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    width: 300px;
+    max-width: 100%;
+}
 .coastalynk-sbm-marker{
     color: var(--wp--preset--color--text-blue);
     font-size: 0.875rem;
@@ -513,7 +558,7 @@ table.dataTable tbody tr.selected {
 /****************************/
 #coastalynk-column-loader{
 	width:110px;
-	height: 25px;
+	height: 16px;
 	display: block;
 	position: relative;
 	margin:auto;
