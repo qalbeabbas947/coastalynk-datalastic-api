@@ -42,10 +42,14 @@ class Coastalynk_STS_Shortcode {
      * Create shortcode for slideshow
      */
     public function coastalynk_sts_shortcode( $atts ) {
+        
         global $wpdb;
+        
+        wp_enqueue_style( 'coastalynk-sts-shortcode-style' );
+        wp_enqueue_script( 'coastalynk-sts-shortcode-front' );
 
         ob_start();
-        
+          
             // Your Datalastic API Key
         $apiKey 	= get_option( 'coatalynk_datalastic_apikey' );
         $total_port_vessels = [];
@@ -90,11 +94,7 @@ class Coastalynk_STS_Shortcode {
                         </div>
                     </div>
                 </header>
-                
-                
-                
                 <div class="dashboard-sts">
-
                      <div id="map" style="height: 100vh; width: 100%; min-width:100%;"></div>
                 </div>
                 
@@ -561,12 +561,12 @@ class Coastalynk_STS_Shortcode {
     * Load custom CSS and JavaScript.
     */
     function coastalynk_enqueue_scripts() : void {
-        // Enqueue my styles.
-       wp_enqueue_style( 'coastalynk-sts-shortcode-style', CSM_CSS_URL.'/frontend/sts-shortcode.css?'.time() );
-       
-        // Enqueue my scripts.
-        wp_enqueue_script( 'coastalynk-sts-shortcode-front', CSM_JS_URL.'/frontend/sts-shortcode.js', array("jquery"), time(), true );    
         
+        // Enqueue my styles.
+        wp_register_style( 'coastalynk-sts-shortcode-style', CSM_CSS_URL.'/frontend/sts-shortcode.css?'.time() );
+
+        // Enqueue my scripts.
+        wp_register_script( 'coastalynk-sts-shortcode-front', CSM_JS_URL.'/frontend/sts-shortcode.js', array("jquery"), time(), true );
     }
 }
 

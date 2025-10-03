@@ -1,8 +1,8 @@
-(function( $, window ) { 'use strict';
+(function( $ ) { 'use strict';
     
     $( document ).ready( function() {
 
-        let coastalynk_Sbm = {
+        let coastalynk_dashboard = {
             init: function() {
                 this.menu_toggle_click();
                 this.mark_active();
@@ -11,13 +11,10 @@
             },
             on_resize: function(){
                 $(window).on('resize', function() {
-                    coastalynk_Sbm.checkScreenSize();
+                    coastalynk_dashboard.checkScreenSize();
                 });
             },
             mark_active: function(){
-
-                
-
                 $('.coastlynk-menu-dashboard-open-close-burger').on('click', function() {
                     $('#coastlynk-menu-toggle-close').css( 'display', 'none' );
                     $('.coastlynk-menu-toggle-open').css( 'display', 'none' );
@@ -26,9 +23,7 @@
                         $('#coastlynk-vessel-dashboard-menu').removeClass('coastalynk-expanded').css( 'display', 'none' );
                     } else {
                         $('#coastlynk-vessel-dashboard-menu').addClass('coastalynk-expanded').css( 'display', 'block' );
-                        
                     }
-                    
                 });
 
                 $('.coastlynk-menu-toggle-open').on('click', function() {
@@ -51,9 +46,6 @@
                 });
             },
             checkScreenSize: function () {
-                
-                
-
                 $('.coastlynk-menu-toggle').css( 'display', 'none' );
                 $('.coastalynk-expanded #coastlynk-menu-toggle-close').css( 'display', 'block' );
                 if (window.innerWidth > 768) {
@@ -79,7 +71,8 @@
                }
                     
             }
-        }
+            
+        };
 
         function  isTablet(){
             const userAgent = navigator.userAgent.toLowerCase();
@@ -110,6 +103,7 @@
                 return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Opera() || isMobile.Windows());
             }
         };
-        coastalynk_Sbm.init();
+
+        coastalynk_dashboard.init();
     });
-})( jQuery, window );
+})( jQuery );

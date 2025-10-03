@@ -42,7 +42,11 @@ class Coastalynk_SBM_Shortcode {
      * Create shortcode for slideshow
      */
     public function shortcode_body( $atts ) {
+        
         global $wpdb;
+
+        wp_enqueue_style( 'coastalynk-sbm-shortcode-style' );
+        wp_enqueue_script( 'coastalynk-sbm-shortcode-front' );
 
         ob_start();
         
@@ -178,7 +182,7 @@ class Coastalynk_SBM_Shortcode {
                             $total += $env_leavy;
                             $leavy_data .= '<b>Environmental levy:</b> $'. $env_leavy.'/ton<br>';
 
-                            $polution_ = ( $draught * 0.10 );
+                            $polution_leavy = ( $draught * 0.10 );
                             $total += $polution_leavy;
                             $leavy_data .= '<b>NIMASA pollution levy:</b> $'.$polution_leavy.'/ton<br>';
                             $leavy_data .= '<b>NIMASA wet cargo levy:</b> 3% of freight value<br>';
@@ -321,10 +325,10 @@ class Coastalynk_SBM_Shortcode {
     function coastalynk_enqueue_scripts() : void {
         
         // Enqueue my styles.
-        wp_enqueue_style( 'coastalynk-sbm-shortcode-style', CSM_CSS_URL.'sbm-shortcode.css?'.time() );
+        wp_register_style( 'coastalynk-sbm-shortcode-style', CSM_CSS_URL.'/frontend/sbm-shortcode.css?'.time() );
 
         // Enqueue my scripts.
-        wp_enqueue_script( 'coastalynk-sbm-shortcode-front', CSM_JS_URL.'sbm-shortcode.js', array("jquery"), time(), true );    
+        wp_register_script( 'coastalynk-sbm-shortcode-front', CSM_JS_URL.'/frontend/sbm-shortcode.js', array("jquery"), time(), true );    
     }
 }
 

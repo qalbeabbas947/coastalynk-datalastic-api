@@ -51,7 +51,26 @@ class Coastalynk_Sea_Vessel_Map_Front {
         add_action('admin_post_coastalynk_sts_history_load_action_ctrl', [ $this, 'coastalynk_sts_history_load_action_ctrl_callback' ]);
         add_action('admin_post_nopriv_coastalynk_sts_history_load_action_ctrl', [ $this, 'coastalynk_sts_history_load_action_ctrl_callback' ]);
 
+        add_action( 'wp_enqueue_scripts', [ $this, 'coastalynk_enqueue_scripts' ] );
+    }
+
+    /**
+     * enque dashboard.
+     */
+    function coastalynk_enqueue_scripts( ) {
+        wp_enqueue_style( 'coastlynk-daterangepicker-css', 'https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css' );
+        wp_enqueue_style( 'coastlynk-map-dataTables-css', '//cdn.datatables.net/2.3.3/css/dataTables.dataTables.min.css' );
+        wp_enqueue_style( 'coastlynk-select2.min.css', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css' );
+        wp_enqueue_style( 'coastlynk-map-leaflet-css', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css', array(), time() ); 
+        wp_enqueue_style( 'coastalynk-frontend-dashboard-style', CSM_CSS_URL.'/frontend/dashboard.css?'.time() );  
         
+        wp_enqueue_script( 'coastlynk-map-dataTables-js', '//cdn.datatables.net/2.3.3/js/dataTables.min.js', array( 'jquery' ) );
+        wp_enqueue_script( 'coastlynk-moment', 'https://cdn.jsdelivr.net/momentjs/latest/moment.min.js', array( 'jquery' ) );
+        wp_enqueue_script( 'coastlynk-daterangepicker', 'https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.min.js', array( 'jquery' ) );
+        wp_enqueue_script( 'leaflet', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js', array( 'jquery' ) );
+        wp_enqueue_script( 'coastlynk-select2.min.js', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', array( 'jquery' ) );
+        wp_enqueue_script( 'markercluster', 'https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js', array( 'jquery' ) );
+        wp_enqueue_script( 'coastalynk-frontend-dashboard-js', CSM_JS_URL.'/frontend/dashboard.js', array( 'jquery' ), time(), true );
     }
 
     /**

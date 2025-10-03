@@ -121,7 +121,14 @@ class Coastalynk_Vessel_Shortcode {
      * Create shortcode for slideshow
      */
     public function coastalynk_shortcode( $atts ) {
+        
         global $wpdb;
+        
+        wp_enqueue_style( 'coastalynk-vessels-shortcode-style' );
+        wp_enqueue_script( 'coastlynk-ticker-js' );
+        wp_enqueue_script( 'coastalynk-vessels-shortcode-front' );
+        wp_enqueue_script( 'coastalynk-vessels-dropdown-front' );
+        
         $table_name = $wpdb->prefix.'coastalynk_dark_ships'; 
         $dark_ships = $wpdb->get_results( "SELECT uuid, name, last_position_UTC, reason FROM $table_name", ARRAY_A );
         $ship_array = [];
@@ -745,15 +752,15 @@ class Coastalynk_Vessel_Shortcode {
     * Load custom CSS and JavaScript.
     */
     function coastalynk_enqueue_scripts() : void {
+        
         // Enqueue my styles.
-
-       wp_enqueue_style( 'coastalynk-vessels-shortcode-style', CSM_CSS_URL.'vessel-shortcode.css?'.time() );
+        wp_register_style( 'coastalynk-vessels-shortcode-style', CSM_CSS_URL.'vessel-shortcode.css?'.time() );
        
         // Enqueue my scripts.
-        wp_enqueue_script( 'coastlynk-ticker-js', CSM_JS_URL.'ticker.js', array( 'jquery' ), time(), true );
+        wp_register_script( 'coastlynk-ticker-js', CSM_JS_URL.'/frontend/ticker.js', array( 'jquery' ), time(), true );
 
-        wp_enqueue_script( 'coastalynk-vessels-shortcode-front', CSM_JS_URL.'vessel-shortcode.js', array("jquery"), time(), true ); 
-        wp_enqueue_script( 'coastalynk-vessels-dropdown-front', CSM_JS_URL.'dropdown.js', array("jquery"), time(), true ); 
+        wp_register_script( 'coastalynk-vessels-shortcode-front', CSM_JS_URL.'/frontend/vessel-shortcode.js', array("jquery"), time(), true ); 
+        wp_register_script( 'coastalynk-vessels-dropdown-front', CSM_JS_URL.'/frontend/dropdown.js', array("jquery"), time(), true ); 
         wp_localize_script( 'coastalynk-vessels-shortcode-front', 'COSTALYNK_VESSEL_VARS', [          
                 'ajaxURL' => admin_url( 'admin-ajax.php' ),
                 'nonce'    => wp_create_nonce('coastalynk_front_vessel_shortcode') // Create nonce

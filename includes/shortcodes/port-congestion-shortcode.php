@@ -715,7 +715,7 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
         wp_localize_script( 'coastlynk-map-js', 'COSTALYNKVARS', [          
                 'ajaxURL' => admin_url( 'admin-ajax.php' ),
                 'nonce'    => wp_create_nonce('coastalynk_secure_ajax_nonce') // Create nonce
-            ] );
+            ] ); 
     }
 }
 

@@ -1,34 +1,4 @@
-.datalastic-container {
-    max-width: 100%;
-    margin: 0 auto;
-    width: 100%;
-}
-.coastlynk-port-card{
-    cursor: pointer;
-}
-.datalastic-container .stats-panel h3 {
-    margin-bottom: 5px;
-    padding-top: 22px;
-    padding-left: 20px;
-    padding-bottom: 5px;
-    font-size: 1.375rem;
-    color: var(--wp--preset--color--text-blue);
-    font-weight: bold;
-}
-.leaflet-popup-content, .leaflet-popup-content-wrapper{
-    background-color:#F7FBFC;
-}
-.datalastic-container header {
-    text-align: center;
-    padding: 20px 0;
-    background: #F2F4F7;
-    color: white;
-    height: auto;
-    width: 100%;
-    max-width: 100%;
-    border-bottom: 1px solid var(--wp--preset--color--logoblue);
 
-}
 .caostalynk-history-header-buttons > div {
     padding: 3px;
 }
@@ -74,61 +44,8 @@ input#caostalynk_congestion_history_range {
     width: 300px;
     max-width: 100%;
 }
-.coastalynk-sbm-marker{
-    color: var(--wp--preset--color--text-blue);
-    font-size: 0.875rem;
-    vertical-align: top;
-}
-.coastalynk-sbm-marker-name-part{
-    border-bottom: 1px solid var(--wp--preset--color--text-blue);
-}
-.coastalynk-sbm-marker-middle-part{
-    border: 1px solid var(--wp--preset--color--text-blue);
-    color: black;
-    background-color: white;
-    font-family: 400;
-}
-.coastalynk-sbm-marker-middle-part h3{
-    text-align: center;
-}
-.coastalynk-sbm-marker-bottom-part{
-    color: black;
-}
-.coastalynk-sbm-marker-middle-part table {
-    margin:5px
-}
-.coastalynk-sbm-marker-labels-part {
-    padding: 5px 0px;
-}
 
-.coastalynk-sbm-marker-name-part img{
-    border-radius: 50%;
-    width: 32px;
-}
-.datalastic-container h1 {
-    font-size: 2.5rem;
-    margin-bottom: 10px;
-}
 
-.datalastic-container .subtitle {
-    font-size: 1.1rem;
-    /* opacity: 0.9; */
-    color: #fff;
-}
-
-.datalastic-container .dashboard {
-    display: grid;
-    grid-template-columns: 1fr 3fr;
-    margin-bottom: 20px;
-}
-
-.datalastic-container .stats-panel {
-    background: white;
-    padding: 20px;
-    height: 950px;
-    max-height: 100%;
-    border-right: 1px solid var(--wp--preset--color--logoblue);
-}
 .coastalynk-retrieve-tonnage-btn{
     border: none;
     border-radius: 5px;
@@ -138,17 +55,6 @@ input#caostalynk_congestion_history_range {
     cursor: pointer;
 }
 
-.coastalyn-flag-port-listing{
-    width:80px;
-}
-
-.datalastic-container .stats-panel h2 {
-    margin-bottom: 15px;
-    /* color: #0088FF;
-    border-bottom: 2px solid #f0f0f0; */
-    padding-bottom: 10px;
-    font-size: 1.75rem;
-}
 .coastalynk-totoal-vessels{
     width: 100%;
     max-width: 100%;
@@ -170,30 +76,7 @@ input#caostalynk_congestion_history_range {
 .coastalynk-port-congestion-sidebar-wrapper{
     background-color: #F2F4F7;
 }
-.datalastic-container .stat-item {
-    padding-bottom: 15px;
-    border-bottom: 1px solid #7C8FA8;
-}
 
-.datalastic-container .stat-item:last-child {
-    border-bottom: none;
-    margin-bottom: 0;
-    padding-bottom: 0;
-}
-
-.datalastic-container .stat-label {
-    font-weight: 600;
-    color: var(--wp--preset--color--text-blue);
-    font-weight: bold;
-    margin-bottom: 5px;
-    font-size: 1.1875rem;
-}
-
-.datalastic-container .stat-value {
-    font-size: 1.1875rem;
-    font-weight: 700;
-    color: var(--wp--preset--color--logoblue);
-}
 .coastalynk-stat-main-wrapper{
     display: flex;
     flex-direction: column;
@@ -264,84 +147,10 @@ div#coastalynk-table_wrapper{
     font-weight: bold;
     text-align: center;
 }
-.datalastic-container .progress-bar {
-    height: 8px;
-    background-color: #e9ecef;
-    border-radius: 4px;
-    margin-top: 5px;
-    overflow: hidden;
-}
 
-.datalastic-container .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #4CAF50 0%, #8BC34A 100%);
-    border-radius: 4px;
-}
 
-.datalastic-container .map-container {
-    overflow: hidden;
-    height: 950px;
-}
 
-.datalastic-container #map {
-    height: 949px;
-    width: 100%;
-}
 
-.datalastic-container .controls {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-left: 20px;
-}
-
-.datalastic-container .port-selector {
-    display: flex;
-    gap: 10px;
-    align-items: center;
-    flex-wrap: nowrap;
-}
-
-.datalastic-container .port-button {
-    padding: 8px 15px;
-    background-color: white;
-    color: var(--wp--preset--color--logoblue);
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
-
-.datalastic-container .port-button:hover {
-    background-color: #d8dfe6;
-}
-
-.datalastic-container .coastalynk-port-history {
-    padding: 8px 15px;
-    background-color: white;
-    color: var(--wp--preset--color--logoblue);
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
-
-.datalastic-container .coastalynk-port-history:hover {
-    background-color: #d8dfe6;
-}
-
-.port-button.active {
-    background-color: #0088FF;
-    color: white;
-}
-
-.datalastic-container .view-options {
-    display: flex;
-    align-items: center;
-    padding-right: 4%;
-}
 .coastalynk-map-view-button-first{
     border-top-left-radius: 5px;
     border-bottom-left-radius: 5px;
@@ -351,45 +160,7 @@ div#coastalynk-table_wrapper{
     border-bottom-right-radius: 5px;
 }
 
-.datalastic-container .view-button {
-    padding: 8px 15px;
-    background-color: white;
-    border: none;
-    cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s ease;
-}
 
-.datalastic-container .view-button:hover {
-    background-color: var(--wp--preset--color--logoblue);
-    color: white;
-}
-
-.datalastic-container .view-button.active {
-    background-color: #0088FF;
-    color: white;
-}
-
-.datalastic-container .info-panel {
-    background: white;
-    border-radius: 10px;
-    padding: 20px;
-    margin-top: 20px;
-}
-
-.datalastic-container .info-panel h2 {
-    margin-bottom: 15px;
-    /* color: #0088FF;
-    border-bottom: 2px solid #f0f0f0; */
-    padding-bottom: 10px;
-    font-size: 2rem;
-}
-
-.datalastic-container .port-info {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 20px;
-}
 
 #coastalynk-table {
     font-size: 1rem; /* Adjust this value to your preference */
@@ -409,23 +180,8 @@ div#coastalynk-table_wrapper{
     font-size: 1rem;
 
 }
-.wp-block-post-title{
-    display: none;
-}
-.datalastic-container .port-card {
-    background: #F2F4F7;
-    padding: 15px;
-    border-left: 3px solid #0088FF;
-    display: flex;
-    flex-direction: column;
-}
 
-.datalastic-container .port-card h3 {
-    margin-bottom: 10px;
-    color: var(--wp--preset--color--text-blue);
-    font-size: 1.375rem;
-    flex-basis: 50%;
-}
+
 
 .coastlynk-port-stat-code{
 border-bottom: 1px solid #7C8FA8;
@@ -434,34 +190,7 @@ border-bottom: 1px solid #7C8FA8;
     margin-bottom: 5px;
 }
 
-.datalastic-container .port-stat {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 8px;
-    font-size: 1rem;
-}
 
-.datalastic-container .port-stat:last-child {
-    margin-bottom: 0;
-}
-
-.datalastic-container .loading {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 400px;
-    flex-direction: column;
-}
-
-.datalastic-container .spinner {
-    width: 50px;
-    height: 50px;
-    border: 5px solid #f3f3f3;
-    border-top: 5px solid #0088FF;
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-bottom: 20px;
-}
 .subtitlelastupdate{
     color: #fff;
     /* font-size: .75rem; */
@@ -474,160 +203,6 @@ border-bottom: 1px solid #7C8FA8;
     100% { transform: rotate(360deg); }
 }
 
-.datalastic-container footer {
-    text-align: center;
-    margin-top: 30px;
-    padding: 20px;
-    color: #6c757d;
-    font-size: 0.9rem;
-}
-.table-responsive, #coastalynk-table_wrapper .dt-layout-cell {
-    display: block;
-    width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    -ms-overflow-style: -ms-autohiding-scrollbar;
-}
-#coastalynk-table th{
-    background-color: #F2F4F7;
-}
-
-/* For every even row */
-.dataTable tr:nth-child(even) {
-    /* background-color: #f00; */
-}
-
-div.dt-container .dt-paging .dt-paging-button{
-    font-size: 1rem;
-}
-div.dt-container .dt-paging .dt-paging-button {
-    width: 50px;
-    height: 50px;
-}
-
-div.dt-container.dt-empty-footer tbody>tr:last-child>*, table.dataTable.row-border>tbody>tr>*, table.dataTable.display>tbody>tr>* {
-    border-bottom: 1px solid #F2F4F7;
-}
-div.dt-container .dt-search{
-    text-align: right;
-}
-div.dt-container .dt-paging .dt-paging-button.current{
-    color: white !important;
-}
-div.dt-container .dt-paging .dt-paging-button.current:hover{
-    color: white !important;
-}
-.dt-paging .current {
-    background: var(--wp--preset--color--text-blue) !important;
-    border-radius: 50% !important;
-    border: 5px solid #C1D8EE !important;
-    color: white !important;
-}
-table.dataTable tbody tr.odd,
-    table.dataTable tbody tr.even {
-        background-color: transparent !important; /* or a specific color like #FFFFFF */
-    }
-
-    /* If using nth-child selectors, override them as well */
-    table.dataTable tbody tr:nth-child(odd),
-    table.dataTable tbody tr:nth-child(even) {
-        background-color: transparent !important; /* or a specific color like #FFFFFF */
-    }
-.dt-paging nav{
-    text-align: right !important;
-}
-.coastlynk-vessel-menu-text a{
-    color: white;
-    text-decoration: none;
-}
-/* Remove box-shadow from all table elements or specific ones if needed */
-table.dataTable,
-table.dataTable th,
-table.dataTable td {
-    box-shadow: none;
-    -webkit-box-shadow: none; /* For Webkit browsers like Chrome, Safari */
-    -moz-box-shadow: none;    /* For Mozilla browsers like Firefox */
-}
-
-/* If a specific element like a selected row has a box-shadow, target it more specifically */
-table.dataTable tbody tr.selected {
-    box-shadow: none !important;
-    -webkit-box-shadow: none !important;
-    -moz-box-shadow: none !important;
-}
-/****************************/
-#coastalynk-column-loader{
-	width:110px;
-	height: 16px;
-	display: block;
-	position: relative;
-	margin:auto;
-}
-
-.coastalynk-column-blockG{
-	background-color:rgb(255,255,255);
-	border:3px solid #0088FF;
-	float:left;
-	height:20px;
-	margin-left:7px;
-	width:23px;
-	opacity:0.1;
-	animation-name:bounceG;
-		-o-animation-name:bounceG;
-		-ms-animation-name:bounceG;
-		-webkit-animation-name:bounceG;
-		-moz-animation-name:bounceG;
-	animation-duration:1.5s;
-		-o-animation-duration:1.5s;
-		-ms-animation-duration:1.5s;
-		-webkit-animation-duration:1.5s;
-		-moz-animation-duration:1.5s;
-	animation-iteration-count:infinite;
-		-o-animation-iteration-count:infinite;
-		-ms-animation-iteration-count:infinite;
-		-webkit-animation-iteration-count:infinite;
-		-moz-animation-iteration-count:infinite;
-	animation-direction:normal;
-		-o-animation-direction:normal;
-		-ms-animation-direction:normal;
-		-webkit-animation-direction:normal;
-		-moz-animation-direction:normal;
-	transform:scale(0.7);
-		-o-transform:scale(0.7);
-		-ms-transform:scale(0.7);
-		-webkit-transform:scale(0.7);
-		-moz-transform:scale(0.7);
-}
-
-#coastalynk-column-blockG_1{
-	animation-delay:0.45s;
-		-o-animation-delay:0.45s;
-		-ms-animation-delay:0.45s;
-		-webkit-animation-delay:0.45s;
-		-moz-animation-delay:0.45s;
-}
-
-#coastalynk-column-blockG_2{
-	animation-delay:0.6s;
-		-o-animation-delay:0.6s;
-		-ms-animation-delay:0.6s;
-		-webkit-animation-delay:0.6s;
-		-moz-animation-delay:0.6s;
-}
-
-#coastalynk-column-blockG_3{
-	animation-delay:0.75s;
-		-o-animation-delay:0.75s;
-		-ms-animation-delay:0.75s;
-		-webkit-animation-delay:0.75s;
-		-moz-animation-delay:0.75s;
-}
-#coastalynk-table th {
-    background: rgba(0, 0, 0, 0.15);
-}
-#coastalynk-table .dt-column-header span {
-    margin-bottom: 0;
-}
 /************************************/
 
 @keyframes bounceG{
@@ -720,260 +295,35 @@ table.dataTable tbody tr.selected {
     border-radius: 4px;
     border-left: 3px solid #4CAF50;
     flex-shrink: 0;
-        }
+}
         
-        .coastalynk-darkship-ticker-item .coastalynk-darkship-news-time {
-            font-size: 0.8rem;
-            opacity: 0.7;
-            margin-right: 8px;
-        }
+.coastalynk-darkship-ticker-item .coastalynk-darkship-news-time {
+    font-size: 0.8rem;
+    opacity: 0.7;
+    margin-right: 8px;
+}
 
-        
-        .coastalynk-darkship-controls {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        
-        #coastalynk-darkship-pause-btn, #coastalynk-darkship-resume-btn {
-            background-color: #0088FF;
-    		color: white;
-            border: none;
-            color: white;
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            transition: background 0.3s;
-        }
-        
-        #coastalynk-darkship-pause-btn:hover, #coastalynk-darkship-resume-btn:hover {
-            background: #0088F0;
-        }
+
+.coastalynk-darkship-controls {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+#coastalynk-darkship-pause-btn, #coastalynk-darkship-resume-btn {
+    background-color: #0088FF;
+    color: white;
+    border: none;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+#coastalynk-darkship-pause-btn:hover, #coastalynk-darkship-resume-btn:hover {
+    background: #0088F0;
+}
         /**************************************************************/
 
-@media (max-width: 768px) {
-    .datalastic-container .dashboard {
-        grid-template-columns: 1fr;
-    }
-    
-    .datalastic-container .controls {
-        flex-direction: column;
-        gap: 15px;
-    }
-    
-    .datalastic-container .port-selector {
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-    
-    .datalastic-container .view-options {
-        justify-content: center;
-    }
-
-    .caostalynk-history-header-buttons {
-        flex-direction: column;
-        
-    }
-}
-
-
-@media (max-width: 768px) {
-    .datalastic-container .info-panel, .datalastic-container .stats-panel {
-        padding: 10px 0px 0px 0px;
-        height: unset;
-        max-height: 100%;
-    }
-    .datalastic-container .map-container {
-        height: 60vh;
-        min-height: 400px;
-    }
-    .datalastic-container header .section-title {
-        margin: 10px;
-    }
-    .datalastic-container .dashboard {
-        grid-template-columns: 1fr;
-    }
-    
-    .datalastic-container .controls {
-        flex-direction: column;
-        gap: 15px;
-    }
-    
-    .datalastic-container .port-selector {
-        flex-wrap: wrap;
-        justify-content: center;
-    }
-    
-    .datalastic-container .view-options {
-        justify-content: center;
-    }
-    #coastalynk-table .content {
-        padding: 1rem;
-    }
-    
-    #coastalynk-table th, #coastalynk-table td {
-        padding: 0.75rem 0.5rem;
-    }
-    
-    #coastalynk-table .table-info {
-        flex-direction: column;
-        align-items: center;
-    }
-    .datalastic-container .info-panel h2{
-        margin-left: 15px;
-    }
-    .coastalynk-congestion-loader .stat-label {
-        text-align: center;
-        padding: 19px;
-    }
-    .datalastic-container .stats-panel h2{
-        margin-bottom: 0px;
-        margin-top: 15px;
-        padding-left: 15px;
-        padding-bottom: 10px;
-    }
-    .datalastic-container header{
-        height: auto;
-    }
-    .coastalynk-totoal-vessels{
-        justify-content: center;
-        padding: 15px 0px;
-        height: unset;
-    }
-}
-
-@media (max-width: 480px) {
-    .coastlynk-menu-dashboard-open-close-burger{
-        display: block;
-    }
-    .caostalynk-history-header-buttons {
-        flex-direction: column;
-        
-    }
-    .coastlynk-menu-toggle, #coastlynk-menu-toggle-close{
-        display: none;
-    }
-     .coastalynk-stat-item-wrapper {
-        padding: 10px 20px 20px 20px;
-        height:auto;
-    }  
-    .port-card.coastlynk-port-card span {
-        margin-bottom:5px;
-    }             
-    .coastlynk-vessel-dashboard-menu{
-        /* position: absolute; */
-        width: 100%;
-        position: absolute;
-        z-index: 1000;
-    }
-    .coastalynk-totoal-vessels{
-        justify-content: center;
-        padding: 15px 0px;
-        height: unset;
-    }
-    .datalastic-container .info-panel, .datalastic-container .stats-panel{
-        height: unset;
-    }
-    .datalastic-container .info-panel h2{
-        margin-left: 15px;
-    }
-    .coastalyn-flag-port-listing {
-        width: 40px;
-    }
-    .datalastic-container .stats-panel h2{
-        margin-bottom: 0px;
-        margin-top: 15px;
-        padding-left: 15px;
-        padding-bottom: 10px;
-    }
-    .coastalynk-congestion-loader .stat-label {
-        text-align: center;
-        padding: 19px;
-    }
-    .datalastic-container .port-card{
-        margin: 0 15px;
-    }
-/* Force horizontal scrolling on small screens */
-    #coastalynk-table .table-container {
-        width: 100%;
-        overflow-x: auto;
-        display: block;
-    }
-   .datalastic-container header{
-        height: auto;
-   }
-    #coastalynk-table table {
-        min-width: 550px; /* Force table to be wider than viewport */
-    }
-    
-    #coastalynk-table th, #coastalynk-table td {
-        padding: 0.6rem 0.4rem;
-        font-size: 0.9rem;
-    }
-    
-    #coastalynk-table .pagination button {
-        padding: 6px 10px;
-        font-size: 0.9rem;
-    }
-    
-    #coastalynk-table .search-input {
-        padding: 10px 15px 10px 40px;
-        font-size: 0.9rem;
-    }
-    
-    #coastalynk-table .search-icon {
-        left: 12px;
-        font-size: 1.1rem;
-    }
-
-    /* #coastalynk-table th:nth-child(n+4), #coastalynk-table td:nth-child(n+4) {
-        display: none;
-    } */
-}
-
-/* Even smaller devices */
-@media (max-width: 360px) {
-    .logo-text {
-        font-size: 1.3rem;
-    }
-    
-    #coastalynk-table h1 {
-        font-size: 1.3rem;
-    }
-    
-    #coastalynk-table table {
-        min-width: 500px;
-    }
-    
-    #coastalynk-table th, #coastalynk-table td {
-        padding: 0.5rem 0.3rem;
-        font-size: 0.85rem;
-    }
-    /* #coastalynk-table th:nth-child(n+4), #coastalynk-table td:nth-child(n+4) {
-        display: none;
-    } */
-
-}
-
-/***********************************************************/
-
-@media (max-width: 1023px) {
-    .datalastic-container .controls {
-        margin-left: unset;
-        flex-direction: column;
-    }
-    .datalastic-container .controls > div {
-        margin: 5px;
-    }
-    .coastlynk-menu-dashboard-open-close-burger{
-        display: block;
-    }
-    .coastlynk-menu-toggle, #coastlynk-menu-toggle-close{
-        display: none;
-    }
-    .coastlynk-vessel-dashboard-menu{
-        position: fixed;
-    }
-    
-}
