@@ -51,19 +51,16 @@ class Coastalynk_STS_Shortcode {
         $total_port_vessels = [];
         // 1. Define the center points (latitude, longitude) of our ports
         $table_name = $wpdb->prefix . 'coastalynk_ports';
-        $port_data = $wpdb->get_results("SELECT * FROM $table_name where country_iso='NG' order by title");
+        $port_data = $wpdb->get_results("SELECT * FROM $table_name where country_iso='NG' and port_type='Port' order by title");
         $ports = [];  
-        $ports['Apapa'] = [6.45, 3.36];
-        $ports['TinCanIsland'] = [6.44, 3.34];
-        $ports['Lomé'] = [6.1375, 1.2870];
-        $ports['Tema'] = [5.6167, 0.0167];
+        
         foreach( $port_data as $port ) {
-            $ports[$port->title] = [$port->lat, $port->lon];
+            if( $port->lat && $port->lon )
+                $ports[$port->title] = [$port->lat, $port->lon];
         }
 
         $table_name_sts = $wpdb->prefix . 'coastalynk_sts';
-        $vessel_data = $wpdb->get_results("SELECT * FROM $table_name_sts");
-
+        $vessel_data = $wpdb->get_results("SELECT * FROM $table_name_sts where last_updated = (select max(last_updated) from $table_name_sts)");
         ?>
         
         <div class="vessel-dashboard-container">
@@ -101,11 +98,41 @@ class Coastalynk_STS_Shortcode {
                      <div id="map" style="height: 100vh; width: 100%; min-width:100%;"></div>
                 </div>
                 
-                
+                <form method="post" id="coastalynk-port-sts-history-form" action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" name="coastalynk-port-sts-history-form">
+                    <div class="section-title d-flex justify-content-between mb-0 leftalign">
+                        <h2><?php _e( "STS History", "castalynkmap" );?></h2>               
+                    </div>
+                    <div class="caostalynk-sts-history-header-buttons">
+                        <div class="coastalynk-sts-history-ports">
+                            <select id="caostalynk_history_ddl_ports" class="coastalynk-sts-select2-js" name="caostalynk_history_ddl_ports">
+                                <option value=""><?php _e( "All Ports", "castalynkmap" );?></option>
+                                <?php foreach( $port_data as $port ) { ?>
+                                    <option value="<?php echo $port->port_id;?>"><?php echo $port->title;?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                        <div class="coastalynk-sts-history-date-range">
+                            <input id="caostalynk_sts_history_range" type="text" class="coastalynk-date-range-js" name="caostalynk_sts_history_range">
+                        </div>
+                        <div class="coastalynk-sts-history-buttons">
+                            <button class="coastalynk-sts-history-buttons-export-csv">
+                                <?php _e( "Export", "castalynkmap" );?>
+                                <div id="coastalynk-column-loader" class="coastalynk-column-loader" style="display:none;">
+                                    <div id="coastalynk-column-blockG_1" class="coastalynk-column-blockG"></div>
+                                    <div id="coastalynk-column-blockG_2" class="coastalynk-column-blockG"></div>
+                                    <div id="coastalynk-column-blockG_3" class="coastalynk-column-blockG"></div>
+                                </div>
+                            </button>
+                        </div>
+                        <?php wp_nonce_field( 'coastalynk_sts_history_load', 'coastalynk_sts_history_load_nonce' ); ?>
+                        <input type="hidden" id="coastalynk_sts_history_load_action_ctrl" name="action" value="coastalynk_sts_history_load_action_ctrl" />
+                    </div>
+                </form>
             </div>
 
             <!-- Leaflet JS -->
             <script>
+                
                 // Initialize the map centered on Nigeria
                 const map = L.map('map').setView([6.5, 5.0], 7);
 
@@ -421,7 +448,6 @@ class Coastalynk_STS_Shortcode {
                 // Create port markers layer
                 const portsLayer = L.layerGroup();
                 
-                
                 Object.entries(ports).forEach(([name, data]) => {
                     const marker = L.marker(data.coords, {
                         icon: L.icon({
@@ -438,7 +464,7 @@ class Coastalynk_STS_Shortcode {
                     portsLayer.addLayer(marker);
                 });
                 
-                // Add ports layer by default
+                // // Add ports layer by default
                 portsLayer.addTo(map);
 
             // Layer control
@@ -453,73 +479,76 @@ class Coastalynk_STS_Shortcode {
                 "Ports": portsLayer
             };
 
-                L.control.layers(baseMaps, overlayMaps).addTo(map);
+            L.control.layers(baseMaps, overlayMaps).addTo(map);
 
-                // Add legend
-                const legend = L.control({position: 'bottomright'});
-                legend.onAdd = function(map) {
-                    const div = L.DomUtil.create('div', 'info legend');
-                    div.innerHTML = `
-                        <h4>Traffic Density</h4>
-                        <div class="legend">
-                            <i style="background: blue;"></i> Low<br>
-                            <i style="background: lime;"></i> Medium<br>
-                            <i style="background: red;"></i> High
-                        </div>
-                        <h4>Map Features</h4>
-                        <div class="legend">
-                            <img src="https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png" style="width: 15px; height: 25px;"> Port<br>
-                            <span style="color: #ff7800;">●</span> Individual Vessel
-                        </div>
-                    `;
-                    return div;
-                };
+            // Add legend
+            const legend = L.control({position: 'bottomright'});
+            legend.onAdd = function(map) {
+                const div = L.DomUtil.create('div', 'info legend');
+                div.innerHTML = `
+                    <h4>Traffic Density</h4>
+                    <div class="legend">
+                        <i style="background: blue;"></i> Low<br>
+                        <i style="background: lime;"></i> Medium<br>
+                        <i style="background: red;"></i> High
+                    </div>
+                    <h4>Map Features</h4>
+                    <div class="legend">
+                        <img src="https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png" style="width: 15px; height: 25px;"> Port<br>
+                        <span style="color: #ff7800;">●</span> Individual Vessel
+                    </div>
+                `;
+                return div;
+            };
 
-                legend.addTo(map);
+          legend.addTo(map);
 
-                // Set up button handlers
-                document.querySelectorAll('.port-button').forEach(button => {
-                    button.addEventListener('click', function() {
-                        document.querySelectorAll('.port-button').forEach(btn => btn.classList.remove('active'));
-                        this.classList.add('active');
-                        
-                        const port = this.dataset.port;
-                        if (port === 'all') {
-                            map.setView([6.5, 5.0], 7);
-                        } else {
-                            const portName = port.replace(/(^\w|\s\w)/g, l => l.toUpperCase()).replace('-', ' ');
-                            const portCoords = ports[portName];
-                            if (portCoords) {
-                                map.setView(portCoords.coords, 12);
-                            }
-                        }
-                    });
-                });
+            // Set up button handlers
+            document.querySelectorAll('.port-button').forEach(button => {
                 
-                document.querySelectorAll('.view-button').forEach(button => {
-                    button.addEventListener('click', function() {
-                        document.querySelectorAll('.view-button').forEach(btn => btn.classList.remove('active'));
-                        this.classList.add('active');
+                button.addEventListener('click', function() {
+               
+                    document.querySelectorAll('.port-button').forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const port = this.dataset.port;
+                    if (port === 'all') {
+                        map.setView([6.5, 5.0], 7);
+                    } else {
+                        const portName = port.replace(/(^\w|\s\w)/g, l => l.toUpperCase()).replace('-', ' ');
                         
-                        const view = this.dataset.view;
-                        
-                        // Toggle layers based on view
-                        if (view === 'heatmap') {
-                            map.addLayer(heatLayer);
-                            map.removeLayer(vesselsLayer);
-                            map.addLayer(portsLayer);
-                        } else if (view === 'vessels') {
-                            map.removeLayer(heatLayer);
-                            map.addLayer(vesselsLayer);
-                            map.addLayer(portsLayer);
-                        } else if (view === 'ports') {
-                            map.removeLayer(heatLayer);
-                            map.removeLayer(vesselsLayer);
-                            map.addLayer(portsLayer);
+                        const portCoords = ports[portName];
+                        if (portCoords) {
+                            map.setView(portCoords.coords, 12);
                         }
-                    });
+                    }
                 });
-            </script>
+            });
+            
+            document.querySelectorAll('.view-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    document.querySelectorAll('.view-button').forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const view = this.dataset.view;
+                    
+                    // Toggle layers based on view
+                    if (view === 'heatmap') {
+                        map.addLayer(heatLayer);
+                        map.removeLayer(vesselsLayer);
+                        map.addLayer(portsLayer);
+                    } else if (view === 'vessels') {
+                        map.removeLayer(heatLayer);
+                        map.addLayer(vesselsLayer);
+                        map.addLayer(portsLayer);
+                    } else if (view === 'ports') {
+                        map.removeLayer(heatLayer);
+                        map.removeLayer(vesselsLayer);
+                        map.addLayer(portsLayer);
+                    }
+                });
+            });
+        </script>
 
             
         <?php
@@ -533,10 +562,10 @@ class Coastalynk_STS_Shortcode {
     */
     function coastalynk_enqueue_scripts() : void {
         // Enqueue my styles.
-       wp_enqueue_style( 'coastalynk-sts-shortcode-style', CSM_CSS_URL.'sts-shortcode.css?'.time() );
+       wp_enqueue_style( 'coastalynk-sts-shortcode-style', CSM_CSS_URL.'/frontend/sts-shortcode.css?'.time() );
        
         // Enqueue my scripts.
-        wp_enqueue_script( 'coastalynk-sts-shortcode-front', CSM_JS_URL.'sts-shortcode.js', array("jquery"), time(), true );    
+        wp_enqueue_script( 'coastalynk-sts-shortcode-front', CSM_JS_URL.'/frontend/sts-shortcode.js', array("jquery"), time(), true );    
         
     }
 }

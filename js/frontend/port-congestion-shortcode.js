@@ -11,8 +11,6 @@
                 this.load_port_data();
                 this.ajax_retrieve_tonnage();
                 this.load_ajax_port_congestion();
-                this.load_popup();
-                this.close_popup();
                 this.btn_filter_port_congestion();
                 this.btn_export_port_congestion_history();
             },
@@ -28,12 +26,11 @@
             load_select_js: function() {
                 $('.coastalynk-select2-js').select2({ width: '100%' });
                 $('.caostalynk_history_ddl_dates').select2({ width: '100%' });
-                $('.caostalynk_history_ddl_times').select2({ width: '100%' });
             },
             load_date_range_js: function() {
                $('#caostalynk_congestion_history_range').daterangepicker({
                     timePicker: true,
-                    startDate: moment().startOf('hour'),
+                    startDate: moment().subtract(6, 'days'),
                     "maxSpan": {
                         "months": 1
                     },  
@@ -45,7 +42,7 @@
                         'This Month': [moment().startOf('month'), moment().endOf('month')],
                         'Last Month': [moment().subtract(1, 'month').startOf('month'), moment().subtract(1, 'month').endOf('month')]
                     },
-                    endDate: moment().startOf('hour').add(32, 'hour'),
+                    endDate: moment(),
                     locale: {
                     format: 'M/DD/YYYY hh:mm A'
                     }
@@ -56,17 +53,7 @@
                     console.log($('#caostalynk_congestion_history_range').val());
                 });
             },
-            close_popup: function() {
-                document.querySelector('#coastalynk-history-popup-close').addEventListener( 'click', (event) => {
-                    document.querySelector(".coastalynk-history-popup-overlay").style.display = 'none';
-                    document.querySelector(".coastalynk-history-popup-content").style.display = 'none';
-                });
-
-                document.querySelector('.coastalynk-history-popup-overlay').addEventListener( 'click', () => {
-                    document.querySelector(".coastalynk-history-popup-overlay").style.display = 'none';
-                    document.querySelector(".coastalynk-history-popup-content").style.display = 'none';
-                });
-            },
+            
             load_date_time_ddls: function() {
                 if( this.date_obj != null ) {
                     $('.caostalynk_history_ddl_dates').empty();
@@ -76,16 +63,8 @@
 
                     for( let date in this.date_obj.options ) {
                         console.log(date);
-                        let date_opt = new Option(date, date, false, false); 
+                        let date_opt = new Option(this.date_obj.options[date], this.date_obj.options[date], false, false); 
                         $('.caostalynk_history_ddl_dates').append(date_opt).trigger('change');
-                        
-                        $('.caostalynk_history_ddl_times').val(null).trigger('change');
-                        var time_all_opt = new Option(this.date_obj.time_all, '', false, false); 
-                        $('.caostalynk_history_ddl_times').append(time_all_opt).trigger('change');
-                        for( let time in this.date_obj.options[date] ) {
-                            let time_opt = new Option(this.date_obj.options[date][time], this.date_obj.options[date][time], false, false); 
-                            $('.caostalynk_history_ddl_times').append(time_opt).trigger('change');
-                        }
                     }
                 }
                 
@@ -120,7 +99,6 @@
                         }
 
                         $('.coastalynk-congestion-history-dates').css('display', 'block');
-                        $('.coastalynk-congestion-history-times').css('display', 'block');
                         preloader.hide();
                         
                     })
@@ -131,16 +109,7 @@
                 });
                 
             },
-            load_popup: function() { 
-
-                $('.coastalynk-port-history').on('click', function(event) {
-                    event.preventDefault();
-
-                    document.querySelector(".coastalynk-history-popup-overlay").style.display = 'block';
-                    document.querySelector(".coastalynk-history-popup-content").style.display = 'block';
-                    $('.coastalynk-history-button1').trigger('click');
-                });
-            },
+            
             ajax_retrieve_tonnage: function() {
                 // Example: Trigger the AJAX call on a button click
                 $('.coastalynk-retrieve-tonnage-btn').on('click', function(e) {

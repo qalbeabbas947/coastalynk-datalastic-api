@@ -334,11 +334,6 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                                 <option value=""><?php _e( "All Dates", "castalynkmap" );?></option>
                             </select>
                         </div>
-                        <div class="coastalynk-congestion-history-times" style="display: none;">
-                            <select id="caostalynk-history-ddl-times" class="caostalynk_history_ddl_times" name="caostalynk_history_ddl_times">
-                                <option value=""><?php _e( "All Times", "castalynkmap" );?></option>
-                            </select>
-                        </div>
                         <div class="coastalynk-congestion-history-buttons">
                             <button class="coastalynk-history-button">
                                 <?php _e( "Sub Dates/Times", "castalynkmap" );?>
@@ -434,37 +429,6 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                     </tfoot>
                 </table>
             </div>
-        </div>
-        <div class="coastalynk-history-popup-overlay"></div>
-        <div class="coastalynk-history-popup-content">
-            <h2>History</h2>
-            <div class="coastalynk-history-popup-content-boxes">
-                <div class="caostalynk-history-header-buttons">
-                    <!-- <div class="coastalynk-congestion-history-ports">
-                        <?php
-                            $results = $wpdb->get_results( "select distinct(port) as port from ".$wpdb->prefix."coastalynk_port_congestion" );
-                        ?>
-                        <select id="caostalynk-history-ddl-ports" class="coastalynk-select2-js" name="caostalynk-history-ddl-ports">
-                            <option value=""><?php _e( "All Ports", "castalynkmap" );?></option>
-                            <?php foreach( $results as $result ) { ?>
-                                <option value="<?php echo $result->port;?>"><?php echo $result->port;?></option>
-                            <?php } ?>
-                        </select>
-                    </div>
-                    <div class="coastalynk-congestion-history-date-range">
-                        <input id="caostalynk_congestion_history_range" type="text" class="coastalynk-date-range-js" name="caostalynk_congestion_history_range">
-                    </div> 
-                    
-                    <button class="coastalynk-history-button"><?php _e( "Filter", "castalynkmap" );?></button>-->
-                </div>
-                <div class="caostalynk-history-header-images">
-
-                    <div id="caostalynk-history-congestion-data-container"></div>
-                    <div id="caostalynk-history-congestion-pagination-links"></div>
-
-                </div>
-            </div>
-            <button id="coastalynk-history-popup-close"><?php _e( "Back to Results", "castalynkmap" );?></button>
         </div>
         <!-- Leaflet JS -->
         <script>

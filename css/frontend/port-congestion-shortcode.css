@@ -770,6 +770,11 @@ table.dataTable tbody tr.selected {
     .datalastic-container .view-options {
         justify-content: center;
     }
+
+    .caostalynk-history-header-buttons {
+        flex-direction: column;
+        
+    }
 }
 
 
@@ -842,7 +847,10 @@ table.dataTable tbody tr.selected {
     .coastlynk-menu-dashboard-open-close-burger{
         display: block;
     }
-
+    .caostalynk-history-header-buttons {
+        flex-direction: column;
+        
+    }
     .coastlynk-menu-toggle, #coastlynk-menu-toggle-close{
         display: none;
     }
@@ -949,98 +957,7 @@ table.dataTable tbody tr.selected {
 }
 
 /***********************************************************/
-/**********************************Popup************************************/
 
-.coastalynk-history-popup-content {
-    display: none; /* Hidden by default */
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: var(--wp--preset--color--logoblue);
-    padding: 20px;
-    border-radius: 5px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    width: 50%;
-}
-
-.coastalynk-history-popup-overlay {
-    display: none; /* Hidden by default */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-}
-.coastalynk-history-popup-content h2{
-    background-image: url(../images/waves-separator.png);
-    background-repeat: no-repeat;
-    background-position: center bottom;
-    padding-bottom: 16px;
-    text-align: center;
-    font-size: 1.75rem;
-    font-weight: bold;
-    color: white;
-} 
-.coastalynk-history-popup-top-bar {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    width: 100%;
-    align-items: center;
-}
-
-#coastalynk-history-popup-close{
-    cursor: pointer;
-    background-color: #F2F4F7;
-    color: var(--wp--preset--color--text-blue);
-    padding: 13px;
-    font-weight: bold;
-    border-radius: 5px;
-    margin-top: 10px;
-    border: none;
-    font-size: 1rem;
-}
-.coastalynk-history-popup-content-box{
-    padding-left: 20px;
-}
-
-
-#coastalynk-history-popup-close:hover{
-    background-color: #EDF0F4;
-    
-}
-
-
-.coastalynk-history-popup-content-boxes{
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    font-size: 1rem;
-    flex-wrap: wrap;
-    row-gap: 20px;
-}
-
-.coastalynk-history-button{
-
-}
-.coastalynk-history-button {
-    cursor: pointer;
-    border-radius: 5px;
-    padding: 10px;
-    border: none;
-}
-
-.coastalynk-history-button:hover {
-    background-color: #d8dfe6;
-}
-.coastalynk-history-image{
-    display: none;
-    width: 100%;
-}
 @media (max-width: 1023px) {
     .datalastic-container .controls {
         margin-left: unset;
@@ -1058,21 +975,5 @@ table.dataTable tbody tr.selected {
     .coastlynk-vessel-dashboard-menu{
         position: fixed;
     }
-    .coastalynk-history-popup-content{
-        height: unset;
-    }
-}
-@media (max-width: 768px) {
-    .coastalynk-history-popup-content{
-        width: 74%;
-    }
-    .coastalynk-history-popup-content{
-        height: unset;
-    }
-}
-
-@media (max-width: 480px) {
-    .coastalynk-history-popup-content{
-        height: auto;
-    }
+    
 }

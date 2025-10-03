@@ -45,16 +45,71 @@ class Coastalynk_Sea_Vessel_Map_Front {
         add_action('admin_post_nopriv_coastalynk_leavy_form_download_pdf_submit', [ $this, 'download_pdf_submit' ]);
 
         
-        add_action('admin_post_coastalynk_congestion_history_load_action', [ $this, 'coastalynk_congestion_history_load_action_callback' ]);
-        add_action('admin_post_nopriv_coastalynk_congestion_history_load_action', [ $this, 'coastalynk_congestion_history_load_action_callback' ]);
-
         add_action('admin_post_coastalynk_congestion_history_export_action', [ $this, 'coastalynk_congestion_history_export_action_callback' ]);
         add_action('admin_post_nopriv_coastalynk_congestion_history_export_action', [ $this, 'coastalynk_congestion_history_export_action_callback' ]);
 
+        add_action('admin_post_coastalynk_sts_history_load_action_ctrl', [ $this, 'coastalynk_sts_history_load_action_ctrl_callback' ]);
+        add_action('admin_post_nopriv_coastalynk_sts_history_load_action_ctrl', [ $this, 'coastalynk_sts_history_load_action_ctrl_callback' ]);
+
+        
     }
 
     /**
-     * show_vessels shortcode content.
+     * Process the STS export.
+     */
+    function coastalynk_sts_history_load_action_ctrl_callback( ) {
+        
+        global $wpdb;
+        if (!isset($_POST['coastalynk_sts_history_load_nonce']) || !wp_verify_nonce($_POST['coastalynk_sts_history_load_nonce'], 'coastalynk_sts_history_load')) {
+            $error_url = add_query_arg('form_error', 'Security verification failed', wp_get_referer());
+            wp_redirect($error_url);
+            exit;
+        }
+
+        $port       = sanitize_text_field( $_REQUEST['caostalynk_history_ddl_ports'] );
+        $date_range = sanitize_text_field( $_REQUEST['caostalynk_sts_history_range'] );
+        if( ! empty( $date_range ) ) {
+            $where = '';
+            if( ! empty( $port ) ) {
+                $where = " and port = '".$port."' ";
+            }
+
+            $start_date = '';
+            $end_date = '';
+            if( !empty( $date_range ) ) {
+                $explode = explode( '-', $date_range );
+                $start_date = date( 'Y-m-d H:i:s', strtotime( trim( $explode[0] ) ) );
+                $end_date = date( 'Y-m-d H:i:s', strtotime( trim( $explode[1] ) ) );
+            } else {
+                $start_date = date( 'Y-m-d' );
+                $end_date = date( 'Y-m-d', strtotime('-6 Days'));
+            }
+
+            $vessle_recs = $wpdb->get_results( $wpdb->prepare( "select `vessel1_uuid`,`vessel1_name`, `vessel1_mmsi`, `vessel1_imo`, `vessel1_country_iso`, `vessel1_type`, `vessel1_type_specific`,`vessel1_lat`', `vessel1_lon`', `vessel1_speed`, `vessel1_navigation_status`, `vessel1_draught`, `vessel1_last_position_UTC`,`vessel2_uuid`, `vessel2_name`, `vessel2_mmsi`, `vessel2_imo`, `vessel2_country_iso`,`vessel2_type`, `vessel2_type_specific`, `vessel2_lat`', `vessel2_lon`', `vessel2_speed`, `vessel2_navigation_status`, `vessel2_draught`, `vessel2_last_position_UTC`, `port`, `port_id`, `distance`, `is_email_sent`, `is_complete`, `last_updated` from ".$wpdb->prefix."coastalynk_sts where last_updated BETWEEN %s AND %s", $start_date, $end_date).$where, ARRAY_A );
+            
+            $fp = fopen('php://output', 'w'); 
+            header('Content-Type: text/csv');
+            header('Content-Disposition: attachment; filename="sts.csv"');
+            header('Pragma: no-cache');    
+            header('Expires: 0');
+            $headers = ['vessel1_uuid','vessel1_name', 'vessel1_mmsi', 'vessel1_imo', 'vessel1_country_iso', 'vessel1_type', 'vessel1_type_specific','vessel1_lat', 'vessel1_lon', 'vessel1_speed', 'vessel1_navigation_status', 'vessel1_draught', 'vessel1_last_position_UTC','vessel2_uuid', 'vessel2_name', 'vessel2_mmsi', 'vessel2_imo', 'vessel2_country_iso','vessel2_type', 'vessel2_type_specific', 'vessel2_lat', 'vessel2_lon', 'vessel2_speed', 'vessel2_navigation_status', 'vessel2_draught', 'vessel2_last_position_UTC', 'port', 'port_id', 'distance', 'is_email_sent', 'is_complete', 'last_updated'];
+            if( ! empty( $vessle_recs ) && is_array( $vessle_recs ) ) {
+                $headers = array_keys( $vessle_recs[0] );
+            }
+            fputcsv($fp, $headers); 
+                
+            
+            if ($fp && $vessle_recs){     
+                foreach( $vessle_recs as $vessle_row ) {
+                    fputcsv($fp, array_values($vessle_row)); 
+                }
+            }
+        }
+
+        exit;
+    }
+    /**
+     * Process the congestion export.
      */
     function coastalynk_congestion_history_export_action_callback( ) {
         
@@ -65,20 +120,18 @@ class Coastalynk_Sea_Vessel_Map_Front {
             exit;
         }
 
-        $port      = sanitize_text_field( $_REQUEST['caostalynk_history_ddl_ports'] );
+        $port       = sanitize_text_field( $_REQUEST['caostalynk_history_ddl_ports'] );
         $date_range = sanitize_text_field( $_REQUEST['caostalynk_congestion_history_range'] );
         $date       = sanitize_text_field( $_REQUEST['caostalynk_history_ddl_dates'] );
-        $time      = sanitize_text_field( $_REQUEST['caostalynk_history_ddl_times'] );
-
-        if( ( ! empty( $date ) && ! empty( $time ) ) || !empty( $date_range ) ) {
+        if( ! empty( $date )  || ! empty( $date_range ) ) {
 
             $where = '';
             if( ! empty( $port ) ) {
                 $where = " and port = '".$port."' ";
             }
 
-            if( ! empty( $date ) && ! empty( $time ) ) {
-                $date_time = strtotime( date('Y-m-d H:i:s', strtotime( $date.' '.$time ) ));
+            if( ! empty( $date ) ) {
+                $date_time = strtotime( date('Y-m-d H:i:s', strtotime( $date ) ));
                 $results = $wpdb->get_results( $wpdb->prepare( "select id, port from ".$wpdb->prefix."coastalynk_port_congestion where Hour(updated_at) = %s and Minute(updated_at) = %s and Date(updated_at) = %s", date('H', $date_time ), date('i', $date_time ), date('Y-m-d', $date_time ) ).$where );
             } else {
                 $start_date = '';
@@ -93,7 +146,6 @@ class Coastalynk_Sea_Vessel_Map_Front {
                 }
 
                 $results = $wpdb->get_results( $wpdb->prepare( "select id, port from ".$wpdb->prefix."coastalynk_port_congestion where updated_at BETWEEN %s AND %s", $start_date, $end_date).$where );
-        
             }
             $array = [];
             $vessle_recs = [];
@@ -102,19 +154,20 @@ class Coastalynk_Sea_Vessel_Map_Front {
                 $array = $wpdb->get_results( $wpdb->prepare( $sql, $result->id ), ARRAY_A  );
                 $vessle_recs = array_merge( $vessle_recs, $array );
             }
-
-            $headers = [];
+            
+            $fp = fopen('php://output', 'w'); 
+            header('Content-Type: text/csv');
+            header('Content-Disposition: attachment; filename="port-congestions.csv"');
+            header('Pragma: no-cache');    
+            header('Expires: 0');
+            $headers = ['uuid','name','mmsi','eni','imo', 'port','type','type_specific','country_iso', 'navigation_status', 'lat', 'lon', 'speed', 'course', 'heading', 'current_draught', 'dest_port_uuid', 'dest_port', 'dest_port_unlocode', 'dep_port', 'dep_port_uuid', 'dep_port_unlocode', 'last_position_epoch', 'last_position_UTC', 'atd_epoch', 'atd_UTC', 'eta_epoch', 'eta_UTC', 'destination'];
             if( ! empty( $vessle_recs ) && is_array( $vessle_recs ) ) {
                 $headers = array_keys( $vessle_recs[0] );
             }
+            fputcsv($fp, $headers); 
+                
             
-            $fp = fopen('php://output', 'w'); 
             if ($fp && $vessle_recs){     
-                header('Content-Type: text/csv');
-                header('Content-Disposition: attachment; filename="port-congestions.csv"');
-                header('Pragma: no-cache');    
-                header('Expires: 0');
-                fputcsv($fp, $headers); 
                 foreach( $vessle_recs as $vessle_row ) {
                     fputcsv($fp, array_values($vessle_row)); 
                 }
@@ -123,16 +176,6 @@ class Coastalynk_Sea_Vessel_Map_Front {
         exit;
     }
 
-    /**
-     * show_vessels shortcode content.
-     */
-    function coastalynk_congestion_history_load_action_callback( ) {
-        $port_code = sanitize_text_field( $_POST['port_code'] );
-        $start_date = sanitize_text_field( $_POST['start_date'] );
-        $end_date = sanitize_text_field( $_POST['end_date'] );
-
-        echo 'coastalynk_congestion_history_load_action_callback:'.$port_code.' '. $start_date.' '.$end_date;exit;
-    }
 
     /**
      * show_vessels shortcode content.
@@ -295,22 +338,15 @@ class Coastalynk_Sea_Vessel_Map_Front {
             $where = " and port = '".$port."' ";
         }
 
-        $results = $wpdb->get_results( $wpdb->prepare( "select updated_at from ".$wpdb->prefix."coastalynk_port_congestion where updated_at BETWEEN %s AND %s", $start_date, $end_date).$where );
+        $results = $wpdb->get_results( $wpdb->prepare( "select distinct(updated_at) as updated_at from ".$wpdb->prefix."coastalynk_port_congestion where updated_at BETWEEN %s AND %s", $start_date, $end_date).$where );
         $array = [];
         
         foreach( $results as $result ) {
-            $date = date( 'Y-m-d', strtotime( $result->updated_at ) );
-            $time = date( 'h:i A', strtotime( $result->updated_at ) );
+
+            $array[] = $result->updated_at;
             
-            if( array_key_exists( $date, $array ) ) {
-               if( ! in_array( $time, $array[$date] ) ) {
-                    $array[$date][] = $time;
-                }
-            } else {
-                $array[$date] = [$time];
-            }
         }
-        echo wp_send_json_success(['date_all'=>__( "All Dates", "castalynkmap" ), 'time_all'=>__( "All Times", "castalynkmap" ), 'options'=>$array]);
+        echo wp_send_json_success(['date_all'=>__( "All Dates", "castalynkmap" ), 'options'=>$array]);
         exit;
     }
 
