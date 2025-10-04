@@ -53,6 +53,14 @@
 .coastalynk-sbm-marker-middle-part table {
     margin:5px
 }
+.coastalynk-map-view-button-first{
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 5px;
+}
+.coastalynk-map-view-button-last{
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 5px;
+}
 .coastalynk-sbm-marker-labels-part {
     padding: 5px 0px;
 }
@@ -555,7 +563,9 @@ table.dataTable tbody tr.selected {
 }
 
 /********************************End preloader********************/
-
+div.dt-container div.dt-layout-row{
+    overflow-x: auto !important;
+}
 @media (max-width: 768px) {
     .datalastic-container .dashboard {
         grid-template-columns: 1fr;
@@ -576,7 +586,7 @@ table.dataTable tbody tr.selected {
     }
 
     .caostalynk-history-header-buttons {
-        flex-direction: column;
+        flex-direction: column !important;
         
     }
 }
@@ -588,6 +598,7 @@ table.dataTable tbody tr.selected {
         height: unset;
         max-height: 100%;
     }
+   
     .datalastic-container .map-container {
         height: 60vh;
         min-height: 400px;
@@ -649,6 +660,9 @@ table.dataTable tbody tr.selected {
     .coastalynk-port-scroll-menu{
         width: unset;
     }
+    .coastalynk_vessel_search_options{
+        flex-direction: column;
+    }
 }
 
 @media (max-width: 480px) {
@@ -656,9 +670,13 @@ table.dataTable tbody tr.selected {
         display: block;
     }
     .caostalynk-history-header-buttons {
-        flex-direction: column;
+        flex-direction: column !important;
         
     }
+    .coastalynk_vessel_search_options{
+        flex-direction: column;
+    }
+
     .coastlynk-menu-toggle, #coastlynk-menu-toggle-close{
         display: none;
     }
@@ -749,7 +767,9 @@ table.dataTable tbody tr.selected {
     .logo-text {
         font-size: 1.3rem;
     }
-    
+    .caostalynk-history-header-buttons {
+        flex-direction: column !important;
+    }
     #coastalynk-table h1 {
         font-size: 1.3rem;
     }

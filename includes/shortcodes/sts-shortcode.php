@@ -88,9 +88,9 @@ class Coastalynk_STS_Shortcode {
                             <button id="coastalynk-port-next-btn">&gt;</button>
                         </div>
                         <div class="view-options">
-                            <button class="view-button active" data-view="heatmap"><?php _e( "Heatmap", "castalynkmap" );?></button>
+                            <button class="view-button coastalynk-map-view-button-first active" data-view="heatmap"><?php _e( "Heatmap", "castalynkmap" );?></button>
                             <button class="view-button" data-view="vessels"><?php _e( "Vessels", "castalynkmap" );?></button>
-                            <button class="view-button" data-view="ports"><?php _e( "Ports", "castalynkmap" );?></button>
+                            <button class="view-button coastalynk-map-view-button-last" data-view="ports"><?php _e( "Ports", "castalynkmap" );?></button>
                         </div>
                     </div>
                 </header>

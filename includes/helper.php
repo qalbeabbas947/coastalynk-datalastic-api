@@ -461,13 +461,13 @@ function coastalynk_side_bar_menu() {
                         </div>
                         <div class="coastlynk-vessel-menu-text"><a href="<?php echo get_permalink($coatalynk_ports_page);?>"><?php _e( "Ports", "castalynkmap" );?></a></div>
                         <div class="coastlynk-menu-toggle" id="coastlynk-menu-toggle-close">
-                            <a href="javascript:;"><i class="fa-regular fa-circle-xmark"></i></a>                    
+                            <a href="javascript:;"><i class="fa fa-window-close"></i> </a>                    
                         </div>
                         <div class="coastlynk-menu-toggle coastlynk-menu-toggle-open" style="display: none;">
-                            <i class="fa-solid fa-angle-right"></i>                       
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
                         </div>
                         <div class="coastlynk-menu-dashboard-open-close-burger coastlynk-menu-dashboard-burger">
-                            <i class="fa-regular fa-circle-xmark"></i>                 
+                            <i class="fa fa-window-close"></i>                 
                         </div>
                     </li>
                 <?php } ?>
@@ -478,13 +478,13 @@ function coastalynk_side_bar_menu() {
                         </div>
                         <div class="coastlynk-vessel-menu-text"><a href="<?php echo get_permalink($coatalynk_ports_page);?>"><?php _e( "Vessels", "castalynkmap" );?></a></div>
                         <div class="coastlynk-menu-toggle" id="coastlynk-menu-toggle-close">
-                            <a href="<?php echo get_permalink($coatalynk_vessels_page);?>"><i class="fa-regular fa-circle-xmark"></i></a>                    
+                            <a href="<?php echo get_permalink($coatalynk_vessels_page);?>"><i class="fa fa-window-close"></i></a>                    
                         </div>
                         <div class="coastlynk-menu-toggle coastlynk-menu-toggle-open" style="display: none;">
-                            <i class="fa-solid fa-angle-right"></i>                       
-                        </div>
+                            <i class="fa fa-angle-double-right" aria-hidden="true"></i>
+                         </div>
                         <div class="coastlynk-menu-dashboard-open-close-burger coastlynk-menu-dashboard-burger">
-                            <i class="fa-regular fa-circle-xmark"></i>                 
+                            <i class="fa fa-window-close"></i>                 
                         </div>
                     </li>
                 <?php } ?>
@@ -507,7 +507,7 @@ function coastalynk_side_bar_menu() {
                 <?php if( in_array( $user_type, [REGULATOR_USER, ADMIN_USER]) ) { ?>
                     <li class="coastlynk-vessel-menu-item <?php echo $post->ID==$coatalynk_sts_page?'active':'';?>">
                         <div class="coastlynk-vessel-menu-icon">
-                            <a href="<?php echo get_permalink($coatalynk_sts_page);?>"><i class="fa-solid fa-map-location"></i></a>
+                            <a href="<?php echo get_permalink($coatalynk_sts_page);?>"><i class="fa fa-arrows-h"></i></a>
                         </div>
                         <div class="coastlynk-vessel-menu-text"><a href="<?php echo get_permalink($coatalynk_sts_page);?>"><?php _e( "STS MAP", "castalynkmap" );?></a></div>
                     </li>
@@ -532,7 +532,7 @@ function coastalynk_side_bar_menu() {
                 <?php if( in_array( $user_type, [REGULATOR_USER, ADMIN_USER]) ) { ?>
                     <li class="coastlynk-vessel-menu-item">
                         <div class="coastlynk-vessel-menu-icon">
-                            <i class="fa-solid fa-route"></i>
+                            <i class="fa fa-compress"></i>
                         </div>
                         <div class="coastlynk-vessel-menu-text"><?php _e( "Sea Routes", "castalynkmap" );?></div>
                     </li>

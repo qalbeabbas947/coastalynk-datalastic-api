@@ -148,20 +148,6 @@ div#coastalynk-table_wrapper{
     text-align: center;
 }
 
-
-
-
-.coastalynk-map-view-button-first{
-    border-top-left-radius: 5px;
-    border-bottom-left-radius: 5px;
-}
-.coastalynk-map-view-button-last{
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
-}
-
-
-
 #coastalynk-table {
     font-size: 1rem; /* Adjust this value to your preference */
 }

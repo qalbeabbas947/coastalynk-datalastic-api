@@ -13,6 +13,19 @@
                 this.load_ajax_port_congestion();
                 this.btn_filter_port_congestion();
                 this.btn_export_port_congestion_history();
+
+                this.prebutton(); 
+                this.nextButton(); 
+            },
+            prebutton: function(){
+                $('#coastalynk-port-prev-btn').on( 'click', function(){
+                    document.querySelector('.coastalynk-port-scroll-menu').scrollBy({ left: -200, behavior: 'smooth' }); // Adjust -200 for desired scroll distance
+                });
+            },
+            nextButton: function(){
+                $('#coastalynk-port-next-btn').on( 'click', function(){
+                    document.querySelector('.coastalynk-port-scroll-menu').scrollBy({ left: 200, behavior: 'smooth' }); // Adjust -200 for desired scroll distance
+                });
             },
             btn_export_port_congestion_history: function() {
                 $('.coastalynk-history-button-export-csv').on('click', function(event) {

@@ -754,7 +754,7 @@ class Coastalynk_Vessel_Shortcode {
     function coastalynk_enqueue_scripts() : void {
         
         // Enqueue my styles.
-        wp_register_style( 'coastalynk-vessels-shortcode-style', CSM_CSS_URL.'vessel-shortcode.css?'.time() );
+        wp_register_style( 'coastalynk-vessels-shortcode-style', CSM_CSS_URL.'/frontend/vessel-shortcode.css?'.time() );
        
         // Enqueue my scripts.
         wp_register_script( 'coastlynk-ticker-js', CSM_JS_URL.'/frontend/ticker.js', array( 'jquery' ), time(), true );
