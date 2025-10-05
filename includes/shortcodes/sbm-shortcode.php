@@ -64,7 +64,7 @@ class Coastalynk_SBM_Shortcode {
         }
 
         $table_name_sbm = $wpdb->prefix . 'coastalynk_sbm';
-        $vessel_data = $wpdb->get_results("SELECT * FROM $table_name_sbm");
+        $vessel_data = $wpdb->get_results("SELECT * FROM $table_name_sbm where last_updated = (select max(last_updated) from $table_name_sbm)");
 
         ?>
         <script>
