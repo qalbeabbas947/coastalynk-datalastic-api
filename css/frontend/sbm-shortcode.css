@@ -167,7 +167,54 @@
     }
 }
 
+/*****************************************************************************/
 
+.caostalynk-sbm-history-header-buttons > div {
+    padding: 3px;
+    margin-right: 10px;
+}
+.caostalynk-sbm-history-header-buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+}
+
+#coastalynk-port-sbm-history-form{
+    background-color: #F2F4F7;
+    border-radius: 1px;
+    padding: 15px;
+    margin: 30px 20px;
+    overflow: hidden;
+    position: relative; 
+}
+#coastalynk-port-sbm-history-form h2 {
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    font-size: 2rem;
+}
+
+#coastalynk-port-sbm-history-form button {
+    background-color: #0088FF;
+    color: white;
+    border: none;
+    color: white;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+.coastalynk-sbm-history-buttons {
+    padding-left: 10px;
+}
+input#caostalynk_sbm_history_range {
+    padding: 6px;
+    background-color: #fff;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    width: 300px;
+    max-width: 100%;
+}
 
 
 

@@ -1,6 +1,6 @@
 <?php
 /**
- * STS shortcode page
+ * sbm shortcode page
  *
  * Do not allow directly accessing this file.
  */
@@ -129,6 +129,37 @@ class Coastalynk_SBM_Shortcode {
                         </div>
                     </div>
                 </div>
+
+                <form method="post" id="coastalynk-port-sbm-history-form" action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" name="coastalynk-port-sbm-history-form">
+                    <div class="section-title d-flex justify-content-between mb-0 leftalign">
+                        <h2><?php _e( "SBM History", "castalynkmap" );?></h2>               
+                    </div>
+                    <div class="caostalynk-sbm-history-header-buttons">
+                        <div class="coastalynk-sbm-history-ports">
+                            <select id="caostalynk_history_ddl_ports" class="coastalynk-sbm-select2-js" name="caostalynk_history_ddl_ports">
+                                <option value=""><?php _e( "All Ports", "castalynkmap" );?></option>
+                                <?php foreach( $port_data as $port ) { ?>
+                                    <option value="<?php echo $port->port_id;?>"><?php echo $port->title;?></option>
+                                <?php } ?>
+                            </select>
+                        </div>
+                        <div class="coastalynk-sbm-history-date-range">
+                            <input id="caostalynk_sbm_history_range" type="text" class="coastalynk-date-range-js" name="caostalynk_sbm_history_range">
+                        </div>
+                        <div class="coastalynk-sbm-history-buttons">
+                            <button class="coastalynk-sbm-history-buttons-export-csv">
+                                <?php _e( "Export", "castalynkmap" );?>
+                                <div id="coastalynk-column-loader" class="coastalynk-column-loader" style="display:none;">
+                                    <div id="coastalynk-column-blockG_1" class="coastalynk-column-blockG"></div>
+                                    <div id="coastalynk-column-blockG_2" class="coastalynk-column-blockG"></div>
+                                    <div id="coastalynk-column-blockG_3" class="coastalynk-column-blockG"></div>
+                                </div>
+                            </button>
+                        </div>
+                        <?php wp_nonce_field( 'coastalynk_sbm_history_load', 'coastalynk_sbm_history_load_nonce' ); ?>
+                        <input type="hidden" id="coastalynk_sbm_history_load_action_ctrl" name="action" value="coastalynk_sbm_history_load_action_ctrl" />
+                    </div>
+                </form>
             </div>
         </div>
             <!-- Leaflet JS -->

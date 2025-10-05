@@ -50,8 +50,68 @@ class Coastalynk_Sea_Vessel_Map_Front {
 
         add_action('admin_post_coastalynk_sts_history_load_action_ctrl', [ $this, 'coastalynk_sts_history_load_action_ctrl_callback' ]);
         add_action('admin_post_nopriv_coastalynk_sts_history_load_action_ctrl', [ $this, 'coastalynk_sts_history_load_action_ctrl_callback' ]);
-
+        
+        add_action('admin_post_coastalynk_sbm_history_load_action_ctrl', [ $this, 'coastalynk_sbm_history_load_action_ctrl_callback' ]);
+        add_action('admin_post_nopriv_coastalynk_sbm_history_load_action_ctrl', [ $this, 'coastalynk_sbm_history_load_action_ctrl_callback' ]);
+        
         add_action( 'wp_enqueue_scripts', [ $this, 'coastalynk_enqueue_scripts' ] );
+    }
+
+    /**
+     * enque dashboard.
+     */
+    function coastalynk_sbm_history_load_action_ctrl_callback( ) {
+        global $wpdb;
+        if (!isset($_POST['coastalynk_sbm_history_load_nonce']) || !wp_verify_nonce($_POST['coastalynk_sbm_history_load_nonce'], 'coastalynk_sbm_history_load')) {
+            $error_url = add_query_arg('form_error', 'Security verification failed', wp_get_referer());
+            wp_redirect($error_url);
+            exit;
+        }
+
+        $port       = sanitize_text_field( $_REQUEST['caostalynk_history_ddl_ports'] );
+        $date_range = sanitize_text_field( $_REQUEST['caostalynk_sbm_history_range'] );
+        if( ! empty( $date_range ) ) {
+            $where = '';
+            if( ! empty( $port ) ) {
+                $where = " and port = '".$port."' ";
+            }
+
+            $start_date = '';
+            $end_date = '';
+            if( !empty( $date_range ) ) {
+                $explode = explode( '-', $date_range );
+                $start_date = date( 'Y-m-d H:i:s', strtotime( trim( $explode[0] ) ) );
+                $end_date = date( 'Y-m-d H:i:s', strtotime( trim( $explode[1] ) ) );
+            } else {
+                $start_date = date( 'Y-m-d' );
+                $end_date = date( 'Y-m-d', strtotime('-6 Days'));
+            }
+
+            
+
+            $vessle_recs = $wpdb->get_results( $wpdb->prepare( "select uuid, name, mmsi, imo, country_iso, type, type_specific, lat, lon, speed, navigation_status, draught, completed_draught, last_position_UTC, port, port_id, port_type, distance, is_offloaded, is_start_email_sent, is_complete_email_sent, last_updated from ".$wpdb->prefix."coastalynk_sbm where last_updated BETWEEN %s AND %s", $start_date, $end_date).$where, ARRAY_A );
+            
+            
+            $fp = fopen('php://output', 'w'); 
+            header('Content-Type: text/csv');
+            header('Content-Disposition: attachment; filename="sts.csv"');
+            header('Pragma: no-cache');    
+            header('Expires: 0');
+            $headers = ['uuid', 'name', 'mmsi', 'imo', 'country_iso', 'type', 'type_specific', 'lat', 'lon', 'speed', 'navigation_status', 'draught', 'completed_draught', 'last_position_UTC', 'port', 'port_id', 'port_type', 'distance', 'is_offloaded', 'is_start_email_sent', 'is_complete_email_sent', 'last_updated'];
+            if( ! empty( $vessle_recs ) && is_array( $vessle_recs ) ) {
+                $headers = array_keys( $vessle_recs[0] );
+            }
+            fputcsv($fp, $headers); 
+                
+            
+            if ($fp && $vessle_recs){     
+                foreach( $vessle_recs as $vessle_row ) {
+                    fputcsv($fp, array_values($vessle_row)); 
+                }
+            }
+        }
+
+        exit;
     }
 
     /**
