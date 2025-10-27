@@ -520,7 +520,7 @@ function coastalynk_side_bar_menu() {
                         <div class="coastlynk-vessel-menu-text"><a href="<?php echo get_permalink($coatalynk_levy_calculator_page);?>"><?php _e( "Levy Calculator", "castalynkmap" );?></a></div>
                     </li>
                 <?php } ?>
-                
+<!--                 
                 <?php if( in_array( $user_type, [REGULATOR_USER, ADMIN_USER]) ) { ?>
                     <li class="coastlynk-vessel-menu-item">
                         <div class="coastlynk-vessel-menu-icon">
@@ -544,7 +544,7 @@ function coastalynk_side_bar_menu() {
                         </div>
                         <div class="coastlynk-vessel-menu-text"><?php _e( "Reports", "castalynkmap" );?></div>
                     </li>
-                <?php } ?>
+                <?php } ?> -->
             </ul>
         </div>
     <?php

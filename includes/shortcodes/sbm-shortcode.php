@@ -65,11 +65,8 @@ class Coastalynk_SBM_Shortcode {
 
         $table_name_sbm = $wpdb->prefix . 'coastalynk_sbm';
         $vessel_data = $wpdb->get_results("SELECT * FROM $table_name_sbm where last_updated = (select max(last_updated) from $table_name_sbm)");
-
         ?>
-        <script>
-        
-    </script>
+
         <div class="vessel-dashboard-container">
             <?php coastalynk_side_bar_menu(); ?>
             <!-- Sidebar -->
@@ -160,6 +157,65 @@ class Coastalynk_SBM_Shortcode {
                         <input type="hidden" id="coastalynk_sbm_history_load_action_ctrl" name="action" value="coastalynk_sbm_history_load_action_ctrl" />
                     </div>
                 </form>
+                <div class="coastalynk-sbm-table_wrapper">
+                    <table id="coastalynk-sbm-table" class="display" class="cell-border hover stripe"> 
+                        <thead>
+                           <tr>
+                                <th></th>
+                                <th><?php _e( "Name", "castalynkmap" );?></th>
+                                <th><?php _e( "MMSI", "castalynkmap" );?></th>
+                                <th><?php _e( "IMO", "castalynkmap" );?></th>
+                                <th><?php _e( "Type", "castalynkmap" );?></th>
+                                <th><?php _e( "Type Specific", "castalynkmap" );?></th>
+                                <th><?php _e( "Speed", "castalynkmap" );?></th>
+                                <th><?php _e( "Status", "castalynkmap" );?></th>
+                                <th><?php _e( "Draught", "castalynkmap" );?></th>
+                                <th><?php _e( "Completed Draught", "castalynkmap" );?></th>
+                                <th><?php _e( "Position UTC", "castalynkmap" );?></th>
+                                <th><?php _e( "Port", "castalynkmap" );?></th>
+                                <th><?php _e( "distance", "castalynkmap" );?></th>
+                                <th><?php _e( "Check", "castalynkmap" );?></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach( $vessel_data as $vessel ) { ?>
+                                <tr>
+                                    <td>
+                                        <?php 
+                                            if( !empty( $vessel->country_iso ) ) {
+                                                echo '<img src="'.CSM_IMAGES_URL."flags/".strtolower( $vessel->country_iso ).".jpg".'" class="coastalyn-flag-port-listing" alt="'.$vessel->name.'">';
+                                            }
+                                        ?>
+                                    </td>
+                                    <td><?php echo $vessel->name; ?></td>
+                                    <td><?php echo $vessel->mmsi; ?></td>
+                                    <td><?php echo $vessel->imo; ?></td>
+                                    <td><?php echo $vessel->type; ?></td>
+                                    <td><?php echo $vessel->type_specific; ?></td>
+                                    <td><?php echo $vessel->speed; ?></td>
+                                    <td><?php echo $vessel->navigation_status; ?></td>
+                                    <td><?php echo $vessel->draught; ?></td>
+                                    <td><?php echo $vessel->completed_draught; ?></td>
+                                    <td><?php echo get_date_from_gmt( $vessel->last_position_UTC, CSM_DATE_FORMAT.' '.CSM_TIME_FORMAT ); ?></td>
+                                    <td><?php echo $vessel->port; ?></td>
+                                    <td><?php echo $vessel->distance; ?></td>
+                                    <td>
+                                        <input type="button" class="coastalynk-sbm-retrieve-draught-btn" data-name="<?php echo $vessel->name; ?>" data-uuid="<?php echo $vessel->uuid; ?>" value="<?php _e( "Draught", "castalynkmap" );?>">
+                                        <div id="coastalynk-column-loader" class="coastalynk-column-loader" style="display:none;">
+                                            <div id="coastalynk-column-blockG_1" class="coastalynk-column-blockG"></div>
+                                            <div id="coastalynk-column-blockG_2" class="coastalynk-column-blockG"></div>
+                                            <div id="coastalynk-column-blockG_3" class="coastalynk-column-blockG"></div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            <?php } ?>
+                        </tbody>
+                        <tfoot>
+                            
+                        </tfoot>
+                    </table>
+                </div>
+                
             </div>
         </div>
             <!-- Leaflet JS -->

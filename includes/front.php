@@ -38,6 +38,9 @@ class Coastalynk_Sea_Vessel_Map_Front {
         add_action('wp_ajax_coastalynk_retrieve_tonnage', [ $this, 'coastalynk_retrieve_tonnage' ]);
         add_action('wp_ajax_nopriv_coastalynk_retrieve_tonnage', [ $this, 'coastalynk_retrieve_tonnage' ]);
 
+        add_action('wp_ajax_coastalynk_retrieve_draught', [ $this, 'coastalynk_retrieve_draught' ]);
+        add_action('wp_ajax_nopriv_coastalynk_retrieve_draught', [ $this, 'coastalynk_retrieve_draught' ]);
+
         add_action('wp_ajax_coastalynk_congestion_history_ports_data', [ $this, 'congestion_history_ports_data' ]);
 
         
@@ -248,6 +251,7 @@ class Coastalynk_Sea_Vessel_Map_Front {
             
             if ($fp && $vessle_recs){     
                 foreach( $vessle_recs as $vessle_row ) {
+                    
                     fputcsv($fp, array_values($vessle_row)); 
                 }
             }
@@ -366,7 +370,7 @@ class Coastalynk_Sea_Vessel_Map_Front {
                     </tr>
                     <tr>
                         <td class="header-td">'.__( "Date", "castalynkmap" ).'</td>
-                        <td class="data-td">'.date('M d, Y').'</td>
+                        <td class="data-td">'.wp_date('M d, Y').'</td>
                     </tr>
                 </table>
             </div>
@@ -465,10 +469,12 @@ class Coastalynk_Sea_Vessel_Map_Front {
             <div class="coastalynk-stat-item-wrapper">
                 <?php
                 $columns = $wpdb->get_col( "select distinct(type) as type from ".$wpdb->prefix."coastalynk_port_congestion_vessels where congestion_id='" .$congestion_id."'" );
+                $total_vessels = 0;
                 foreach( $columns as $type  ) {
                     if( !empty( $type ) ) {
                         $total = $wpdb->get_var( "select count(id) as total from ".$wpdb->prefix."coastalynk_port_congestion_vessels where congestion_id='" .$congestion_id."' and type like '%" . $wpdb->esc_like( $type ) . "%'" );
                         if( intval($total) > 0 ) {
+                            $total_vessels += $total;
                             ?>
                                 <div class="stat-item">
                                     <div class="stat-label"><?php _e( ucwords( $type ), "castalynkmap" );?></div>
@@ -481,10 +487,17 @@ class Coastalynk_Sea_Vessel_Map_Front {
                     }
                 }
                 ?>
+
+                <div class="stat-item">
+                    <div class="stat-label"><?php _e( 'Total Vessels', "castalynkmap" );?></div>
+                    <div class="stat-value" id="total-vessels">
+                        <?php echo $total_vessels;?> <?php if(intval( $total_vessels ) > 1 ) { echo __( "vessel(s)", "castalynkmap" ); } else { echo __( "vessel", "castalynkmap" ); } ?>
+                    </div>
+                </div>
             </div>
             <div class="coastalynk-date-updated">
                 <div class="stat-label"><?php _e( "Updated Congestion Data", "castalynkmap" );?></div>
-                <div class="stat-value" id="total-vessels"><?php echo $updated_at;?></div>
+                <div class="stat-value" id="total-vessels"><?php echo get_date_from_gmt( $updated_at, CSM_DATE_FORMAT.' '.CSM_TIME_FORMAT);?></div>
             </div>
         </div>
         <?php
@@ -495,7 +508,124 @@ class Coastalynk_Sea_Vessel_Map_Front {
         die();
 
     }
-    
+
+    /**
+     * retrieve the vessel tonnage.
+     */
+    function coastalynk_retrieve_draught() {
+        ini_set( "display_errors", "On" );
+        error_reporting(E_ALL);
+        $selected_uuid = isset( $_REQUEST['selected_uuid']  ) ? sanitize_text_field( $_REQUEST['selected_uuid'] ): "";
+        $selected_name = isset( $_REQUEST['selected_name']  ) ? sanitize_text_field( $_REQUEST['selected_name'] ): "";
+
+        if ( ! check_ajax_referer( 'coastalynk_secure_ajax_nonce', 'nonce', false ) ) {
+            wp_send_json_error( __( 'Security nonce check failed. Please refresh the page.', "castalynkmap" ) );
+            wp_die();
+        }
+
+        $apiKey 	= get_option( 'coatalynk_datalastic_apikey' );
+        $endpoint = 'https://api.datalastic.com/api/v0/vessel_find';
+        $params = array(
+            'api-key' => $apiKey,
+            'name' => $selected_name,
+            'fuzzy'    => '0'
+        );
+        $url = add_query_arg($params, $endpoint);
+
+        $response = wp_remote_get($url);
+
+        if (is_wp_error($response)) {
+            error_log('API Request Failed: ' . $response->get_error_message());
+            return false;
+        }
+
+        $body = wp_remote_retrieve_body($response);
+        $vessel_find = json_decode($body);
+
+        $draught_avg = 0; 
+        $draught_max = 0;
+           
+        $vessel_data_find = [];
+        if( isset( $vessel_find->data ) ){
+            foreach( $vessel_find->data as $dat ) {
+                if( trim( $selected_uuid ) == trim( $dat->uuid ) ) {
+                    $vessel_data_find = $dat;
+                }
+            }
+        }
+
+        $endpoint = 'https://api.datalastic.com/api/v0/vessel_pro';
+        $params = array(
+            'api-key' => $apiKey,
+            'uuid' => $selected_uuid
+        );
+        $url = add_query_arg($params, $endpoint);
+
+        $response = wp_remote_get($url);
+
+        if (is_wp_error($response)) {
+            error_log('API Request Failed: ' . $response->get_error_message());
+            return false;
+        }
+
+        $body = wp_remote_retrieve_body($response);
+        $vessel_pro = json_decode($body);
+        $vessel_pro_data = [];
+        if( isset( $vessel_pro->data ) ){
+            $vessel_pro_data = $vessel_pro->data;
+        }
+        
+        if( !empty( $vessel_pro_data ) && !empty( $vessel_data_find ) ) {
+            
+            $type = $vessel_pro_data->type;
+            $k_factor = 0;
+            if( in_array( $type, ['Tanker', 'Tanker - Hazard A (Major)', 'Tanker - Hazard B', 'asdad', 'Tanker - Hazard C (Minor)', 'Tanker - Hazard D (Recognizable)', 'Tanker: Hazardous category A', 'Tanker: Hazardous category B', 'Tanker: Hazardous category C', 'Tanker: Hazardous category D'] ) ) {
+                $k_factor = 0.26;
+            } else if( in_array( $type, [ 'Cargo', 'Cargo - Hazard A (Major)', 'Cargo - Hazard B', 'Cargo - Hazard C (Minor)', 'Cargo - Hazard D (Recognizable)', 'Cargo: Hazardous category A', 'Cargo: Hazardous category B', 'Cargo: Hazardous category C', 'Cargo: Hazardous category D' ] ) ) {
+                $k_factor = 0.25;
+            } else if( in_array( $type, [ 'Passenger' ] ) ) {
+                $k_factor = 0.23;
+            } else if( in_array( $type, [ 'Fishing' ] ) ) {
+                $k_factor =  0.20;
+            } else if( in_array( $type, [ 'Tug', 'OffShore Structure', 'Dredger' ] ) ) {
+                $k_factor =  0.21;
+            } else if( in_array( $type, [ 'Other', 'Unspecified' ] ) ) {
+                $k_factor =  0.21;
+            }
+
+            $current_draught = $vessel_pro_data->current_draught;
+            $deadweight = $vessel_data_find->deadweight;
+            $draught_max = $vessel_data_find->draught_max;
+            if( floatval( $draught_max ) > 0 && floatval( $current_draught ) > 0 && floatval( $current_draught ) <= floatval( $draught_max ) && $k_factor > 0 ) {
+                $percentage = ( floatval( $current_draught ) * 100 ) / $draught_max;
+                if( $percentage > 80 ) {
+                    echo __( "Loaded", "castalynkmap" );
+                } else if( $percentage <= 80 && $percentage >= 40 ) {
+                    echo __( "Partial", "castalynkmap" );
+                } else {
+                    echo __( "Ballast", "castalynkmap" );
+                }
+                
+            } else if( floatval( $deadweight ) > 0 && $k_factor > 0 ) {
+                
+                $draught_max = pow( $deadweight, 1/3) * 0.25;
+                $percentage = ( floatval( $current_draught ) * 100 ) / $draught_max;
+                if( $percentage > 80 ) {
+                    echo __( "Loaded", "castalynkmap" );
+                } else if( $percentage <= 80 && $percentage >= 40 ) {
+                    echo __( "Partial", "castalynkmap" );
+                } else {
+                    echo __( "Ballast", "castalynkmap" );
+                }
+            } else {
+                    echo __( "Unknown", "castalynkmap" );
+            }
+        } else {
+            echo __( "Unknown", "castalynkmap" );
+        }
+
+        exit;
+    }
 
     /**
      * retrieve the vessel tonnage.

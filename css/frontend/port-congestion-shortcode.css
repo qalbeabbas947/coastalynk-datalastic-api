@@ -124,6 +124,7 @@ div#coastalynk-table_wrapper{
     padding: 10px 20px 0px 20px;
     background-color: #F2F4F7;
     height: 537px;
+    overflow-y: scroll;
     max-width: 100%;
 }
 .coastalynk-date-updated .stat-value {

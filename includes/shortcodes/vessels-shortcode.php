@@ -57,6 +57,11 @@ class Coastalynk_Vessel_Shortcode {
         $table_name = $wpdb->prefix . 'coastalynk_vessels';
         $vessel = $wpdb->get_row( $wpdb->prepare( "SELECT * FROM $table_name where uuid=%s", $uuid ), ARRAY_A );
         if( isset( $vessel['country_iso'] ) && !empty( $vessel['country_iso'] )) {
+
+            $vessel['atd_UTC'] = get_date_from_gmt( $vessel['atd_UTC'], CSM_DATE_FORMAT.' '.CSM_TIME_FORMAT );
+            $vessel['eta_UTC'] = get_date_from_gmt( $vessel['eta_UTC'], CSM_DATE_FORMAT.' '.CSM_TIME_FORMAT );
+            $vessel['last_position_UTC'] = get_date_from_gmt( $vessel['last_position_UTC'], CSM_DATE_FORMAT.' '.CSM_TIME_FORMAT );
+            $vessel['last_updated'] = get_date_from_gmt( $vessel['last_updated'], CSM_DATE_FORMAT.' '.CSM_TIME_FORMAT );
             $vessel['flag'] = CSM_IMAGES_URL."flags/".strtolower( $vessel['country_iso'] ).".jpg";
         }
 
@@ -324,7 +329,7 @@ class Coastalynk_Vessel_Shortcode {
                             foreach( $dark_ships as $dship ) {
                                 ?>
                                     <div class="coastalynk-darkship-ticker-item">
-                                        <span class="coastalynk-darkship-news-time"><?php echo date('m/d/Y H:i', strtotime( $dship['last_position_UTC']));?></span>
+                                        <span class="coastalynk-darkship-news-time"><?php echo get_date_from_gmt( $dship['last_position_UTC'], CSM_DATE_FORMAT.' '.CSM_TIME_FORMAT );?></span>
                                         <?php echo $dship['name'];?>: <?php echo $dship['reason'];?>
                                     </div>
                                 <?php
@@ -351,6 +356,8 @@ class Coastalynk_Vessel_Shortcode {
                                     <th><?php _e( "Port", "castalynkmap" );?></th>
                                     <th><?php _e( "MMSI", "castalynkmap" );?></th>
                                     <th><?php _e( "IMO", "castalynkmap" );?></th>
+                                    <th><?php _e( "Type", "castalynkmap" );?></th>
+                                    <th><?php _e( "Type Specific", "castalynkmap" );?></th>
                                     <th><?php _e( "Dark Ship?", "castalynkmap" );?></th>
                                     <th><?php _e( "Destination", "castalynkmap" );?></th>
                                     <th><?php _e( "Speed", "castalynkmap" );?></th>
@@ -359,9 +366,7 @@ class Coastalynk_Vessel_Shortcode {
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php 
-
-                               
+                            <?php 
                                 foreach( $vessel_data as $data ) { 
                                                                  
                                     ?>
@@ -377,10 +382,12 @@ class Coastalynk_Vessel_Shortcode {
                                         <td><?php echo $data['dest_port']; ?></td>
                                         <td><?php echo $data['mmsi']; ?></td>
                                         <td><?php echo $data['imo']; ?></td>
+                                        <td><?php echo $data['type']; ?></td>
+                                        <td><?php echo $data['type_specific']; ?></td>
                                         <td style="color:red"><?php echo isset( $ship_array[ $data['uuid'] ] ) ? $ship_array[ $data['uuid'] ] : ''; ?></td>
                                         <td><?php echo $data['destination']; ?></td>
                                         <td><?php echo $data['speed']; ?></td>
-                                        <td><?php echo $data['atd_UTC']; ?></td>
+                                        <td><?php echo get_date_from_gmt( $data['atd_UTC'], CSM_DATE_FORMAT.' '.CSM_TIME_FORMAT ); ?></td>
                                         <td>
                                             <input type="button" class="coastalynk-retrieve-popup-btn" data-name='<?php echo $data['name']; ?>' data-uuid="<?php echo $data['uuid']; ?>" value="<?php _e( "More", "castalynkmap" );?>">
                                             <div id="coastalynk-column-loader" style="display:none;">

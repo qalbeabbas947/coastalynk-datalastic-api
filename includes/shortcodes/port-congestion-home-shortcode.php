@@ -384,7 +384,7 @@ class Coastalynk_Dashboard_Port_Congestion_Home_Shortcode {
                                 <td><?php echo $feature['properties']['reason']; ?></td>
                                 <td><?php echo $feature['properties']['destination']; ?></td>
                                 <td><?php echo $feature['properties']['speed']; ?></td>
-                                <td><?php echo $feature['properties']['timestamp'] ? date('Y-m-d H:i:s', $feature['properties']['timestamp']) : 'N/A'; ?></td>
+                                <td><?php echo $feature['properties']['timestamp'] ? get_date_from_gmt($feature['properties']['timestamp'], CSM_DATE_FORMAT.' '.CSM_TIME_FORMAT) : 'N/A'; ?></td>
                                 <td>
                                     <input type="button" class="coastalynk-retrieve-tonnage-btn" data-name="<?php echo $feature['properties']['name']; ?>" data-uuid="<?php echo $feature['properties']['uuid']; ?>" value="<?php _e( "Retrieve Tonnage", "castalynkmap" );?>">
                                     <div id="coastalynk-column-loader" style="display:none;">

@@ -1,4 +1,36 @@
+.coastalynk-sbm-table_wrapper {
+    margin: 20px;
+    overflow-x: scroll;
+}
+.table-responsive, #coastalynk-sbm-table .dt-layout-cell {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    -ms-overflow-style: -ms-autohiding-scrollbar;
+}
+.coastalynk-sbm-retrieve-draught-btn{
+    border: none;
+    border-radius: 5px;
+    padding: 6px;
+    background-color: #0088FF;
+    color: white;
+    cursor: pointer;
+}
+#coastalynk-sbm-table {
+    font-size: 1rem; /* Adjust this value to your preference */
+}
 
+/* Or, be more specific to target just the cell data */
+#coastalynk-sbm-table tbody td {
+    font-size: 1rem;
+}
+
+/* Optional: Adjust the header font size separately */
+#coastalynk-sbm-table thead th {
+    font-size: 1rem;
+    font-weight: bold;
+} 
 .sbm-main-content {
     display: flex;
     flex: 1;

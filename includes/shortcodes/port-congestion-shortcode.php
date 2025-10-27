@@ -167,7 +167,7 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
 
             $response = file_get_contents( $url );
             $data = json_decode( $response, true );
-
+            
             if (isset($data['data']['vessels'])) {
 
                 foreach ( $data['data']['vessels'] as $vessel ) {
@@ -225,7 +225,10 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                                 'country_flag' => CSM_IMAGES_URL."flags/".strtolower( $flag ).".jpg" ?? '',
                                 'destination' => $vessel['destination'] ?? '',
                                 'speed' => $vessel['speed'] ?? '',
-                                'timestamp' => $vessel['last_position_epoch'] ?? '',
+                                'type' => $vessel['type'] ?? '',
+                                'type_specific' => $vessel['type_specific'] ?? '',
+                                'timestamp' => $vessel['last_position_epoch'],
+                                'timestamp_formated' => get_date_from_gmt( date( 'Y-m-d H:i:s', $vessel['last_position_epoch']), CSM_DATE_FORMAT.' '.CSM_TIME_FORMAT  ),
                                 'type' => $vessel['type'] ?? '',
                                 'type_specific' => $vessel['type_specific'] ?? '',
                                 'reason' => $reason ?? '',
@@ -237,6 +240,7 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                 }
             }
         }
+        
         ?>
         <div class="vessel-dashboard-container">
             <?php coastalynk_side_bar_menu(); ?>
@@ -273,7 +277,7 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                         </div>
                         <div class="coastalynk-port-congestion-sidebar-wrapper"> 
                             <div class="stat-item coastalynk-totoal-vessels">
-                                <div class="stat-label"><?php _e( "Total Vessels Tracked", "castalynkmap" );?></div>
+                                <div class="stat-label"><?php _e( "Total Vessels(All Ports)", "castalynkmap" );?></div>
                                 <div class="stat-value" id="total-vessels"><?php echo $total_vessels;?></div>
                             </div>
                             
@@ -298,7 +302,7 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                             foreach( $dark_ships as $dship ) {
                                 ?>
                                     <div class="coastalynk-darkship-ticker-item">
-                                        <span class="coastalynk-darkship-news-time"><?php echo date('m/d/Y H:i', strtotime( $dship['last_position_UTC']));?></span>
+                                        <span class="coastalynk-darkship-news-time"><?php echo get_date_from_gmt($dship['last_position_UTC'], CSM_DATE_FORMAT.' '.CSM_TIME_FORMAT);?></span>
                                         <?php echo $dship['name'];?>: <?php echo $dship['reason'];?>
                                     </div>
                                 <?php
@@ -388,6 +392,8 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                             <th><?php _e( "Port", "castalynkmap" );?></th>
                             <th><?php _e( "MMSI", "castalynkmap" );?></th>
                             <th><?php _e( "IMO", "castalynkmap" );?></th>
+                            <th><?php _e( "Type", "castalynkmap" );?></th>
+                            <th><?php _e( "Type Specific", "castalynkmap" );?></th>
                             <th><?php _e( "Darkship?", "castalynkmap" );?></th>
                             <th><?php _e( "Destination", "castalynkmap" );?></th>
                             <th><?php _e( "Speed", "castalynkmap" );?></th>
@@ -409,10 +415,12 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                                 <td><?php echo $feature['properties']['port']; ?></td>
                                 <td><?php echo $feature['properties']['mmsi']; ?></td>
                                 <td><?php echo $feature['properties']['imo']; ?></td>
+                                <td><?php echo $feature['properties']['type']; ?></td>
+                                <td><?php echo $feature['properties']['type_specific']; ?></td>
                                 <td><?php echo $feature['properties']['reason']; ?></td>
                                 <td><?php echo $feature['properties']['destination']; ?></td>
                                 <td><?php echo $feature['properties']['speed']; ?></td>
-                                <td><?php echo $feature['properties']['timestamp'] ? date('Y-m-d H:i:s', $feature['properties']['timestamp']) : 'N/A'; ?></td>
+                                <td><?php echo $feature['properties']['timestamp_formated'] ? $feature['properties']['timestamp_formated'] : 'N/A'; ?></td>
                                 <td>
                                     <input type="button" class="coastalynk-retrieve-tonnage-btn" data-name="<?php echo $feature['properties']['name']; ?>" data-uuid="<?php echo $feature['properties']['uuid']; ?>" value="<?php _e( "Retrieve Tonnage", "castalynkmap" );?>">
                                     <div id="coastalynk-column-loader" class="coastalynk-column-loader" style="display:none;">
@@ -475,6 +483,7 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
                             color: "<?php echo $feature['properties']['color'];?>",
                             port: "<?php echo $feature['properties']['port'];?>",
                             timestamp: "<?php echo $feature['properties']['timestamp'];?>",
+                            timestamp_formated: "<?php echo $feature['properties']['timestamp_formated'];?>",
                             lat: "<?php echo $feature['geometry']['coordinates'][0];?>",
                             lng: "<?php echo $feature['geometry']['coordinates'][1];?>",
                             imo: "<?php echo $feature['properties']['imo'];?>",

@@ -74,7 +74,10 @@ class Coastalynk_Sea_Vessel_Map {
         define( 'PORT_OPERATOR_USER', 'pmpro_role_3' );
         define( 'REGULATOR_USER', 'pmpro_role_4' );
 
-
+        $date_format = get_option( 'date_format' );
+        $time_format = get_option( 'time_format' );
+        define( 'CSM_DATE_FORMAT', $date_format );
+        define( 'CSM_TIME_FORMAT', $time_format );
     }
 
     /**
