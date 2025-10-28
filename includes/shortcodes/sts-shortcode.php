@@ -57,15 +57,15 @@ class Coastalynk_STS_Shortcode {
         $table_name = $wpdb->prefix . 'coastalynk_ports';
         $port_data = $wpdb->get_results("SELECT * FROM $table_name where country_iso='NG' and port_type='Port' order by title");
         $ports = [];  
-        
-        foreach( $port_data as $port ) {
-            if( $port->lat && $port->lon )
-                $ports[$port->title] = [$port->lat, $port->lon];
-        }
-
         $table_name_sts = $wpdb->prefix . 'coastalynk_sts';
-        $vessel_data = $wpdb->get_results("SELECT * FROM $table_name_sts where last_updated = (select max(last_updated) from $table_name_sts)");
-        
+        $vessel_data = [];
+        foreach( $port_data as $port ) {
+            if( $port->lat && $port->lon ) {
+                $ports[$port->title] = [$port->lat, $port->lon];
+                $vdata = $wpdb->get_results("SELECT * FROM $table_name_sts where port='".$port->title."' and is_complete='No' and last_updated = (select max(last_updated) from $table_name_sts where port='".$port->title."' and is_disappeared='No')");
+                $vessel_data = array_merge( $vessel_data, $vdata );
+            }
+        }
         ?>
         
         <div class="vessel-dashboard-container">
