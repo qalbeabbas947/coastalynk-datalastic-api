@@ -18,8 +18,17 @@
                 var lat = $(this).data('lat');
                 var lon = $(this).data('lon');
                 const portCoords = [lat, lon];
+                var mapContainer = $('#map');
+
+                // Scroll to the map container
+                $('html, body').animate({
+                    scrollTop: mapContainer.offset().top 
+                }, 800, function() { // Callback after scroll animation completes
+                    // Focus the map container after scrolling
+                    mapContainer.focus();
+                });
                 if (portCoords) {
-                    map.setView(portCoords, 12);
+                    map.setView(portCoords, 14);
                 }
             });
 

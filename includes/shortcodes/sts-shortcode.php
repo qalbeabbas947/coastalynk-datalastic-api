@@ -226,7 +226,7 @@ class Coastalynk_STS_Shortcode {
                                         </div>
                                     </td>
                                     <td>
-                                        <input type="button" class="coastalynk-sts-focus-marker-btn" data-lon="<?php echo $vessel->vessel1_lon; ?>" data-lat="<?php echo $vessel->vessel1_lat; ?>" value="<?php _e( "Goto Map", "castalynkmap" );?>">
+                                        <input type="button" class="coastalynk-sts-focus-marker-btn" data-lon="<?php echo $vessel->vessel1_lon; ?>" data-lat="<?php echo $vessel->vessel1_lat; ?>" value="<?php _e( "View on Map", "castalynkmap" );?>">
                                     </td>
                                 </tr>
                             <?php } ?>
