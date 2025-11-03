@@ -564,28 +564,29 @@ table.dataTable tbody tr.selected {
 
 
 .coastalynk_at_anchor_status_color{
-    background-color: #0088FF;
+    background-color: Yellow;
 }
 .coastalynk_not_under_command_status_color{
-    background-color: #4CAF50;
+    background-color: Red;
 }
 .coastalynk_restricted_maneuverability_status_color{
-    background-color: #6c757d;
+    background-color: Red;
 }
 .coastalynk_constrained_by_her_draught_status_color{
-    background-color: #C1D8EE;
+    background-color: Orange;
 }
 .coastalynk_moored_status_color{
-    background-color: #2ace32;
+    background-color: Yellow;
 }
 .coastalynk_aground_status_color{
-    background-color: #170a8f;
+    background-color: Red;
 }
 .coastalynk_engaged_in_fishing_status_color{
-    background-color: #1e0a74;
+    background-color: Blue;
 }
 .coastalynk_underway_sailing_status_color{
-    background-color: #c9df4c;
+    background-color: Green;
+    color: white;
 }
 /********************************End preloader********************/
 div.dt-container div.dt-layout-row{

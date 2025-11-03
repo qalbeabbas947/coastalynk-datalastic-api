@@ -465,12 +465,15 @@ function coastalynk_get_vessel_navigation_status_class( $navigation_status ) {
             $navigation_status_class = 'coastalynk_moored_status_color';
             break;
         case 'aground':
+        case 'stopped':
+        case 'pushing ahead/towing alongside':
             $navigation_status_class = 'coastalynk_aground_status_color';
             break;
         case 'engaged in fishing':
             $navigation_status_class = 'coastalynk_engaged_in_fishing_status_color';
             break;
         case 'underway sailing':
+        case 'under way using engine':
             $navigation_status_class = 'coastalynk_underway_sailing_status_color';
             break;
            
