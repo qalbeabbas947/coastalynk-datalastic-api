@@ -433,6 +433,52 @@ function coastalynk_display_dropdown( $field_id, $default = '', $selected = '', 
     <?php
 }
 
+function coastalynk_get_vessel_short_types( $vessel_type ) {
+    
+    if( str_contains($vessel_type, "Tanker") ) {
+        return __( "Tanker", "castalynkmap" );
+    } else if( str_contains($vessel_type, "Cargo") ) {
+        return __( "Cargo", "castalynkmap" );
+    }
+
+    return $vessel_type;
+}
+
+function coastalynk_get_vessel_navigation_status_class( $navigation_status ) {
+    
+    $navigation_status_class = '';
+    
+    switch( strtolower( $navigation_status ) ) {
+        case 'at anchor':
+            $navigation_status_class = 'coastalynk_at_anchor_status_color';
+            break;
+        case 'not under command':
+            $navigation_status_class = 'coastalynk_not_under_command_status_color';
+            break;
+        case 'restricted maneuverability':
+            $navigation_status_class = 'coastalynk_restricted_maneuverability_status_color';
+            break;
+        case 'constrained by her draught':
+            $navigation_status_class = 'coastalynk_constrained_by_her_draught_status_color';
+            break;
+        case 'moored':
+            $navigation_status_class = 'coastalynk_moored_status_color';
+            break;
+        case 'aground':
+            $navigation_status_class = 'coastalynk_aground_status_color';
+            break;
+        case 'engaged in fishing':
+            $navigation_status_class = 'coastalynk_engaged_in_fishing_status_color';
+            break;
+        case 'underway sailing':
+            $navigation_status_class = 'coastalynk_underway_sailing_status_color';
+            break;
+           
+    }
+
+    return $navigation_status_class;
+}
+
 /**
  * Renders the sidebar expandable menu
  */

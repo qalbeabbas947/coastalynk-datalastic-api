@@ -58,14 +58,14 @@ class Coastalynk_STS_Shortcode {
         $port_data = $wpdb->get_results("SELECT * FROM $table_name where country_iso='NG' and port_type='Port' order by title");
         $ports = [];  
         $table_name_sts = $wpdb->prefix . 'coastalynk_sts';
-        $vessel_data = [];
         foreach( $port_data as $port ) {
             if( $port->lat && $port->lon ) {
                 $ports[$port->title] = [$port->lat, $port->lon];
-                $vdata = $wpdb->get_results("SELECT * FROM $table_name_sts where port='".$port->title."' and is_complete='No' and last_updated = (select max(last_updated) from $table_name_sts where port='".$port->title."' and is_disappeared='No')");
-                $vessel_data = array_merge( $vessel_data, $vdata );
+                
             }
         }
+
+        $vessel_data = $wpdb->get_results( "SELECT * FROM $table_name_sts where is_disappeared='No'" );
         ?>
         
         <div class="vessel-dashboard-container">
@@ -116,8 +116,16 @@ class Coastalynk_STS_Shortcode {
                             <input id="caostalynk_sts_history_range" type="text" class="coastalynk-date-range-js" name="caostalynk_sts_history_range">
                         </div>
                         <div class="coastalynk-sts-history-buttons">
-                            <button class="coastalynk-sts-history-buttons-export-csv">
-                                <?php _e( "Export", "castalynkmap" );?>
+                            <button class="coastalynk-sts-history-buttons-export-csv" data-id="export-csv">
+                                <?php _e( "Export CSV", "castalynkmap" );?>
+                                <div id="coastalynk-column-loader" class="coastalynk-column-loader" style="display:none;">
+                                    <div id="coastalynk-column-blockG_1" class="coastalynk-column-blockG"></div>
+                                    <div id="coastalynk-column-blockG_2" class="coastalynk-column-blockG"></div>
+                                    <div id="coastalynk-column-blockG_3" class="coastalynk-column-blockG"></div>
+                                </div>
+                            </button>
+                            <button class="coastalynk-sts-history-buttons-export-pdf" data-id="export-pdf">
+                                <?php _e( "Export PDF", "castalynkmap" );?>
                                 <div id="coastalynk-column-loader" class="coastalynk-column-loader" style="display:none;">
                                     <div id="coastalynk-column-blockG_1" class="coastalynk-column-blockG"></div>
                                     <div id="coastalynk-column-blockG_2" class="coastalynk-column-blockG"></div>
@@ -126,7 +134,7 @@ class Coastalynk_STS_Shortcode {
                             </button>
                         </div>
                         <?php wp_nonce_field( 'coastalynk_sts_history_load', 'coastalynk_sts_history_load_nonce' ); ?>
-                        <input type="hidden" id="coastalynk_sts_history_load_action_ctrl" name="action" value="coastalynk_sts_history_load_action_ctrl" />
+                        <input type="hidden" id="coastalynk_sts_history_load_action_ctrl" name="action" value="coastalynk_sts_history_load_action_ctrl_csv" />
                     </div>
                 </form>
                 <div class="coastalynk-sts-table_wrapper">
@@ -136,7 +144,7 @@ class Coastalynk_STS_Shortcode {
                                 <th colspan="6" align="center"><?php _e( "Vessel 1", "castalynkmap" );?></th>
                                 <th colspan="6" align="center"><?php _e( "Vessel 2", "castalynkmap" );?></th>
                                 <th><?php _e( "Port", "castalynkmap" );?></th>
-                                <th colspan="2"><?php _e( "Action", "castalynkmap" );?></th>
+                                <th colspan="2"></th>
                             </tr>
                             
                             <tr>
@@ -157,7 +165,8 @@ class Coastalynk_STS_Shortcode {
                                 <th><?php _e( "Status", "castalynkmap" );?></th>
                                 <th><?php _e( "Draught", "castalynkmap" );?></th>
                                 <th><?php _e( "Port", "castalynkmap" );?></th>
-                                <th colspan="2"></th>
+                                <th><?php _e( "Detail", "castalynkmap" );?></th>
+                                <th><?php _e( "Action", "castalynkmap" );?></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -168,6 +177,8 @@ class Coastalynk_STS_Shortcode {
                                         
                                         if( in_array( $key, ['vessel1_eta', 'vessel1_atd', 'vessel2_eta', 'vessel2_atd', 'last_updated', 'start_date', 'end_date'] ) ) {
                                             $attributes .= ' data-'.$key.' = "'.get_date_from_gmt( $val, CSM_DATE_FORMAT.' '.CSM_TIME_FORMAT ).'"';
+                                        } else if( in_array( $key, ['vessel1_draught', 'vessel1_completed_draught', 'vessel2_draught', 'vessel2_completed_draught' ] ) ) {
+                                            $attributes .= ' data-'.$key.' = "'.( floatval( $val ) > 0?$val:__( "Pending", "castalynkmap" )).'"';
                                         } else {
                                             $attributes .= ' data-'.$key.' = "'.$val.'"';
                                         }
@@ -184,9 +195,9 @@ class Coastalynk_STS_Shortcode {
                                     <td><?php echo $vessel->vessel1_name; ?></td>
                                     <!-- <td><?php echo $vessel->vessel1_mmsi; ?></td>
                                     <td><?php echo $vessel->vessel1_imo; ?></td> -->
-                                    <td><?php echo $vessel->vessel1_type; ?></td>
+                                    <td><?php echo coastalynk_get_vessel_short_types( $vessel->vessel1_type); ?></td>
                                     <td><?php echo $vessel->vessel1_speed; ?></td>
-                                    <td><?php echo $vessel->vessel1_navigation_status; ?></td>
+                                    <td class="<?php echo coastalynk_get_vessel_navigation_status_class( $vessel->vessel1_navigation_status); ?>"><?php echo $vessel->vessel1_navigation_status; ?></td>
                                     <td>
                                         <input type="button" class="coastalynk-retrieve-draught-btn" data-name="<?php echo $vessel->vessel1_name; ?>" data-uuid="<?php echo $vessel->vessel1_uuid; ?>" value="<?php _e( "Draught", "castalynkmap" );?>">
                                         <div id="coastalynk-column-loader" class="coastalynk-column-loader" style="display:none;">
@@ -205,9 +216,11 @@ class Coastalynk_STS_Shortcode {
                                     <td><?php echo $vessel->vessel2_name; ?></td>
                                     <!-- <td><?php echo $vessel->vessel2_mmsi; ?></td>
                                     <td><?php echo $vessel->vessel2_imo; ?></td> -->
-                                    <td><?php echo $vessel->vessel2_type; ?></td>
+                                    <td>
+                                        <?php echo coastalynk_get_vessel_short_types( $vessel->vessel2_type); ?>
+                                    </td>
                                     <td><?php echo $vessel->vessel2_speed; ?></td>
-                                    <td><?php echo $vessel->vessel2_navigation_status; ?></td>
+                                    <td class="<?php echo coastalynk_get_vessel_navigation_status_class( $vessel->vessel2_navigation_status); ?>"><?php echo $vessel->vessel2_navigation_status; ?></td>
                                     <td>
                                         <input type="button" class="coastalynk-retrieve-draught-btn" data-name="<?php echo $vessel->vessel2_name; ?>" data-uuid="<?php echo $vessel->vessel2_uuid; ?>" value="<?php _e( "Draught", "castalynkmap" );?>">
                                         <div id="coastalynk-column-loader" class="coastalynk-column-loader" style="display:none;">
@@ -218,7 +231,7 @@ class Coastalynk_STS_Shortcode {
                                     </td>
                                     <td><?php echo $vessel->port; ?></td>
                                     <td>
-                                        <input type="button" class="coastalynk-sts-retrieve-popup-btn" <?php echo $attributes;?> value="<?php _e( "More", "castalynkmap" );?>">
+                                        <input type="button" class="coastalynk-sts-retrieve-popup-btn" <?php echo $attributes;?> value="<?php _e( "Details", "castalynkmap" );?>">
                                         <div id="coastalynk-column-loader" style="display:none;">
                                             <div id="coastalynk-column-blockG_1" class="coastalynk-column-blockG"></div>
                                             <div id="coastalynk-column-blockG_2" class="coastalynk-column-blockG"></div>
@@ -240,7 +253,7 @@ class Coastalynk_STS_Shortcode {
             <div class="coastalynk-sts-popup-overlay"></div>
             <div class="coastalynk-sts-popup-content">
                 <h2>
-                    <div>STS Activity</div>
+                    <div><?php _e( "STS Activity", "castalynkmap" );?></div>
                     <div id="coastalynk-sts-popup-close"><i class="fa fa-times" aria-hidden="true"></i></div>
                 </h2>
                 <div class="coastalynk-sts-popup-top-bar">
@@ -446,7 +459,7 @@ class Coastalynk_STS_Shortcode {
                             type_specific: '<?php echo $feature->vessel1_type_specific;?>',
                             position: ['<?php echo $feature->vessel1_lat;?>', '<?php echo $feature->vessel1_lon;?>'],
                             speed: '<?php echo $feature->vessel1_speed;?>',
-                            draught: '<?php echo $feature->vessel1_draught;?>',
+                            draught: '<?php echo ( floatval( $feature->vessel1_draught ) > 0?$feature->vessel1_draught:__( "Pending", "castalynkmap" ));?>',
                             navigation_status: "<?php echo $feature->vessel1_navigation_status;?>",
                             country_iso: "<?php echo $feature->vessel1_country_iso;?>",
                             flag: "<?php echo CSM_IMAGES_URL."flags/".strtolower( $feature->vessel1_country_iso ).".jpg"; ?>",
@@ -466,7 +479,7 @@ class Coastalynk_STS_Shortcode {
                             lng: '<?php echo $feature->vessel2_lon;?>',
                             speed: '<?php echo $feature->vessel2_speed;?>',
                             country_iso: "<?php echo $feature->vessel2_country_iso;?>",
-                            draught: '<?php echo $feature->vessel2_draught;?>',
+                            draught: '<?php echo ( floatval( $feature->vessel2_draught ) > 0?$feature->vessel2_draught:__( "Pending", "castalynkmap" ));?>',
                             navigation_status: "<?php echo $feature->vessel2_navigation_status;?>",
                             flag: "<?php echo CSM_IMAGES_URL."flags/".strtolower( $feature->vessel2_country_iso ).".jpg"; ?>",
                             port: "<?php echo $feature->port;?>",

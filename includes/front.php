@@ -51,15 +51,275 @@ class Coastalynk_Sea_Vessel_Map_Front {
         add_action('admin_post_coastalynk_congestion_history_export_action', [ $this, 'coastalynk_congestion_history_export_action_callback' ]);
         add_action('admin_post_nopriv_coastalynk_congestion_history_export_action', [ $this, 'coastalynk_congestion_history_export_action_callback' ]);
 
-        add_action('admin_post_coastalynk_sts_history_load_action_ctrl', [ $this, 'coastalynk_sts_history_load_action_ctrl_callback' ]);
-        add_action('admin_post_nopriv_coastalynk_sts_history_load_action_ctrl', [ $this, 'coastalynk_sts_history_load_action_ctrl_callback' ]);
-        
+        add_action('admin_post_coastalynk_sts_history_load_action_ctrl_csv', [ $this, 'coastalynk_sts_history_load_action_ctrl_csv_callback' ]);
+        add_action('admin_post_nopriv_coastalynk_sts_history_load_action_ctrl_csv', [ $this, 'coastalynk_sts_history_load_action_ctrl_csv_callback' ]);
+
+        add_action('admin_post_coastalynk_sts_history_load_action_ctrl_pdf', [ $this, 'coastalynk_sts_history_load_action_ctrl_pdf_callback' ]);
+        add_action('admin_post_nopriv_coastalynk_sts_history_load_action_ctrl_pdf', [ $this, 'coastalynk_sts_history_load_action_ctrl_pdf_callback' ]);
+
+
         add_action('admin_post_coastalynk_sbm_history_load_action_ctrl', [ $this, 'coastalynk_sbm_history_load_action_ctrl_callback' ]);
         add_action('admin_post_nopriv_coastalynk_sbm_history_load_action_ctrl', [ $this, 'coastalynk_sbm_history_load_action_ctrl_callback' ]);
         
         add_action( 'wp_enqueue_scripts', [ $this, 'coastalynk_enqueue_scripts' ] );
     }
 
+    /**
+     * enque dashboard.
+     */
+    function coastalynk_sts_history_load_action_ctrl_pdf_callback( ) {
+        ini_set( "display_errors", "On" );
+        error_reporting(E_ALL);ini_set('memory_limit', '-1');
+        global $wpdb;
+        // print_r($_POST);
+        // ;
+        // if (!isset($_POST['coastalynk_sbm_history_load_nonce']) || !wp_verify_nonce($_POST['coastalynk_sbm_history_load_nonce'], 'coastalynk_sbm_history_load')) {
+            
+        //     echo $error_url = add_query_arg('form_error', 'Security verification failed', wp_get_referer());exit;
+        //     wp_redirect($error_url);
+        //     exit;
+        // }
+        $port       = sanitize_text_field( $_REQUEST['caostalynk_history_ddl_ports'] );
+        $date_range = sanitize_text_field( $_REQUEST['caostalynk_sts_history_range'] );
+        if( ! empty( $date_range ) ) {
+            $where = '';
+            if( ! empty( $port ) ) {
+                $where = " and port = '".$port."' ";
+            }
+
+            $start_date = '';
+            $end_date = '';
+            if( !empty( $date_range ) ) {
+                $explode = explode( '-', $date_range );
+                $start_date = date( 'Y-m-d H:i:s', strtotime( trim( $explode[0] ) ) );
+                $end_date = date( 'Y-m-d H:i:s', strtotime( trim( $explode[1] ) ) );
+            } else {
+                $start_date = date( 'Y-m-d' );
+                $end_date = date( 'Y-m-d', strtotime('-6 Days'));
+            }
+
+            $vessle_recs = $wpdb->get_results( $wpdb->prepare( "select * from ".$wpdb->prefix."coastalynk_sts where last_updated BETWEEN %s AND %s", $start_date, $end_date).$where.' limit 100', ARRAY_A );
+            
+            require( CSM_LIB_DIR.'vendor/autoload.php' );
+            $options = new Dompdf\Options();
+            $options->set('isRemoteEnabled', true);
+            $options->set('isHtml5ParserEnabled', true);
+            $options->set('chroot', __DIR__); // Set base directory
+            $options->set('defaultFont', 'Helvetica');
+
+            // Create PDF instance
+            $dompdf = new Dompdf\Dompdf();
+
+            $imageData = base64_encode(file_get_contents(get_template_directory_uri().'/assets/images/main_logo-footer.png'));
+            //$imageData = base64_encode(file_get_contents('https://coastalynk.com/staging/wp-content/themes/coastalynk/assets/images/main_logo-footer.png'));
+            $base64Image = 'data:image/jpeg;base64,' . $imageData;
+
+            // HTML content
+            $html = '
+            <!DOCTYPE html>
+            <html>
+            <head>
+                <style>
+                    body { font-family: Arial, sans-serif; }
+                    .currency{font-family: "DejaVu Sans Mono", monospace;}
+                    h1 { color: #333; }
+                    .header-td { background-color: #ddd;border: 1px solid #ddd;padding: 8px; }
+                    .data-td { background-color: #eee;border: 1px solid #ddd;padding: 8px; }
+                    .content { margin: 0px; }
+                    footer{ background-color:#317ec6; color:white; padding:5px;}
+                </style>
+            </head>
+            <body>
+                <div class="content">
+                    <table width="100%" cellpadding="5px" cellspacing="0">
+                        
+                    
+                        <tr style="background-color:#317ec6;">
+                            <td width="35%" style="background-color:#317ec6;"><img width=""171px src="'.$base64Image.'" /></td>
+                            <td width="65%" valign="" style="background-color:#317ec6;color:white;"><h2>'.__( "Coastalynk STS Report", "castalynkmap" ).'</h2><span style="font-size:13px; color: white;">'.__( "Digital Maritime Intelligence Platform", "castalynkmap" ).'</span></td>
+                        </tr>
+                        <tr>
+                            <td>&nbsp;</td>
+                            <td>&nbsp;</td>
+                        </tr>
+                        
+                        ';
+                        
+                        foreach( $vessle_recs as $record ) {
+                            $html .= '<tr><td colspan="2"><table width="100%" cellpadding="5px" cellspacing="0"><tr><td class="data-td" colspan="6">'.$record['remarks'].'</td></tr>
+                            <tr><td class="data-td" colspan="6">'.__( "Vehicle 1:", "castalynkmap" ).'</td></tr>
+                            <tr>
+                                <td class="header-td">'.__( "Name", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['vessel1_name'].'</td>
+                                <td class="header-td">'.__( "MMSI", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['vessel1_mmsi'].'</td>
+                                <td class="header-td">'.__( "IMP", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['vessel1_imo'].'</td>
+                            </tr>
+                            <tr>
+                                <td class="header-td">'.__( "Country", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['vessel1_country_iso'].'</td>
+                                <td class="header-td">'.__( "Type", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['vessel1_type'].'</td>
+                                <td class="header-td">'.__( "Sub. Type", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['vessel1_type_specific'].'</td>
+                            </tr>
+                            <tr>
+                                <td class="header-td">'.__( "Lattitude", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['vessel1_lat'].'</td>
+                                <td class="header-td">'.__( "Longitude", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['vessel1_lon'].'</td>
+                                <td class="header-td">'.__( "Speed", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['vessel1_speed'].'</td>
+                            </tr>
+                            <tr>
+                                <td class="header-td">'.__( "Nav. Status", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['vessel1_navigation_status'].'</td>
+                                <td class="header-td">'.__( "Before Draught", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['vessel1_draught'].'</td>
+                                <td class="header-td">'.__( "After Draught", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['vessel1_completed_draught'].'</td>
+                            </tr>
+                            <tr>
+                                <td class="header-td">'.__( "Last Position", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['vessel1_last_position_UTC'].'</td>
+                                <td class="header-td">'.__( "Condition", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['vessel_condition1'].'</td>
+                                <td class="header-td">'.__( "Cargo ETA", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['cargo_eta1'].'</td>
+                            </tr>
+                            <tr>
+                                <td class="header-td">'.__( "Owner", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['vessel_owner1'].'</td>
+                                <td class="header-td">'.__( "ETA", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['vessel1_eta'].'</td>
+                                <td class="header-td">'.__( "ETD", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['vessel1_atd'].'</td>
+                            </tr>
+                            <tr><td class="data-td" colspan="6">'.__( "Vehicle 2:", "castalynkmap" ).'</td></tr>
+                            <tr>
+                                <td class="header-td">'.__( "Name", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['vessel2_name'].'</td>
+                                <td class="header-td">'.__( "MMSI", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['vessel2_mmsi'].'</td>
+                                <td class="header-td">'.__( "IMP", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['vessel2_imo'].'</td>
+                            </tr>
+                            <tr>
+                                <td class="header-td">'.__( "Country", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['vessel2_country_iso'].'</td>
+                                <td class="header-td">'.__( "Type", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['vessel2_type'].'</td>
+                                <td class="header-td">'.__( "Sub. Type", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['vessel2_type_specific'].'</td>
+                            </tr>
+                            <tr>
+                                <td class="header-td">'.__( "Lattitude", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['vessel2_lat'].'</td>
+                                <td class="header-td">'.__( "Longitude", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['vessel2_lon'].'</td>
+                                <td class="header-td">'.__( "Speed", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['vessel2_speed'].'</td>
+                            </tr>
+                            <tr>
+                                <td class="header-td">'.__( "Nav. Status", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['vessel2_navigation_status'].'</td>
+                                <td class="header-td">'.__( "Before Draught", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['vessel2_draught'].'</td>
+                                <td class="header-td">'.__( "After Draught", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['vessel2_completed_draught'].'</td>
+                            </tr>
+                            <tr>
+                                <td class="header-td">'.__( "Last Position", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['vessel2_last_position_UTC'].'</td>
+                                <td class="header-td">'.__( "Condition", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['vessel_condition2'].'</td>
+                                <td class="header-td">'.__( "Cargo ETA", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['cargo_eta2'].'</td>
+                            </tr>
+                            <tr>
+                                <td class="header-td">'.__( "Owner", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['vessel_owner2'].'</td>
+                                <td class="header-td">'.__( "ETA", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['vessel2_eta'].'</td>
+                                <td class="header-td">'.__( "ETD", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['vessel2_atd'].'</td>
+                            </tr>
+                            <tr><td class="data-td" colspan="6">'.__( "General detail:", "castalynkmap" ).'</td></tr>
+                            <tr>
+                                <td class="header-td">'.__( "Reference ID", "castalynkmap" ).'</td>
+                                <td class="data-td" colspan="5">'.$record['event_ref_id'].'</td>
+                            </tr>
+                            <tr>
+                                <td class="header-td">'.__( "Zone", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['zone_terminal_name'].'</td>
+                                <td class="header-td">'.__( "Start Date", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['start_date'].'</td>
+                                <td class="header-td">'.__( "End Date", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['end_date'].'</td>
+                            </tr>
+                            <tr>    
+                                <td class="header-td">'.__( "Percentage", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['event_percentage'].'</td>
+                                <td class="header-td">'.__( "Cargo Type", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['cargo_category_type'].'</td>
+                                <td class="header-td">'.__( "Risk Level", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['risk_level'].'</td>
+                            </tr>
+                            <tr>
+                                <td class="header-td">'.__( "Distance", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['current_distance_nm'].'</td>
+                                <td class="header-td">'.__( "Stationary(hrs)", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['stationary_duration_hours'].'</td>
+                                <td class="header-td">'.__( "Proximity", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['proximity_consistency'].'</td>
+                            </tr>
+                            <tr>
+                                <td class="header-td">'.__( "Data Points", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['data_points_analyzed'].'</td>
+                                <td class="header-td">'.__( "Operation Mode", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['operationmode'].'</td>
+                                <td class="header-td">'.__( "Status", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['status'].'</td>
+                            </tr>
+                            <tr>
+                                <td class="header-td">'.__( "Pory", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['port'].'</td>
+                                <td class="header-td">'.__( "Distance", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['distance'].'</td>
+                                <td class="header-td">'.__( "Last Updated", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$record['last_updated'].'</td>
+                            </tr>
+                            <tr>
+                                <td colspan="6">&nbsp;</td>
+                            </tr>
+                            </table></td> </tr>
+                            ';
+                        }
+                   
+            $html .= '</table>
+                </div>
+                <footer>Generated by Coastalynk STS - Pilot Version.</footer>
+            </body>
+            </html>';
+// echo $html;
+// exit;
+            // Load HTML content
+            $dompdf->loadHtml($html);
+
+            // Set paper size and orientation
+            $dompdf->setPaper('A4', 'portrait');
+
+            // Render PDF
+            $dompdf->render();
+
+            // Output the PDF
+            $dompdf->stream("document.pdf", array("Attachment" => false));
+        }
+        
+
+        exit;
+    }
     /**
      * enque dashboard.
      */
@@ -139,10 +399,10 @@ class Coastalynk_Sea_Vessel_Map_Front {
     /**
      * Process the STS export.
      */
-    function coastalynk_sts_history_load_action_ctrl_callback( ) {
+    function coastalynk_sts_history_load_action_ctrl_csv_callback( ) {
         
         global $wpdb;
-        if (!isset($_POST['coastalynk_sts_history_load_nonce']) || !wp_verify_nonce($_POST['coastalynk_sts_history_load_nonce'], 'coastalynk_sts_history_load')) {
+        if (!isset($_POST['coastalynk_sts_history_load_nonce']) || ! wp_verify_nonce($_POST['coastalynk_sts_history_load_nonce'], 'coastalynk_sts_history_load')) {
             $error_url = add_query_arg('form_error', 'Security verification failed', wp_get_referer());
             wp_redirect($error_url);
             exit;
@@ -167,19 +427,18 @@ class Coastalynk_Sea_Vessel_Map_Front {
                 $end_date = date( 'Y-m-d', strtotime('-6 Days'));
             }
 
-            $vessle_recs = $wpdb->get_results( $wpdb->prepare( "select `vessel1_uuid`,`vessel1_name`, `vessel1_mmsi`, `vessel1_imo`, `vessel1_country_iso`, `vessel1_type`, `vessel1_type_specific`,`vessel1_lat`', `vessel1_lon`', `vessel1_speed`, `vessel1_navigation_status`, `vessel1_draught`, `vessel1_last_position_UTC`,`vessel2_uuid`, `vessel2_name`, `vessel2_mmsi`, `vessel2_imo`, `vessel2_country_iso`,`vessel2_type`, `vessel2_type_specific`, `vessel2_lat`', `vessel2_lon`', `vessel2_speed`, `vessel2_navigation_status`, `vessel2_draught`, `vessel2_last_position_UTC`, `port`, `port_id`, `distance`, `is_email_sent`, `is_complete`, `last_updated` from ".$wpdb->prefix."coastalynk_sts where last_updated BETWEEN %s AND %s", $start_date, $end_date).$where, ARRAY_A );
+            $vessle_recs = $wpdb->get_results( $wpdb->prepare( "select vessel1_uuid,vessel1_name,vessel1_mmsi,vessel1_imo,vessel1_country_iso,vessel1_type,vessel1_type_specific,vessel1_lat,vessel1_lon,vessel1_speed,vessel1_navigation_status,vessel1_draught,vessel1_completed_draught,vessel1_last_position_UTC,vessel2_uuid,vessel2_name,vessel2_mmsi,vessel2_imo,vessel2_country_iso,vessel2_type,vessel2_type_specific,vessel2_lat,vessel2_lon,vessel2_speed,vessel2_navigation_status,vessel2_draught, vessel2_completed_draught,vessel2_last_position_UTC,port,port_id,distance,event_ref_id,zone_terminal_name,start_date,end_date,remarks,event_percentage,vessel_condition1,cargo_eta1,vessel_owner1,vessel_condition2,cargo_eta2,vessel_owner2,cargo_category_type,vessel1_eta,vessel1_atd,vessel2_eta,vessel2_atd,risk_level, current_distance_nm,stationary_duration_hours,proximity_consistency,data_points_analyzed,operationmode, status,last_updated from ".$wpdb->prefix."coastalynk_sts where last_updated BETWEEN %s AND %s", $start_date, $end_date).$where, ARRAY_A );
             
             $fp = fopen('php://output', 'w'); 
             header('Content-Type: text/csv');
             header('Content-Disposition: attachment; filename="sts.csv"');
             header('Pragma: no-cache');    
             header('Expires: 0');
-            $headers = ['vessel1_uuid','vessel1_name', 'vessel1_mmsi', 'vessel1_imo', 'vessel1_country_iso', 'vessel1_type', 'vessel1_type_specific','vessel1_lat', 'vessel1_lon', 'vessel1_speed', 'vessel1_navigation_status', 'vessel1_draught', 'vessel1_last_position_UTC','vessel2_uuid', 'vessel2_name', 'vessel2_mmsi', 'vessel2_imo', 'vessel2_country_iso','vessel2_type', 'vessel2_type_specific', 'vessel2_lat', 'vessel2_lon', 'vessel2_speed', 'vessel2_navigation_status', 'vessel2_draught', 'vessel2_last_position_UTC', 'port', 'port_id', 'distance', 'is_email_sent', 'is_complete', 'last_updated'];
+            $headers = ['vessel1_uuid','vessel1_name','vessel1_mmsi','vessel1_imo','vessel1_country_iso','vessel1_type','vessel1_type_specific','vessel1_lat','vessel1_lon','vessel1_speed','vessel1_navigation_status','vessel1_draught','vessel1_completed_draught','vessel1_last_position_UTC','vessel2_uuid','vessel2_name','vessel2_mmsi','vessel2_imo','vessel2_country_iso','vessel2_type','vessel2_type_specific','vessel2_lat','vessel2_lon','vessel2_speed','vessel2_navigation_status','vessel2_draught', 'vessel2_completed_draught','vessel2_last_position_UTC','port','port_id','distance','event_ref_id','zone_terminal_name','start_date','end_date','remarks','event_percentage','vessel_condition1','cargo_eta1','vessel_owner1','vessel_condition2','cargo_eta2','vessel_owner2','cargo_category_type','vessel1_eta','vessel1_atd','vessel2_eta','vessel2_atd','risk_level', 'current_distance_nm','stationary_duration_hours','proximity_consistency','data_points_analyzed','operationmode', 'status','last_updated'];
             if( ! empty( $vessle_recs ) && is_array( $vessle_recs ) ) {
                 $headers = array_keys( $vessle_recs[0] );
             }
             fputcsv($fp, $headers); 
-                
             
             if ($fp && $vessle_recs){     
                 foreach( $vessle_recs as $vessle_row ) {
@@ -316,7 +575,7 @@ class Coastalynk_Sea_Vessel_Map_Front {
 
         // Create PDF instance
         $dompdf = new Dompdf\Dompdf();
-
+echo get_template_directory_uri().'/assets/images/main_logo-footer.png';
         $imageData = base64_encode(file_get_contents(get_template_directory_uri().'/assets/images/main_logo-footer.png'));
         $base64Image = 'data:image/jpeg;base64,' . $imageData;
 
@@ -513,8 +772,7 @@ class Coastalynk_Sea_Vessel_Map_Front {
      * retrieve the vessel tonnage.
      */
     function coastalynk_retrieve_draught() {
-        ini_set( "display_errors", "On" );
-        error_reporting(E_ALL);
+        
         $selected_uuid = isset( $_REQUEST['selected_uuid']  ) ? sanitize_text_field( $_REQUEST['selected_uuid'] ): "";
         $selected_name = isset( $_REQUEST['selected_name']  ) ? sanitize_text_field( $_REQUEST['selected_name'] ): "";
 

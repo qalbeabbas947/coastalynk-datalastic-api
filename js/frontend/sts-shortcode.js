@@ -11,7 +11,25 @@
         this.load_popup();
         this.close_popup();
         this.goto_map();
-      },
+        this.submit_export();
+        },
+        submit_export: function() {
+            $('#coastalynk-port-sts-history-form').on('click', '.coastalynk-sts-history-buttons-export-csv, .coastalynk-sts-history-buttons-export-pdf', function(event) {
+                event.preventDefault();
+                let btn = $(this).data('id');
+                switch( btn ) {
+                    case "export-csv":
+                        $("#coastalynk_sts_history_load_action_ctrl").val('coastalynk_sts_history_load_action_ctrl_csv');
+                        break;
+                    case "export-pdf":
+                        $("#coastalynk_sts_history_load_action_ctrl").val('coastalynk_sts_history_load_action_ctrl_pdf');
+                        break;
+                }
+                
+                $("#coastalynk-port-sts-history-form").submit();
+            });
+        },
+      
       goto_map: function() {
         $('.coastalynk-sts-table_wrapper').on('click', '.coastalynk-sts-focus-marker-btn', function(event) {
                 event.preventDefault();

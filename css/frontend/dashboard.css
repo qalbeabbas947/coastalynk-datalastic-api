@@ -562,6 +562,31 @@ table.dataTable tbody tr.selected {
 		-moz-animation-delay:0.75s;
 }
 
+
+.coastalynk_at_anchor_status_color{
+    background-color: #0088FF;
+}
+.coastalynk_not_under_command_status_color{
+    background-color: #4CAF50;
+}
+.coastalynk_restricted_maneuverability_status_color{
+    background-color: #6c757d;
+}
+.coastalynk_constrained_by_her_draught_status_color{
+    background-color: #C1D8EE;
+}
+.coastalynk_moored_status_color{
+    background-color: #2ace32;
+}
+.coastalynk_aground_status_color{
+    background-color: #170a8f;
+}
+.coastalynk_engaged_in_fishing_status_color{
+    background-color: #1e0a74;
+}
+.coastalynk_underway_sailing_status_color{
+    background-color: #c9df4c;
+}
 /********************************End preloader********************/
 div.dt-container div.dt-layout-row{
     overflow-x: auto !important;
