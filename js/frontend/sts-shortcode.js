@@ -12,6 +12,38 @@
         this.close_popup();
         this.goto_map();
         this.submit_export();
+        this.display_tonnage();
+        
+        },
+        display_tonnage: function() { 
+            $('.dashboard-sts').on('click', '.coastlynk-display-sts-tonnage', function(event) {
+                event.preventDefault();
+                
+                let vessel1_uuid = $(this).data('id');
+                let vessel1_name = $(this).data('name');
+                let link = $(this);
+                let link_parent = link.parent();
+                
+
+                link_parent.html('<div id="coastalynk-field-column-loader"><div id="coastalynk-field-column-blockG_1" class="coastalynk-field-column-blockG"></div><div id="coastalynk-field-column-blockG_2" class="coastalynk-field-column-blockG"></div><div id="coastalynk-field-column-blockG_3" class="coastalynk-field-column-blockG"></div></div>');
+                $.ajax({
+                    type: 'POST',
+                    aSync: false,
+                    dataType: "html",
+                    url: COSTALYNKVARS.ajaxURL, // URL from our localized variable
+                    data: {
+                        action: 'coastalynk_retrieve_tonnage', // The WordPress hook to trigger
+                        nonce: COSTALYNKVARS.nonce,     // The nonce value
+                        selected_uuid: vessel1_uuid,
+                        selected_name: vessel1_name
+                    },
+                    success: function(response) {
+                        link_parent.html(response);
+                    },
+                    error: function(jqXHR, textStatus, errorThrown) {
+                    }
+                });
+            });
         },
         submit_export: function() {
             $('#coastalynk-port-sts-history-form').on('click', '.coastalynk-sts-history-buttons-export-csv, .coastalynk-sts-history-buttons-export-pdf', function(event) {
@@ -113,8 +145,8 @@
                 error: function(jqXHR, textStatus, errorThrown) {
                 }
             });
-            $(".coastalynk-sts-popup-content-vessel1_tonnage").html('Loading...')
-            $(".coastalynk-sts-popup-content-vessel2_tonnage").html('Loading...')        
+            $(".coastalynk-sts-popup-content-vessel1_tonnage").html('<div id="coastalynk-field-column-loader"><div id="coastalynk-field-column-blockG_1" class="coastalynk-field-column-blockG"></div><div id="coastalynk-field-column-blockG_2" class="coastalynk-field-column-blockG"></div><div id="coastalynk-field-column-blockG_3" class="coastalynk-field-column-blockG"></div></div>')
+            $(".coastalynk-sts-popup-content-vessel2_tonnage").html('<div id="coastalynk-field-column-loader"><div id="coastalynk-field-column-blockG_1" class="coastalynk-field-column-blockG"></div><div id="coastalynk-field-column-blockG_2" class="coastalynk-field-column-blockG"></div><div id="coastalynk-field-column-blockG_3" class="coastalynk-field-column-blockG"></div></div>')        
             $(".coastalynk-sts-popup-content-vessel1_name").html(data.vessel1_name)
             $(".coastalynk-sts-popup-content-vessel1_mmsi").html(data.vessel1_mmsi)
             $(".coastalynk-sts-popup-content-vessel1_imo").html(data.vessel1_imo)

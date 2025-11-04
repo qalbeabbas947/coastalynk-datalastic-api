@@ -522,7 +522,7 @@ class Coastalynk_STS_Shortcode {
                             vessel.position,
                             {icon: createVesselIcon()}
                         ).addTo(map);
-                        
+
                         // Add popup to vessel
                         vesselMarkers[vesselId].bindPopup(`
                             <table class="coastalynk-sbm-marker">
@@ -562,6 +562,12 @@ class Coastalynk_STS_Shortcode {
                                             <td colspan="3">
                                                 <b><?php _e( "Type Specific", "castalynkmap" );?></b><br>
                                                 ${vessel.type_specific}
+                                            </td>
+                                        </tr>
+                                        <tr class="coastalynk-sbm-marker-second-row">
+                                            <td colspan="3">
+                                                <b><?php _e( "Tonnage", "castalynkmap" );?></b><br>
+                                                <div><a href="javascript:;" class="coastlynk-display-sts-tonnage" data-id="${vessel.id}" data-name="${vessel.name}">Show Tonnage</a></div>
                                             </td>
                                         </tr>
                                     </table>
