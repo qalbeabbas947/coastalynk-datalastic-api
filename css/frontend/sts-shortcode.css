@@ -1,8 +1,14 @@
 
 /***************************************History Start***************************/
 .coastalynk-sts-table_wrapper {
-    margin: 20px;
+    margin: 20px 0;
     overflow-x: scroll;
+    padding: 0px 20px !important;
+}
+.coastalynk-popup-approved-zone, .coastalynk-popup-unapproved-zone{
+    display: none;
+    color: white;
+    font-size: 1.75rem;
 }
 .table-responsive, #coastalynk-sts-table .dt-layout-cell {
     display: block;
@@ -243,6 +249,7 @@ input#caostalynk_sts_history_range {
 
     .coastalynk-sts-popup-content{
         width: 90%;
+        overflow-y: auto;
     }
     .caostalynk-sts-history-header-buttons {
         flex-direction: column;

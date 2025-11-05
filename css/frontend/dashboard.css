@@ -648,6 +648,7 @@ table.dataTable tbody tr.selected {
 }
 .coastalynk_engaged_in_fishing_status_color{
     background-color: Blue;
+    color: white;
 }
 .coastalynk_underway_sailing_status_color{
     background-color: Green;

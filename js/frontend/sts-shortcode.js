@@ -103,7 +103,7 @@
             let button = event.target;
             let loader = event.target.nextElementSibling;
             var data = $(this).data();
-            
+            console.log(data);
             loader.style.display = "block";
             button.style.display = "none";
             
@@ -157,13 +157,9 @@
             $(".coastalynk-sts-popup-content-vessel1_navigation_status").html(data.vessel1_navigation_status)
             $(".coastalynk-sts-popup-content-vessel1_draught").html(data.vessel1_draught)
             $(".coastalynk-sts-popup-content-vessel1_completed_draught").html(data.vessel1_completed_draught)
-            $(".coastalynk-sts-popup-content-vessel1_last_position_UTC").html(data.vessel1_last_position_UTC)
-            $(".coastalynk-sts-popup-content-vessel_condition1").html(data.vessel_condition1)
-            $(".coastalynk-sts-popup-content-vessel_owner1").html(data.vessel_owner1)
-            $(".coastalynk-sts-popup-content-cargo_eta1").html(data.cargo_eta1)
-            $(".coastalynk-sts-popup-content-vessel1_eta").html(data.vessel1_eta)
-            $(".coastalynk-sts-popup-content-vessel1_atd").html(data.vessel1_atd)
-
+            $(".coastalynk-sts-popup-content-vessel1_last_position_UTC").html(data.vessel1_last_position_utc)
+            //$(".coastalynk-sts-popup-content-vessel_condition1").html(data.vessel_condition1)
+            //$(".coastalynk-sts-popup-content-cargo_eta1").html(data.cargo_eta1)
             $(".coastalynk-sts-popup-content-vessel2_name").html(data.vessel2_name)
             $(".coastalynk-sts-popup-content-vessel2_mmsi").html(data.vessel2_mmsi)
             $(".coastalynk-sts-popup-content-vessel2_imo").html(data.vessel2_imo)
@@ -174,15 +170,32 @@
             $(".coastalynk-sts-popup-content-vessel2_navigation_status").html(data.vessel2_navigation_status)
             $(".coastalynk-sts-popup-content-vessel2_draught").html(data.vessel2_draught)
             $(".coastalynk-sts-popup-content-vessel2_completed_draught").html(data.vessel2_completed_draught)
-            $(".coastalynk-sts-popup-content-vessel2_last_position_UTC").html(data.vessel2_last_position_UTC)
-            $(".coastalynk-sts-popup-content-vessel2_eta").html(data.vessel2_eta)
-            $(".coastalynk-sts-popup-content-vessel2_atd").html(data.vessel2_atd)
-            $(".coastalynk-sts-popup-content-vessel_condition2").html(data.vessel_condition2)
-            $(".coastalynk-sts-popup-content-vessel_owner2").html(data.vessel_owner2)
-            $(".coastalynk-sts-popup-content-cargo_eta2").html(data.cargo_eta2)
-
+            $(".coastalynk-sts-popup-content-vessel2_last_position_UTC").html(data.vessel1_last_position_utc)
+            // $(".coastalynk-sts-popup-content-vessel_condition2").html(data.vessel_condition2)
+            // $(".coastalynk-sts-popup-content-cargo_eta2").html(data.cargo_eta2)
+            if( data.zone_terminal_name != '' ) {
+                $(".coastalynk-popup-approved-zone").css('display', 'inline-block');
+                $(".coastalynk-popup-unapproved-zone").css('display', 'none');
+            } else {
+                $(".coastalynk-popup-unapproved-zone").css('display', 'inline-block');
+                $(".coastalynk-popup-approved-zone").css('display', 'none');
+            }
             $(".coastalynk-sts-popup-content-port").html(data.port);
-            $(".coastalynk-sts-popup-content-distance").html(data.distance);
+            $(".coastalynk-sts-popup-content-estimated_cargo").html(data.estimated_cargo);
+
+            if( data.vessel1_signal == 'AIS Consistent' ) {
+                $(".coastalynk-sts-popup-content-vessel1-ais-signal").html(data.vessel1_signal + ' <i class="fa fa-check-square" aria-hidden="true"></i>');
+            } else if( data.vessel1_signal == 'AIS Gap' ) {
+                $(".coastalynk-sts-popup-content-vessel1-ais-signal").html(data.vessel1_signal + ' <i class="fa fa-exclamation" aria-hidden="true"></i>');
+            }
+            
+            if( data.vessel2_signal == 'AIS Consistent' ) {
+                $(".coastalynk-sts-popup-content-vessel2-ais-signal").html(data.vessel2_signal + ' <i class="fa fa-check-square" aria-hidden="true"></i>');
+            } else if( data.vessel1_signal == 'AIS Gap' ) {
+                $(".coastalynk-sts-popup-content-vessel2-ais-signal").html(data.vessel2_signal + ' <i class="fa fa-exclamation" aria-hidden="true"></i>');
+            }
+            
+
             $(".coastalynk-sts-popup-content-event_ref_id").html(data.event_ref_id);
             $(".coastalynk-sts-popup-content-zone_terminal_name").html(data.zone_terminal_name);
             $(".coastalynk-sts-popup-content-start_date").html(data.start_date);
