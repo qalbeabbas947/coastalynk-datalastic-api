@@ -268,7 +268,7 @@ class Coastalynk_Sea_Vessel_Map_Front {
                                 <td class="data-td">'.$record['status'].'</td>
                             </tr>
                             <tr>
-                                <td class="header-td">'.__( "Pory", "castalynkmap" ).'</td>
+                                <td class="header-td">'.__( "Port", "castalynkmap" ).'</td>
                                 <td class="data-td">'.$record['port'].'</td>
                                 <td class="header-td">'.__( "Distance", "castalynkmap" ).'</td>
                                 <td class="data-td">'.$record['distance'].'</td>
@@ -412,14 +412,14 @@ class Coastalynk_Sea_Vessel_Map_Front {
                 $end_date = date( 'Y-m-d', strtotime('-6 Days'));
             }
 
-            $vessle_recs = $wpdb->get_results( $wpdb->prepare( "select vessel1_uuid,vessel1_name,vessel1_mmsi,vessel1_imo,vessel1_country_iso,vessel1_type,vessel1_type_specific,vessel1_lat,vessel1_lon,vessel1_speed,vessel1_navigation_status,vessel1_draught,vessel1_completed_draught,vessel1_last_position_UTC,vessel2_uuid,vessel2_name,vessel2_mmsi,vessel2_imo,vessel2_country_iso,vessel2_type,vessel2_type_specific,vessel2_lat,vessel2_lon,vessel2_speed,vessel2_navigation_status,vessel2_draught, vessel2_completed_draught,vessel2_last_position_UTC,port,port_id,distance,event_ref_id,zone_terminal_name,start_date,end_date,remarks,event_percentage,vessel_condition1,cargo_eta1,vessel_condition2,cargo_eta2,cargo_category_type,vessel1_eta,vessel1_atd,vessel2_eta,vessel2_atd,risk_level, current_distance_nm,stationary_duration_hours,proximity_consistency,data_points_analyzed,operationmode, status,last_updated from ".$wpdb->prefix."coastalynk_sts where last_updated BETWEEN %s AND %s", $start_date, $end_date).$where, ARRAY_A );
-            
+
+            $vessle_recs = $wpdb->get_results( $wpdb->prepare( "select `vessel1_uuid`,`vessel1_name`,`vessel1_mmsi`,`vessel1_imo`,`vessel1_country_iso`,`vessel1_type`,`vessel1_type_specific`,`vessel1_lat` ,`vessel1_lon` ,`vessel1_speed`,`vessel1_navigation_status`,`vessel1_draught`,`vessel1_completed_draught`,`vessel1_last_position_UTC`,`vessel1_signal`,`vessel2_uuid`,`vessel2_name`,`vessel2_mmsi`,`vessel2_imo`,`vessel2_country_iso`,`vessel2_type`,`vessel2_type_specific`,`vessel2_lat` ,`vessel2_lon` ,`vessel2_speed`,`vessel2_navigation_status`,`vessel2_draught`,`vessel2_completed_draught`,`vessel2_last_position_UTC`,`vessel2_signal`,`port`,`port_id`,`distance`,`event_ref_id`,`zone_terminal_name`,`start_date`,`end_date`,`remarks`,`event_percentage`,`vessel_condition1`,`cargo_eta1`, `vessel_condition2`,`cargo_eta2`,`cargo_category_type`,`risk_level` ,`current_distance_nm`,`stationary_duration_hours`,`proximity_consistency`,`data_points_analyzed`,`estimated_cargo`,`operationmode`,`status`,`last_updated` from ".$wpdb->prefix."coastalynk_sts where last_updated BETWEEN %s AND %s", $start_date, $end_date).$where, ARRAY_A );
             $fp = fopen('php://output', 'w'); 
             header('Content-Type: text/csv');
             header('Content-Disposition: attachment; filename="sts.csv"');
             header('Pragma: no-cache');    
             header('Expires: 0');
-            $headers = ['vessel1_uuid','vessel1_name','vessel1_mmsi','vessel1_imo','vessel1_country_iso','vessel1_type','vessel1_type_specific','vessel1_lat','vessel1_lon','vessel1_speed','vessel1_navigation_status','vessel1_draught','vessel1_completed_draught','vessel1_last_position_UTC','vessel2_uuid','vessel2_name','vessel2_mmsi','vessel2_imo','vessel2_country_iso','vessel2_type','vessel2_type_specific','vessel2_lat','vessel2_lon','vessel2_speed','vessel2_navigation_status','vessel2_draught', 'vessel2_completed_draught','vessel2_last_position_UTC','port','port_id','distance','event_ref_id','zone_terminal_name','start_date','end_date','remarks','event_percentage','vessel_condition1','cargo_eta1','vessel_condition2','cargo_eta2','cargo_category_type','vessel1_eta','vessel1_atd','vessel2_eta','vessel2_atd','risk_level', 'current_distance_nm','stationary_duration_hours','proximity_consistency','data_points_analyzed','operationmode', 'status','last_updated'];
+            $headers = ['vessel1_uuid','vessel1_name','vessel1_mmsi','vessel1_imo','vessel1_country_iso','vessel1_type','vessel1_type_specific','vessel1_lat' ,'vessel1_lon' ,'vessel1_speed','vessel1_navigation_status','vessel1_draught','vessel1_completed_draught','vessel1_last_position_UTC','vessel1_signal','vessel2_uuid','vessel2_name','vessel2_mmsi','vessel2_imo','vessel2_country_iso','vessel2_type','vessel2_type_specific','vessel2_lat' ,'vessel2_lon' ,'vessel2_speed','vessel2_navigation_status','vessel2_draught','vessel2_completed_draught','vessel2_last_position_UTC','vessel2_signal','port','port_id','distance','event_ref_id','zone_terminal_name','start_date','end_date','remarks','event_percentage','vessel_condition1','cargo_eta1', 'vessel_condition2','cargo_eta2','cargo_category_type','risk_level' ,'current_distance_nm','stationary_duration_hours','proximity_consistency','data_points_analyzed','estimated_cargo','operationmode','status','last_updated'];
             if( ! empty( $vessle_recs ) && is_array( $vessle_recs ) ) {
                 $headers = array_keys( $vessle_recs[0] );
             }
