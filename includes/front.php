@@ -147,7 +147,7 @@ class Coastalynk_Sea_Vessel_Map_Front {
                         
                         foreach( $vessle_recs as $record ) {
                             $html .= '<tr><td colspan="2"><table width="100%" cellpadding="5px" cellspacing="0"><tr><td class="data-td" colspan="6">'.$record['remarks'].'</td></tr>
-                            <tr><td class="data-td" colspan="6">'.__( "Vehicle 1:", "castalynkmap" ).'</td></tr>
+                            <tr><td class="data-td" colspan="6">'.__( "Vessel 1:", "castalynkmap" ).'</td></tr>
                             <tr>
                                 <td class="header-td">'.__( "Name", "castalynkmap" ).'</td>
                                 <td class="data-td">'.$record['vessel1_name'].'</td>
@@ -188,7 +188,7 @@ class Coastalynk_Sea_Vessel_Map_Front {
                                 <td class="header-td">'.__( "Cargo ETA", "castalynkmap" ).'</td>
                                 <td class="data-td">'.$record['cargo_eta1'].'</td>
                             </tr>
-                            <tr><td class="data-td" colspan="6">'.__( "Vehicle 2:", "castalynkmap" ).'</td></tr>
+                            <tr><td class="data-td" colspan="6">'.__( "Vessel 2:", "castalynkmap" ).'</td></tr>
                             <tr>
                                 <td class="header-td">'.__( "Name", "castalynkmap" ).'</td>
                                 <td class="data-td">'.$record['vessel2_name'].'</td>
