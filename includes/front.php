@@ -560,7 +560,7 @@ class Coastalynk_Sea_Vessel_Map_Front {
 
         // Create PDF instance
         $dompdf = new Dompdf\Dompdf();
-echo get_template_directory_uri().'/assets/images/main_logo-footer.png';
+        //echo get_template_directory_uri().'/assets/images/main_logo-footer.png';
         $imageData = base64_encode(file_get_contents(get_template_directory_uri().'/assets/images/main_logo-footer.png'));
         $base64Image = 'data:image/jpeg;base64,' . $imageData;
 
