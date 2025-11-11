@@ -55,13 +55,20 @@ class Coastalynk_STS_Shortcode {
         $total_port_vessels = [];
         // 1. Define the center points (latitude, longitude) of our ports
         $table_name = $wpdb->prefix . 'coastalynk_ports';
-        $port_data = $wpdb->get_results("SELECT * FROM $table_name where country_iso='NG' and port_type='Port' order by title");
-        $ports = [];  
+        $port_data = $wpdb->get_results("SELECT * FROM $table_name where country_iso='NG' and port_type in( 'Port', 'Coastal Zone', 'Territorial Zone', 'EEZ' ) order by title");
+        $ports = []; 
+        $port_exports = [];  
         $table_name_sts = $wpdb->prefix . 'coastalynk_sts';
         foreach( $port_data as $port ) {
             if( $port->lat && $port->lon ) {
-                $ports[$port->title] = [$port->lat, $port->lon];
-                
+                $total = $wpdb->get_var( "SELECT count(id) as total FROM $table_name_sts where is_disappeared='No' and port='".$port->title."'" );
+                if( intval( $total ) > 0 ) {
+                    $port_exports[$port->title] = [$port->lat, $port->lon, $total, $port->port_id];
+                }
+
+                if( $port->port_type == 'Port' ) {
+                    $ports[$port->title] = [$port->lat, $port->lon];
+                }
             }
         }
 
@@ -107,8 +114,8 @@ class Coastalynk_STS_Shortcode {
                         <div class="coastalynk-sts-history-ports">
                             <select id="caostalynk_history_ddl_ports" class="coastalynk-sts-select2-js" name="caostalynk_history_ddl_ports">
                                 <option value=""><?php _e( "All Ports", "castalynkmap" );?></option>
-                                <?php foreach( $port_data as $port ) { ?>
-                                    <option value="<?php echo $port->port_id;?>"><?php echo $port->title;?></option>
+                                <?php foreach( $port_exports as $key=>$port ) { ?>
+                                    <option value="<?php echo $key;?>"><?php echo $key.'('.$port[2].')';?></option>
                                 <?php } ?>
                             </select>
                         </div>
@@ -675,7 +682,7 @@ class Coastalynk_STS_Shortcode {
                         })
                     });
                     
-                    marker.bindPopup(`<strong>${name} Port</strong>`);
+                    marker.bindPopup(`<strong>${name}</strong>`);
                     portsLayer.addLayer(marker);
                 });
                 
