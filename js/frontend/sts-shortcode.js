@@ -148,6 +148,16 @@
             $(".coastalynk-sts-popup-content-vessel1_tonnage").html('<div id="coastalynk-field-column-loader"><div id="coastalynk-field-column-blockG_1" class="coastalynk-field-column-blockG"></div><div id="coastalynk-field-column-blockG_2" class="coastalynk-field-column-blockG"></div><div id="coastalynk-field-column-blockG_3" class="coastalynk-field-column-blockG"></div></div>')
             $(".coastalynk-sts-popup-content-vessel2_tonnage").html('<div id="coastalynk-field-column-loader"><div id="coastalynk-field-column-blockG_1" class="coastalynk-field-column-blockG"></div><div id="coastalynk-field-column-blockG_2" class="coastalynk-field-column-blockG"></div><div id="coastalynk-field-column-blockG_3" class="coastalynk-field-column-blockG"></div></div>')        
             $(".coastalynk-sts-popup-content-vessel1_name").html(data.vessel1_name)
+
+            $(".coastalynk-popup-vessel1-parent").css('display', 'none');  
+            $(".coastalynk-popup-vessel2-parent").css('display', 'none');  
+            if( parseInt(data.mother_vessel_number ) == 1 ) {
+                $(".coastalynk-popup-vessel1-parent").css('display', 'inline-block');    
+            } else if( parseInt(data.mother_vessel_number ) == 2 ) {
+                $(".coastalynk-popup-vessel2-parent").css('display', 'inline-block');
+            }
+            
+
             $(".coastalynk-sts-popup-content-vessel1_mmsi").html(data.vessel1_mmsi)
             $(".coastalynk-sts-popup-content-vessel1_imo").html(data.vessel1_imo)
             $(".coastalynk-sts-popup-content-vessel1_country_iso").html(data.vessel1_country_iso)
@@ -197,6 +207,7 @@
             
 
             $(".coastalynk-sts-popup-content-event_ref_id").html(data.event_ref_id);
+            $(".coastalynk-sts-popup-content-is_sts_zone").html(data.is_sts_zone);
             $(".coastalynk-sts-popup-content-zone_terminal_name").html(data.zone_terminal_name);
             $(".coastalynk-sts-popup-content-start_date").html(data.start_date);
             $(".coastalynk-sts-popup-content-end_date").html(data.end_date);
