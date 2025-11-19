@@ -773,8 +773,6 @@ class Coastalynk_STS_Shortcode {
                 });
             });
         </script>
-
-            
         <?php
         $content = ob_get_contents();
         ob_get_clean();

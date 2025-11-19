@@ -19,6 +19,11 @@ class CSM_STS_Admin_listing extends WP_List_Table {
      * Current select Plugin
      */
     public $csm_ports_filter;
+    public $csm_vessel1_search1;
+    public $csm_vessel2_search2;
+    public $csm_history_range;
+    public $csm_risk_level;
+    public $csm_status;
 
     /**
      * STS Search
@@ -39,9 +44,14 @@ class CSM_STS_Admin_listing extends WP_List_Table {
         
         global $status, $page;
 
-		$this->csm_ports_filter       = isset( $_GET['csm_ports_filter'] ) ? sanitize_text_field( $_GET['csm_ports_filter'] ) : '' ;
-        $this->selected_search          = ( isset( $_GET['search'] )  ) ? sanitize_text_field( $_GET['search'] ) : ''; 
-       
+		$this->csm_ports_filter             = isset( $_GET['csm_ports_filter'] ) ? sanitize_text_field( $_GET['csm_ports_filter'] ) : '' ;
+        $this->selected_search              = ( isset( $_GET['search'] )  ) ? sanitize_text_field( $_GET['search'] ) : ''; 
+        $this->csm_vessel1_search1          = ( isset( $_GET['csm_vessel1_search1'] )  ) ? sanitize_text_field( $_GET['csm_vessel1_search1'] ) : ''; 
+        $this->csm_vessel2_search2          = ( isset( $_GET['csm_vessel2_search2'] )  ) ? sanitize_text_field( $_GET['csm_vessel2_search2'] ) : ''; 
+        $this->csm_history_range            = ( isset( $_GET['csm_history_range'] )  ) ? sanitize_text_field( $_GET['csm_history_range'] ) : ''; 
+        $this->csm_risk_level               = ( isset( $_GET['csm_risk_level'] )  ) ? sanitize_text_field( $_GET['csm_risk_level'] ) : ''; 
+        $this->csm_status                   = ( isset( $_GET['csm_status'] )  ) ? sanitize_text_field( $_GET['csm_status'] ) : ''; 
+        
         /**
          * Set parent defaults
          */
@@ -92,7 +102,6 @@ class CSM_STS_Admin_listing extends WP_List_Table {
             case 'vessel1_navigation_status':
             case 'vessel1_draught':
             case 'vessel1_completed_draught':
-            case 'vessel1_last_position_UTC':
             case 'vessel1_signal':
             case 'vessel2_uuid':
             case 'vessel2_name':
@@ -107,7 +116,6 @@ class CSM_STS_Admin_listing extends WP_List_Table {
             case 'vessel2_navigation_status':
             case 'vessel2_draught':
             case 'vessel2_completed_draught':
-            case 'vessel2_last_position_UTC':
             case 'vessel2_signal':
             case 'port':
             case 'port_id':
@@ -115,8 +123,6 @@ class CSM_STS_Admin_listing extends WP_List_Table {
             case 'event_ref_id':
             case 'is_sts_zone':
             case 'zone_terminal_name':
-            case 'start_date':
-            case 'end_date':
             case 'remarks':
             case 'event_percentage':
             case 'vessel_condition1':
@@ -133,8 +139,13 @@ class CSM_STS_Admin_listing extends WP_List_Table {
             case 'is_email_sent':
             case 'is_complete':
             case 'is_disappeared':
-            case 'last_updated':
                 return $item[$column_name];
+            case 'last_updated':
+            case 'start_date':
+            case 'end_date':
+            case 'vessel1_last_position_UTC':
+            case 'vessel2_last_position_UTC':
+                return get_date_from_gmt( $item[$column_name], CSM_DATE_FORMAT.' '.CSM_TIME_FORMAT );
             default:
                 return print_r($item,true);
         }
@@ -224,9 +235,20 @@ class CSM_STS_Admin_listing extends WP_List_Table {
      */
     public function column_view( $item ){
         
-        if( !empty( strip_tags( $item['id'] ) ) ) {
- 
-            return '<a data-action="csm_delete_sts" data-id="'.$item['id'].'"  data-event_ref_id="'.$item['event_ref_id'].'" class="csm_delete_sts" href="javascript:;">'.__( 'Delete', 'castalynkmap' ).'</a>';
+        if( !empty( strip_tags( $item['id'] ) ) ) { 
+            $attributes = '';
+            foreach( $item as $key=>$val ) {
+
+                
+                if( in_array( $key, ['last_updated', 'start_date', 'end_date', 'vessel1_last_position_UTC', 'vessel2_last_position_UTC'] ) ) {
+                    $attributes .= ' data-'.$key.' = "'.get_date_from_gmt( $val, CSM_DATE_FORMAT.' '.CSM_TIME_FORMAT ).'"';
+                } else if( in_array( $key, ['vessel1_draught', 'vessel1_completed_draught', 'vessel2_draught', 'vessel2_completed_draught' ] ) ) {
+                    $attributes .= ' data-'.$key.' = "'.( floatval( $val ) > 0?$val.'m':__( "Pending", "castalynkmap" )).'"';
+                } else {
+                    $attributes .= ' data-'.$key.' = "'.$val.'"';
+                }
+            }
+            return '<a data-action="csm_delete_sts" data-id="'.$item['id'].'"  data-event_ref_id="'.$item['event_ref_id'].'" class="csm_delete_sts" href="javascript:;">'.__( 'Delete', 'castalynkmap' ).'</a> | <a data-action="csm_view_sts" '.$attributes .' class="csm_view_sts" href="javascript:;">'.__( 'View', 'castalynkmap' ).'</a>';
         } else {
             return Coastalynk_Admin::get_bar_preloader();
         }    
@@ -507,15 +529,50 @@ class CSM_STS_Admin_listing extends WP_List_Table {
             $where .= " and port_id='".$this->csm_ports_filter."'";
         }
         
+        if( ! empty( $this->csm_status ) ) {
+            $where .= " and status='".$this->csm_status."'";
+        }
+
+        if( ! empty( $this->csm_vessel1_search1 ) ) {
+            $where .= " and ( vessel1_uuid like '%".$this->csm_vessel1_search1."%' or lower(vessel1_name) like '%".strtolower($this->csm_vessel1_search1)."%' or lower(vessel1_imo) like '%".strtolower($this->csm_vessel1_search1)."%' or lower(vessel1_mmsi) like '%".strtolower($this->csm_vessel1_search1)."%' or lower(vessel1_type_specific) like '%".strtolower($this->csm_vessel1_search1)."%' or lower(event_ref_id) like '%".strtolower($this->csm_vessel1_search1)."%' )";
+        }
+
+        if( ! empty( $this->csm_vessel2_search2 ) ) {
+            $where .= " and ( vessel2_uuid like '%".$this->csm_vessel2_search2."%' or lower(vessel2_name) like '%".strtolower($this->csm_vessel2_search2)."%' or lower(vessel2_imo) like '%".strtolower($this->csm_vessel2_search2)."%' or lower(vessel2_mmsi) like '%".strtolower($this->csm_vessel2_search2)."%' or lower(vessel2_type_specific) like '%".strtolower($this->csm_vessel2_search2)."%' or lower(event_ref_id) like '%".strtolower($this->csm_vessel2_search2)."%' )";
+        }
+
+        if( !empty( $this->csm_history_range ) ) {
+            $explode = explode( '-', $this->csm_history_range );
+            $start_date = date( 'Y-m-d H:i:s', strtotime( trim( $explode[0] ) ) );
+            $end_date = date( 'Y-m-d H:i:s', strtotime( trim( $explode[1] ) ) );
+            
+            $where .= " and start_date >= '".$start_date."' and ( end_date  <= '".$end_date."' or end_date is NULL ) ";
+        }
+
+        if( !empty( $this->csm_risk_level ) ) {
+
+            switch( $this->csm_risk_level ) {
+                case "0-30":
+                    $where .= " and event_percentage >= '0' and event_percentage < '30' ";
+                    break;
+                case "30-70":
+                    $where .= " and event_percentage >= '30' and event_percentage < '70' ";
+                    break;
+                case "70-100":
+                    $where .= " and event_percentage >= '70'";
+                    break;
+            }
+        }
+        
         $where .= ! empty( $this->selected_search ) ? " and ( vessel1_uuid like '%".$this->selected_search."%' or  vessel2_uuid like '%".$this->selected_search."%' or lower(vessel1_name) like '%".strtolower($this->selected_search)."%' or lower(vessel2_name) like '%".strtolower($this->selected_search)."%' or lower(vessel1_imo) like '%".strtolower($this->selected_search)."%' or lower(vessel2_imo) like '%".strtolower($this->selected_search)."%' or lower(vessel1_mmsi) like '%".strtolower($this->selected_search)."%' or lower(vessel2_mmsi) like '%".strtolower($this->selected_search)."%' or lower(vessel1_type_specific) like '%".strtolower($this->selected_search)."%' or lower(vessel2_type_specific) like '%".strtolower($this->selected_search)."%'  or lower(event_ref_id) like '%".strtolower($this->selected_search)."%' )" : '';
         $total_items = $wpdb->get_var("SELECT COUNT(id) FROM $table_name".$where);
-
+        
         // prepare query params, as usual current page, order by and order direction
         $offset     = isset($paged) ? intval(($paged-1) * $per_page) : 0;
         $orderby    = (isset($_REQUEST['orderby']) && in_array($_REQUEST['orderby'], array_keys($this->get_sortable_columns()))) ? sanitize_text_field( $_REQUEST['orderby'] ) : 'last_updated';
         $order      = (isset($_REQUEST['order']) && in_array($_REQUEST['order'], array('asc', 'desc'))) ? sanitize_text_field( $_REQUEST['order'] ) : 'desc';
         $result     = $wpdb->get_results( "SELECT * FROM $table_name $where ORDER BY $orderby $order LIMIT $per_page OFFSET $offset", ARRAY_A );
-            
+        // echo "SELECT * FROM $table_name $where ORDER BY $orderby $order LIMIT $per_page OFFSET $offset";   
         $data = [];
         $count = 0;
         if( isset($result) && is_array($result) && count($result) > 0 ) {
@@ -694,12 +751,17 @@ class CSM_STS_Admin_listing extends WP_List_Table {
             $page_links[] = '<span class="tablenav-pages-navspan button disabled" aria-hidden="true">&laquo;</span>';
         } else {
             $page_links[] = sprintf( 
-                "<a data-csm_ports_filter='%d' data-search='%s' data-per_page='%d' class='first-page button csm_check_load_next' data-paged='1' href='javascript:;'>" .
+                "<a data-csm_ports_filter='%d' data-search='%s' data-csm_vessel1_search1='%s' data-csm_vessel2_search2='%s' data-csm_history_range='%s' data-csm_risk_level='%s' data-csm_status='%s' data-per_page='%d' class='first-page button csm_check_load_next' data-paged='1' href='javascript:;'>" .
                     "<span class='screen-reader-text'>%s</span>" .
                     "<span aria-hidden='true'>%s</span>" .
                 '</a>',
                 $this->csm_ports_filter,
                 $this->selected_search,
+                $this->csm_vessel1_search1,
+                $this->csm_vessel2_search2,
+                $this->csm_history_range,
+                $this->csm_risk_level,
+                $this->csm_status,
                 $per_page,
                 /* translators: Hidden accessibility text. */
                 __( 'First page' ),
@@ -711,12 +773,17 @@ class CSM_STS_Admin_listing extends WP_List_Table {
             $page_links[] = '<span class="tablenav-pages-navspan button disabled" aria-hidden="true">&lsaquo;</span>';
         } else {
             $page_links[] = sprintf(
-                "<a data-csm_ports_filter='%d' data-search='%s' data-per_page='%d' class='prev-page button csm_check_load_next' data-paged='%d' href='javascript:;'>" .
+                "<a data-csm_ports_filter='%d' data-search='%s' data-csm_vessel1_search1='%s' data-csm_vessel2_search2='%s' data-csm_history_range='%s' data-csm_risk_level='%s' data-csm_status='%s' data-per_page='%d' class='prev-page button csm_check_load_next' data-paged='%d' href='javascript:;'>" .
                     "<span class='screen-reader-text'>%s</span>" .
                     "<span aria-hidden='true'>%s</span>" .
                 '</a>',
                 $this->csm_ports_filter,
                 $this->selected_search,
+                $this->csm_vessel1_search1,
+                $this->csm_vessel2_search2,
+                $this->csm_history_range,
+                $this->csm_risk_level,
+                $this->csm_status,
                 $per_page,
                 intval($paged)>1?intval($paged)-1:1,
                 /* translators: Hidden accessibility text. */
@@ -748,12 +815,17 @@ class CSM_STS_Admin_listing extends WP_List_Table {
             $page_links[] = '<span class="tablenav-pages-navspan button disabled" aria-hidden="true">&rsaquo;</span>';
         } else {
             $page_links[] = sprintf(
-                "<a data-csm_ports_filter='%d' data-search='%s' data-per_page='%d' data-paged='%d' data-current_recs='%d' class='next-page button csm_check_load_next' href='javascript:;'>" .
+                "<a data-csm_ports_filter='%d' data-search='%s' data-csm_vessel1_search1='%s' data-csm_vessel2_search2='%s' data-csm_history_range='%s' data-csm_risk_level='%s' data-csm_status='%s' data-per_page='%d' data-paged='%d' data-current_recs='%d' class='next-page button csm_check_load_next' href='javascript:;'>" .
                     "<span class='screen-reader-text'>%s</span>" .
                     "<span aria-hidden='true'>%s</span>" .
                 '</a>',
                 $this->csm_ports_filter,
                 $this->selected_search,
+                $this->csm_vessel1_search1,
+                $this->csm_vessel2_search2,
+                $this->csm_history_range,
+                $this->csm_risk_level,
+                $this->csm_status,
                 $per_page,
                 $paged+1,
                 $current_recs,
@@ -767,12 +839,17 @@ class CSM_STS_Admin_listing extends WP_List_Table {
             $page_links[] = '<span class="tablenav-pages-navspan button disabled" aria-hidden="true">&raquo;</span>';
         } else {
             $page_links[] = sprintf(
-                "<a data-csm_ports_filter='%d' data-search='%s' data-per_page='%d' data-paged='%d' data-current_recs='%d' class='last-page button csm_check_load_next' href='javascript:;'>" .
+                "<a data-csm_ports_filter='%d' data-search='%s' data-csm_vessel1_search1='%s' data-csm_vessel2_search2='%s' data-csm_history_range='%s' data-csm_risk_level='%s' data-csm_status='%s' data-per_page='%d' data-paged='%d' data-current_recs='%d' class='last-page button csm_check_load_next' href='javascript:;'>" .
                     "<span class='screen-reader-text'>%s</span>" .
                     "<span aria-hidden='true'>%s</span>" .
                 '</a>',
                 $this->csm_ports_filter,
                 $this->selected_search,
+                $this->csm_vessel1_search1,
+                $this->csm_vessel2_search2,
+                $this->csm_history_range,
+                $this->csm_risk_level,
+                $this->csm_status,
                 $per_page,
                 $total_pages,
                 $current_recs,
