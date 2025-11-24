@@ -169,7 +169,7 @@ input#caostalynk_sts_history_range {
 }
 .coastalynk-sts-popup-content-box-list li{
     position: relative; /* Allows positioning of the icon */
-    margin-bottom: 0.5em; /* Spacing between list items */
+    margin-bottom: 0.2em; /* Spacing between list items */
 }
 
 

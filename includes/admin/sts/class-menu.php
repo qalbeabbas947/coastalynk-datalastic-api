@@ -46,7 +46,7 @@ class CSM_STS_Admin_Menu {
             'port_id',
             'port',
             'distance',
-            'is_sts_zone',
+            'zone_type','zone_ship',
             'remarks',
             'event_percentage',
             'vessel_condition1',
@@ -137,7 +137,7 @@ class CSM_STS_Admin_Menu {
             }
         }
 
-        $vessle_recs     = $wpdb->get_results( "SELECT * FROM $table_name $where ORDER BY last_updated desc", ARRAY_A );
+        $vessle_recs     = $wpdb->get_results( "SELECT id, vessel1_uuid, vessel1_name,vessel1_mmsi,vessel1_imo,vessel1_country_iso,vessel1_type,vessel1_type_specific, vessel1_lat,vessel1_lon,vessel1_speed,vessel1_navigation_status,vessel1_draught,vessel1_completed_draught,vessel1_last_position_UTC,vessel1_signal,vessel2_uuid,vessel2_name,vessel2_mmsi,vessel2_imo,vessel2_country_iso, vessel2_type,vessel2_type_specific,vessel2_lat,vessel2_lon,vessel2_speed,vessel2_navigation_status,vessel2_draught,vessel2_completed_draught,vessel2_last_position_UTC,vessel2_signal,port,port_id,distance,event_ref_id,zone_type, zone_ship,zone_terminal_name,start_date,end_date,remarks,event_percentage,vessel_condition1,vessel_condition2,cargo_category_type,risk_level,current_distance_nm,stationary_duration_hours,proximity_consistency,data_points_analyzed,estimated_cargo,mother_vessel_number,operationmode,status,is_email_sent,is_complete,is_disappeared,last_updated FROM $table_name $where ORDER BY last_updated desc", ARRAY_A );
 
         $fp = fopen('php://output', 'w'); 
         header('Content-Type: text/csv');
@@ -145,7 +145,7 @@ class CSM_STS_Admin_Menu {
         header('Pragma: no-cache');    
         header('Expires: 0');
         
-        $headers = ['id', 'vessel1_uuid', 'vessel1_name','vessel1_mmsi','vessel1_imo','vessel1_country_iso','vessel1_type','vessel1_type_specific', 'vessel1_lat','vessel1_lon','vessel1_speed','vessel1_navigation_status','vessel1_draught','vessel1_completed_draught','vessel1_last_position_UTC','vessel1_signal','vessel2_uuid','vessel2_name','vessel2_mmsi','vessel2_imo','vessel2_country_iso', 'vessel2_type','vessel2_type_specific','vessel2_lat','vessel2_lon','vessel2_speed','vessel2_navigation_status','vessel2_draught','vessel2_completed_draught','vessel2_last_position_UTC','vessel2_signal','port','port_id','distance','event_ref_id','is_sts_zone','zone_terminal_name','start_date','end_date','remarks','event_percentage','vessel_condition1','vessel_condition2','cargo_category_type','risk_level','current_distance_nm','stationary_duration_hours','proximity_consistency','data_points_analyzed','estimated_cargo','mother_vessel_number','operationmode','status','is_email_sent','is_complete','is_disappeared','last_updated'];
+        $headers = ['id', 'vessel1_uuid', 'vessel1_name','vessel1_mmsi','vessel1_imo','vessel1_country_iso','vessel1_type','vessel1_type_specific', 'vessel1_lat','vessel1_lon','vessel1_speed','vessel1_navigation_status','vessel1_draught','vessel1_completed_draught','vessel1_last_position_UTC','vessel1_signal','vessel2_uuid','vessel2_name','vessel2_mmsi','vessel2_imo','vessel2_country_iso', 'vessel2_type','vessel2_type_specific','vessel2_lat','vessel2_lon','vessel2_speed','vessel2_navigation_status','vessel2_draught','vessel2_completed_draught','vessel2_last_position_UTC','vessel2_signal','port','port_id','distance','event_ref_id','zone_type', 'zone_ship','zone_terminal_name','start_date','end_date','remarks','event_percentage','vessel_condition1','vessel_condition2','cargo_category_type','risk_level','current_distance_nm','stationary_duration_hours','proximity_consistency','data_points_analyzed','estimated_cargo','mother_vessel_number','operationmode','status','is_email_sent','is_complete','is_disappeared','last_updated'];
         if( ! empty( $vessle_recs ) && is_array( $vessle_recs ) ) {
             $headers = array_keys( $vessle_recs[0] );
         }
@@ -256,7 +256,8 @@ class CSM_STS_Admin_Menu {
             wp_enqueue_style( 'coastlynk-daterangepicker-css', 'https://cdn.jsdelivr.net/npm/daterangepicker/daterangepicker.css' );
             wp_enqueue_style( 'jquery-Intimidatetime-style', 'https://cdnjs.cloudflare.com/ajax/libs/jquery-datetimepicker/2.5.20/jquery.datetimepicker.min.css' );
             wp_enqueue_style( 'csm-backend-css', CSM_CSS_URL . 'backend.css', [], time(), null );
-
+            wp_enqueue_style( 'font-awesome-4.7', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css', array(), time() );            
+            
             /**
              * enqueue admin js
              */
@@ -269,7 +270,8 @@ class CSM_STS_Admin_Menu {
                 'ajaxURL'                       => admin_url( 'admin-ajax.php' ),
                 'loader'                        => CSM_IMAGES_URL .'spinner-2x.gif',
                 'preloader_gif_img'             => Coastalynk_Admin::get_bar_preloader(),
-                'security'                      => wp_create_nonce( 'csm_sts_load' )
+                'security'                      => wp_create_nonce( 'csm_sts_load' ),
+                'nonce'                         => wp_create_nonce('coastalynk_secure_ajax_nonce')
             ] );
         }
     }  
@@ -429,21 +431,32 @@ class CSM_STS_Admin_Menu {
                         <?php $testListTable->display() ?>
                     </div>
                 </div>
-					
-                
             </div>
             <div class="coastalynk-popup-overlay"></div>
             <div class="coastalynk-popup-content">
                 <h2>
                     <div>
-                        <?php _e( "STS Activity", "castalynkmap" );?>
+                        <?php _e( "STS Activity", "castalynkmap" );?>(<span class="coastalynk-sts-popup-content-operationmode"></span>)
                         <span class="coastalynk-popup-approved-zone"><i class="fa fa-check-square" aria-hidden="true"></i></span>
                         <span class="coastalynk-popup-unapproved-zone"><i class="fa fa-exclamation" aria-hidden="true"></i></span>
-
+                        <span class="coastalynk-popup-risk-level-top"></span>
                     </div>
                     <div id="coastalynk-popup-close"><span class="dashicons dashicons-no"></span></div>
                 </h2>
                 <div class="coastalynk-popup-top-message" style="display:none;"></div>
+                <div class="coastalynk-popup-top-progress-bar" data-percentage="10">
+                    <div class="coastalynk-progress-container-wrapper">
+                        <label class="coastalynk-percentage-label"><?php _e( "Start", "castalynkmap" );?></label>
+                        <div class="coastalynk-progress-container">
+                            <div class="coastalynk-progress-bar">
+                                <div class="coastalynk-progress-fill">
+                                    <span class="coastalynk-progress-percentage">0%</span>
+                                </div>
+                            </div>
+                        </div>
+                        <label class="coastalynk-percentage-label"><?php _e( "End", "castalynkmap" );?></label>
+                    </div>
+                </div>
                 <div class="coastalynk-popup-top-bar">
                     <div class="coastalynk-popup-top-bar-remarks">
                         <?php _e( "Remarks:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-remarks"></span>
@@ -496,11 +509,11 @@ class CSM_STS_Admin_Menu {
                         <ul class="coastalynk-popup-content-box-list">
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Port:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-port"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Ref#:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-event_ref_id"></span></li>
-                            <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "STS Zone?", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-is_sts_zone"></span></li>
+                            <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Zone Type:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-zone_type"></span></li>
+                            <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Ship Type:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-zone_ship"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Zone:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-zone_terminal_name"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Start Date:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-start_date"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "End Date:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-end_date"></span></li>
-                            <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Percentage:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-event_percentage"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Cargo Type:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-cargo_category_type"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Estimated Cargo:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-estimated_cargo"></span></li>
                         </ul>
@@ -513,8 +526,9 @@ class CSM_STS_Admin_Menu {
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Stationary(hours):", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-stationary_duration_hours"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Proximity Consistency:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-proximity_consistency"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Data Points Analyzed:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-data_points_analyzed"></span></li>
-                            <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Operation Mode:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-operationmode"></span></li>
+                            <!-- <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Operation Mode:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-operationmode"></span></li> -->
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Status:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-status"></span></li>
+                            <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Percentage:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-event_percentage"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Last Updated:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-last_updated"></span></li>
                         </ul>
                     </div>

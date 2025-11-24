@@ -86,7 +86,6 @@ class CSM_STS_Admin_listing extends WP_List_Table {
      * @return string Text or HTML to be placed inside the column <td>
      **************************************************************************/
     public function column_default($item, $column_name){
-        
         switch($column_name){
             case 'id':
             case 'vessel1_uuid':
@@ -121,7 +120,8 @@ class CSM_STS_Admin_listing extends WP_List_Table {
             case 'port_id':
             case 'distance':
             case 'event_ref_id':
-            case 'is_sts_zone':
+            case 'zone_type':
+            case 'zone_ship':    
             case 'zone_terminal_name':
             case 'remarks':
             case 'event_percentage':
@@ -168,9 +168,9 @@ class CSM_STS_Admin_listing extends WP_List_Table {
     public function get_columns(){
         
         $columns = [
+            'vessel1_name'                          => __( 'Vessel 1 Name', 'castalynkmap' ),
             'id'                                    => __( 'ID', 'castalynkmap' ),
             'vessel1_uuid'                          => __( 'Vessel 1 UUID', 'castalynkmap' ),
-            'vessel1_name'                          => __( 'Vessel 1 Name', 'castalynkmap' ),
             'vessel1_mmsi'                          => __( 'Vessel 1 MMSI', 'castalynkmap' ),
             'vessel1_imo'                           => __( 'Vessel 1 IMO', 'castalynkmap' ),
             'vessel1_country_iso'                   => __( 'Vessel 1 Country', 'castalynkmap' ),
@@ -203,7 +203,8 @@ class CSM_STS_Admin_listing extends WP_List_Table {
             'port_id'                               => __( 'Port ID', 'castalynkmap' ),
             'distance'                              => __( 'distance', 'castalynkmap' ),
             'event_ref_id'                          => __( 'Ref ID', 'castalynkmap' ),
-            'is_sts_zone'                           => __( 'IS STS Zone?', 'castalynkmap' ),
+            'zone_type'                             => __( 'Zone Type', 'castalynkmap' ),
+            'zone_ship'                             => __( 'Zone Ship', 'castalynkmap' ),            
             'zone_terminal_name'                    => __( 'Zone Name', 'castalynkmap' ),
             'start_date'                            => __( 'Start Date', 'castalynkmap' ),
             'end_date'                              => __( 'End Date', 'castalynkmap' ),
@@ -248,7 +249,7 @@ class CSM_STS_Admin_listing extends WP_List_Table {
                     $attributes .= ' data-'.$key.' = "'.$val.'"';
                 }
             }
-            return '<a data-action="csm_delete_sts" data-id="'.$item['id'].'"  data-event_ref_id="'.$item['event_ref_id'].'" class="csm_delete_sts" href="javascript:;">'.__( 'Delete', 'castalynkmap' ).'</a> | <a data-action="csm_view_sts" '.$attributes .' class="csm_view_sts" href="javascript:;">'.__( 'View', 'castalynkmap' ).'</a>';
+            return '<a data-action="csm_view_sts" '.$attributes .' class="csm_view_sts" href="javascript:;"><span class="dashicons dashicons-search"></span></a> <a data-action="csm_delete_sts" data-id="'.$item['id'].'"  data-event_ref_id="'.$item['event_ref_id'].'" class="csm_delete_sts" href="javascript:;"><span class="dashicons dashicons-no-alt"></span></a>';
         } else {
             return Coastalynk_Admin::get_bar_preloader();
         }    
@@ -271,9 +272,9 @@ class CSM_STS_Admin_listing extends WP_List_Table {
     public function get_sortable_columns() {
         
         $sortable_columns = array(
+            'vessel1_name'                  => array( 'vessel1_name', false ),
             'id'                            => array( 'id', false ),
             'vessel1_uuid'                  => array( 'vessel1_uuid', false ),
-            'vessel1_name'                  => array( 'vessel1_name', false ),
             'vessel1_mmsi'                  => array( 'vessel1_mmsi', false ),
             'vessel1_imo'                   => array( 'vessel1_imo', false ),
             'vessel1_country_iso'           => array( 'vessel1_country_iso', false ),
@@ -307,7 +308,8 @@ class CSM_STS_Admin_listing extends WP_List_Table {
             'port_id'                       => array( 'port_id', false ),
             'distance'                      => array( 'distance', false ),
             'event_ref_id'                  => array( 'event_ref_id', false ),
-            'is_sts_zone'                   => array( 'is_sts_zone', false ),
+            'zone_type'                     => array( 'zone_type', false ),
+            'zone_ship'                     => array( 'zone_ship', false ),
             'zone_terminal_name'            => array( 'zone_terminal_name', false ),
             'start_date'                    => array( 'start_date', false ),
             'end_date'                      => array( 'end_date', false ),
@@ -406,9 +408,9 @@ class CSM_STS_Admin_listing extends WP_List_Table {
             
 			$this->items = [
                 [
+                    'vessel1_name'                  => Coastalynk_Admin::get_bar_preloader(), 
                     'id'                            => Coastalynk_Admin::get_bar_preloader(), 
                     'vessel1_uuid'                  => Coastalynk_Admin::get_bar_preloader(), 
-                    'vessel1_name'                  => Coastalynk_Admin::get_bar_preloader(), 
                     'vessel1_mmsi'                  => Coastalynk_Admin::get_bar_preloader(), 
                     'vessel1_imo'                   => Coastalynk_Admin::get_bar_preloader(), 
                     'vessel1_country_iso'           => Coastalynk_Admin::get_bar_preloader(), 
@@ -442,7 +444,8 @@ class CSM_STS_Admin_listing extends WP_List_Table {
                     'port_id'                       => Coastalynk_Admin::get_bar_preloader(), 
                     'distance'                      => Coastalynk_Admin::get_bar_preloader(), 
                     'event_ref_id'                  => Coastalynk_Admin::get_bar_preloader(), 
-                    'is_sts_zone'                   => Coastalynk_Admin::get_bar_preloader(), 
+                    'zone_type'                   => Coastalynk_Admin::get_bar_preloader(), 
+                    'zone_ship'                   => Coastalynk_Admin::get_bar_preloader(), 
                     'zone_terminal_name'            => Coastalynk_Admin::get_bar_preloader(), 
                     'start_date'                    => Coastalynk_Admin::get_bar_preloader(), 
                     'end_date'                      => Coastalynk_Admin::get_bar_preloader(), 
@@ -571,9 +574,9 @@ class CSM_STS_Admin_listing extends WP_List_Table {
         $offset     = isset($paged) ? intval(($paged-1) * $per_page) : 0;
         $orderby    = (isset($_REQUEST['orderby']) && in_array($_REQUEST['orderby'], array_keys($this->get_sortable_columns()))) ? sanitize_text_field( $_REQUEST['orderby'] ) : 'last_updated';
         $order      = (isset($_REQUEST['order']) && in_array($_REQUEST['order'], array('asc', 'desc'))) ? sanitize_text_field( $_REQUEST['order'] ) : 'desc';
-        $result     = $wpdb->get_results( "SELECT * FROM $table_name $where ORDER BY $orderby $order LIMIT $per_page OFFSET $offset", ARRAY_A );
+        $result     = $wpdb->get_results( "SELECT vessel1_name,id, vessel1_uuid, vessel1_mmsi,vessel1_imo,vessel1_country_iso,vessel1_type,vessel1_type_specific, vessel1_lat,vessel1_lon,vessel1_speed,vessel1_navigation_status,vessel1_draught,vessel1_completed_draught,vessel1_last_position_UTC,vessel1_signal,vessel2_uuid,vessel2_name,vessel2_mmsi,vessel2_imo,vessel2_country_iso, vessel2_type,vessel2_type_specific,vessel2_lat,vessel2_lon,vessel2_speed,vessel2_navigation_status,vessel2_draught,vessel2_completed_draught,vessel2_last_position_UTC,vessel2_signal,port,port_id,distance, event_ref_id, zone_type, zone_ship, zone_terminal_name,start_date,end_date,remarks,event_percentage,vessel_condition1,vessel_condition2,cargo_category_type,risk_level,current_distance_nm,stationary_duration_hours,proximity_consistency,data_points_analyzed,estimated_cargo,mother_vessel_number,operationmode,status,is_email_sent,is_complete,is_disappeared,last_updated FROM $table_name $where ORDER BY $orderby $order LIMIT $per_page OFFSET $offset", ARRAY_A );
         // echo "SELECT * FROM $table_name $where ORDER BY $orderby $order LIMIT $per_page OFFSET $offset";   
-        $data = [];
+        $data = []; 
         $count = 0;
         if( isset($result) && is_array($result) && count($result) > 0 ) {
             foreach( $result as $res ) {
@@ -607,10 +610,77 @@ class CSM_STS_Admin_listing extends WP_List_Table {
 	 */
 
 	public function display() {
-
+        echo '<div class="fixed-column-table-container">';
 		parent::display();
+        echo '</div>';
+        
+        $this->add_table_styles();
 	}
+private function add_table_styles() {
+        ?>
+        <style>
+        .fixed-column-table-container {
+            position: relative;
+            overflow-x: auto;
+            background: white;
+            border: 1px solid #ccd0d4;
+            margin-bottom: 20px;
+        }
 
+        .fixed-column-table-container table.widefat {
+            min-width: 800px;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin: 0;
+        }
+
+        /* Fixed first column */
+        .fixed-column-table-container table.widefat thead th:first-child,
+        .fixed-column-table-container table.widefat tfoot th:first-child,
+        .fixed-column-table-container table.widefat tbody td:first-child {
+            position: sticky;
+            left: 0;
+            background: white;
+            z-index: 2;
+            border-right: 2px solid #e2e4e7;
+            width: 200px;
+        }
+
+        /* Fixed header first column */
+        .fixed-column-table-container table.widefat thead th:first-child,
+        .fixed-column-table-container table.widefat tfoot th:first-child {
+            background: #f1f1f1;
+            z-index: 3;
+            top: 0;
+        }
+        #csm_sts_data{
+            clear: both;
+        }
+        /* Checkbox column styling */
+        .fixed-column-table-container table.widefat thead th.column-cb,
+        .fixed-column-table-container table.widefat tfoot th.column-cb,
+        .fixed-column-table-container table.widefat tbody td.check-column {
+            position: sticky;
+            left: 0;
+            background: #f1f1f1;
+            z-index: 4;
+            width: 40px;
+            border-right: 2px solid #e2e4e7;
+        }
+
+        .fixed-column-table-container table.widefat tbody td.check-column {
+            background: white;
+            z-index: 3;
+        }
+
+        /* Regular cells */
+        .fixed-column-table-container table.widefat th,
+        .fixed-column-table-container table.widefat td {
+            width: 70px;
+        }
+        </style>
+        <?php
+    }
 	/**
 	 * @Override ajax_response method
 	 */

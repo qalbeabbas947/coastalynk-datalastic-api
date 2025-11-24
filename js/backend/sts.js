@@ -18,6 +18,17 @@
                 CSM_STS.back_to_information();
                 CSM_STS.load_datetime_pickers();
                 CSM_STS.load_date_range_js();
+                CSM_STS.popup_top_progress_bar();
+            },
+            popup_top_progress_bar: function() {
+                var percentage = $(".coastalynk-popup-top-progress-bar").data('percentage');
+                console.log(percentage);
+                const progressFill = document.querySelector('.coastalynk-progress-fill');
+                const percentageText = document.querySelector('.coastalynk-progress-percentage');
+                
+                progressFill.style.width = `${percentage}%`;
+                percentageText.textContent = `${percentage}%`;
+
             },
             load_datetime_pickers: function() {
                 $(".coastalynk-field-sts-date").each(function () {
@@ -205,6 +216,7 @@
                     $(".coastalynk-sts-popup-content-vessel2_draught").html(data.vessel2_draught)
                     $(".coastalynk-sts-popup-content-vessel2_completed_draught").html(data.vessel2_completed_draught)
                     $(".coastalynk-sts-popup-content-vessel2_last_position_UTC").html(data.vessel1_last_position_utc)
+                    console.log(data.zone_terminal_name);
                     if( data.zone_terminal_name != '' ) {
                         $(".coastalynk-popup-approved-zone").css('display', 'inline-block');
                         $(".coastalynk-popup-unapproved-zone").css('display', 'none');
@@ -228,12 +240,22 @@
                     }
 
                     $(".coastalynk-sts-popup-content-event_ref_id").html(data.event_ref_id);
-                    $(".coastalynk-sts-popup-content-is_sts_zone").html(data.is_sts_zone);
+                    $(".coastalynk-sts-popup-content-zone_type").html(data.zone_type);
+                    $(".coastalynk-sts-popup-content-zone_ship").html(data.zone_ship);
                     $(".coastalynk-sts-popup-content-zone_terminal_name").html(data.zone_terminal_name);
                     $(".coastalynk-sts-popup-content-start_date").html(data.start_date);
                     $(".coastalynk-sts-popup-content-end_date").html(data.end_date);
                     $(".coastalynk-sts-popup-content-remarks").html(data.remarks);
                     $(".coastalynk-sts-popup-content-event_percentage").html(data.event_percentage);
+                    $(".coastalynk-popup-risk-level-top").html('Risk: ' + data.event_percentage + "%");
+                    if( parseFloat( data.event_percentage ) <= 30 ) {
+                        $(".coastalynk-popup-risk-level-top").css( 'background-color', 'green' );
+                    } else if( parseFloat( data.event_percentage ) <= 70 ) {
+                        $(".coastalynk-popup-risk-level-top").css( 'background-color', 'yellow' );
+                    } else {
+                        $(".coastalynk-popup-risk-level-top").css( 'background-color', 'red' );
+                    }
+
                     $(".coastalynk-sts-popup-content-cargo_category_type").html(data.cargo_category_type);
                     $(".coastalynk-sts-popup-content-risk_level").html(data.risk_level);
                     $(".coastalynk-sts-popup-content-current_distance_nm").html(data.current_distance_nm);

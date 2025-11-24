@@ -903,7 +903,7 @@ class Coastalynk_Sea_Vessel_Map_Front {
         $data = json_decode($body);
 
         // Process the data as needed.
-        if (!empty($data)) {
+        if (!empty($data) && isset( $data->data )) {
             foreach( $data->data as $dat ) {
                 if( $selected_uuid == $dat->uuid ) {
                     if( intval( $dat->gross_tonnage ) > 0 ) {
@@ -916,7 +916,7 @@ class Coastalynk_Sea_Vessel_Map_Front {
                 } 
             }
         }
-
+        echo __( "N/A", "castalynkmap" );
         exit;
     }
     
