@@ -240,8 +240,9 @@
                     }
 
                     $(".coastalynk-sts-popup-content-event_ref_id").html(data.event_ref_id);
-                    $(".coastalynk-sts-popup-content-zone_type").html(data.zone_type);
-                    $(".coastalynk-sts-popup-content-zone_ship").html(data.zone_ship);
+                    $(".coastalynk-sts-popup-content-zone_type").html(data.zone_type=='-' || data.zone_type==''?'Unknown':data.zone_type);
+                   
+                    $(".coastalynk-sts-popup-content-zone_ship").html(data.zone_ship=='-' || data.zone_ship==''?'Unknown':data.zone_ship);
                     $(".coastalynk-sts-popup-content-zone_terminal_name").html(data.zone_terminal_name);
                     $(".coastalynk-sts-popup-content-start_date").html(data.start_date);
                     $(".coastalynk-sts-popup-content-end_date").html(data.end_date);
