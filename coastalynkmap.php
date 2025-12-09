@@ -117,6 +117,14 @@ class Coastalynk_Sea_Vessel_Map {
             if( file_exists( CSM_INCLUDES_DIR . 'admin/sts/class-sts.php' ) ) {
                 require_once CSM_INCLUDES_DIR . 'admin/sts/class-sts.php';
             }
+
+            // if( file_exists( CSM_INCLUDES_DIR . 'admin/sts-log/class-menu.php' ) ) {
+            //     require_once CSM_INCLUDES_DIR . 'admin/sts-log/class-menu.php';
+            // }
+
+            // if( file_exists( CSM_INCLUDES_DIR . 'admin/sts-log/class-sts.php' ) ) {
+            //     require_once CSM_INCLUDES_DIR . 'admin/sts-log/class-sts.php';
+            // }
         }
         if( file_exists( CSM_INCLUDES_DIR.'front.php' ) ) {
             require_once CSM_INCLUDES_DIR . 'front.php';

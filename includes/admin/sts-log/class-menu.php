@@ -9,9 +9,9 @@
 ini_set('display_errors', 'On');
 error_reporting(E_ALL);
 /**
- * CSM_STS_Admin_Menu class
+ * CSM_STS_Log_Admin_Menu class
  */
-class CSM_STS_Admin_Menu {
+class CSM_STS_Log_Admin_Menu {
 
     /**
      * Default hidden columns
@@ -192,7 +192,6 @@ class CSM_STS_Admin_Menu {
             'status' => $status,
             'remarks' => $comments
         );
-        
         $where_condition = array(
             'id' => $id,
         );
@@ -310,10 +309,10 @@ class CSM_STS_Admin_Menu {
         
         $hook = add_submenu_page( 
             'coastalynk',
-            __( 'STS', 'castalynkmap' ),
-            __( 'STS', 'castalynkmap' ),
+            __( 'STS Log', 'castalynkmap' ),
+            __( 'STS Log', 'castalynkmap' ),
             'manage_options',
-            'coastalynk-sts',
+            'coastalynk-sts-log',
             [ $this,'listing_page'],
             2 
         );
@@ -331,10 +330,10 @@ class CSM_STS_Admin_Menu {
             $args = [
                     'label' => 'STS Per Page',
                     'default' => 20,
-                    'option' => 'sts_per_page'
+                    'option' => 'sts_log_per_page'
                 ];
             add_screen_option( $option, $args );
-            $csmSTSListTable = new CSM_STS_Admin_listing();
+            $csmSTSListTable = new CSM_STS_Log_Admin_listing();
         } );
     }
 
@@ -465,7 +464,7 @@ class CSM_STS_Admin_Menu {
                 </div>
                 <div class="coastalynk-popup-content-boxes coastalynk-popup-sts-content-boxes">
                     <div class="coastalynk-popup-content-box">
-                        <h3><?php _e( "Vessel 1", "castalynkmap" );?><span title = "<?php _e( "Mother", "castalynkmap" );?>" class="coastalynk-popup-vessel1-parent" style="display:none;"><?php _e( "(Mother)", "castalynkmap" );?></span><span title = "<?php _e( "Daughter", "castalynkmap" );?>" class="coastalynk-popup-vessel1-daughter" style="display:none;"><?php _e( "(Daughter)", "castalynkmap" );?></span></h3>
+                        <h3><?php _e( "Vessel 1", "castalynkmap" );?><span title = "<?php _e( "Mother Ship", "castalynkmap" );?>" class="coastalynk-popup-vessel1-parent" style="display:none;"><i class="fa fa-cogs" aria-hidden="true"></i></span></h3>
                         <ul class="coastalynk-popup-content-box-list">
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Name:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel1_name"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "MMSI:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel1_mmsi"></span></li>
@@ -485,7 +484,7 @@ class CSM_STS_Admin_Menu {
                         </ul>
                     </div>
                     <div class="coastalynk-popup-content-box">
-                        <h3><?php _e( "Vessel 2", "castalynkmap" );?><span title = "<?php _e( "Mother", "castalynkmap" );?>" class="coastalynk-popup-vessel2-parent" style="display:none;"><?php _e( "(Mother)", "castalynkmap" );?></span><span title = "<?php _e( "Daughter", "castalynkmap" );?>" class="coastalynk-popup-vessel2-daughter" style="display:none;"><?php _e( "(Daughter)", "castalynkmap" );?></span></h3>
+                        <h3><?php _e( "Vessel 2", "castalynkmap" );?><span title = "<?php _e( "Mother Ship", "castalynkmap" );?>" class="coastalynk-popup-vessel2-parent" style="display:none;"><i class="fa fa-cogs" aria-hidden="true"></i></span></h3>
                         <ul class="coastalynk-popup-content-box-list">
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Name:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel2_name"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "MMSI:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel2_mmsi"></span></li>
@@ -603,4 +602,4 @@ class CSM_STS_Admin_Menu {
     }
 }
 
-new CSM_STS_Admin_Menu();
+new CSM_STS_Log_Admin_Menu();

@@ -73,16 +73,6 @@ class Coastalynk_Admin {
             [ $this, 'dark_ships' ]
         );
         
-        // add_submenu_page(
-        //     'coastalynk',
-        //     __( 'Dark Ships', "castalynkmap" ),
-        //     __( 'Dark Ships', "castalynkmap" ),
-        //     'manage_options',
-        //     'coastalynk-dark-ships',
-        //      [ $this, 'dark_ships' ]
-        // );
-
-        
     }
 
     

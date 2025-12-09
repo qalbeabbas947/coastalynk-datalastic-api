@@ -52,7 +52,7 @@
                     },
                     endDate: moment(),
                     locale: {
-                        format: 'M/DD/YYYY hh:mm A'
+                        format: 'MM/DD/YYYY hh:mm A'
                     }
                 });
                 
@@ -177,11 +177,15 @@
                     $(".coastalynk-sts-popup-content-vessel1_name").html(data.vessel1_name)
 
                     $(".coastalynk-popup-vessel1-parent").css('display', 'none');  
+                    $(".coastalynk-popup-vessel1-daughter").css('display', 'none');  
                     $(".coastalynk-popup-vessel2-parent").css('display', 'none');  
+                    $(".coastalynk-popup-vessel2-daughter").css('display', 'none');  
                     if( parseInt(data.mother_vessel_number ) == 1 ) {
-                        $(".coastalynk-popup-vessel1-parent").css('display', 'inline-block');    
+                        $(".coastalynk-popup-vessel1-parent").css('display', 'inline-block');  
+                        $(".coastalynk-popup-vessel2-daughter").css('display', 'inline-block');  
                     } else if( parseInt(data.mother_vessel_number ) == 2 ) {
                         $(".coastalynk-popup-vessel2-parent").css('display', 'inline-block');
+                        $(".coastalynk-popup-vessel1-daughter").css('display', 'inline-block');
                     }
                     
                     $('#coastalynk-field-start-date').val(data.start_date);
