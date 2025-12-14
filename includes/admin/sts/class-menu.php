@@ -480,8 +480,6 @@ class CSM_STS_Admin_Menu {
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Nav. Status:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel1_navigation_status"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Signal:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel1-ais-signal"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Last Position:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel1_last_position_UTC"></span></li>
-                            <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Event:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-event_desc"></span></li>
-                            <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Draught Change:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-draught_change"></span></li> -->
                         </ul>
                     </div>
                     <div class="coastalynk-popup-content-box">
@@ -514,6 +512,7 @@ class CSM_STS_Admin_Menu {
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "End Date:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-end_date"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Cargo Type:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-cargo_category_type"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Estimated Cargo:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-estimated_cargo"></span></li>
+                            <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Draught Change:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-draught_change"></span></li>
                         </ul>
                     </div>
                     <div class="coastalynk-popup-content-box">
@@ -524,10 +523,10 @@ class CSM_STS_Admin_Menu {
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Stationary(hours):", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-stationary_duration_hours"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Proximity Consistency:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-proximity_consistency"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Data Points Analyzed:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-data_points_analyzed"></span></li>
-                            <!-- <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Operation Mode:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-operationmode"></span></li> -->
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Status:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-status"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Percentage:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-event_percentage"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Last Updated:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-last_updated"></span></li>
+                            <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Event:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-event_desc"></span></li>
                         </ul>
                     </div>
                 </div>

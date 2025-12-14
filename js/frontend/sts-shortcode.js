@@ -101,10 +101,10 @@
             event.preventDefault();
             
             let button = event.target;
-            let loader = event.target.nextElementSibling;
+           // let loader = event.target.nextElementSibling;
             var data = $(this).data();
             console.log(data);
-            loader.style.display = "block";
+            //loader.style.display = "block";
             button.style.display = "none";
             
             $(".coastalynk-sts-popup-overlay").show();
@@ -247,7 +247,7 @@
             console.log(data);
             
             button.style.display = "block";
-            loader.style.display = "none";
+            //loader.style.display = "none";
         });
       },
       ajax_retrieve_draught: function() {

@@ -99,7 +99,7 @@ input#caostalynk_sts_history_range {
     border-radius: 5px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     z-index: 1000;
-    width: 50%;
+    width: 55%;
     height: 96vh;
 }
 
@@ -209,7 +209,18 @@ input#caostalynk_sts_history_range {
     background-color: white;
     flex: 0 0 48.5%;
 }
-.coastalynk-sts-retrieve-popup-btn, .coastalynk-sts-focus-marker-btn{
+
+.coastalynk-sts-retrieve-popup-btn{
+    padding: 12px;
+    border-radius: 5px;
+    outline: none;
+    border: none;
+}
+.coastalynk-sts-retrieve-popup-btn:hover{
+    text-decoration: none;
+    cursor: pointer;
+}
+.coastalynk-sts-focus-marker-btn{
     background-color: var(--wp--preset--color--logoblue);
     color: white;
     padding: 12px;
@@ -218,7 +229,7 @@ input#caostalynk_sts_history_range {
     border: none;
 }
 
-.coastalynk-sts-retrieve-popup-btn:hover, .coastalynk-sts-focus-marker-btn:hover{
+.coastalynk-sts-focus-marker-btn:hover{
     background-color: var(--wp--preset--color--text-blue);
     transition: border 0.4s ease-in;
     cursor: pointer;
@@ -226,6 +237,125 @@ input#caostalynk_sts_history_range {
 .coastalynk-sts-popup-top-bar-remarks, .coastalynk-sts-popup-top-bar-remarks span{
     color: white;
     font-size: 1rem;
+}
+.coastalynk-sts-children-popup-btn li, .coastalynk-sts-parent-popup-btn li{
+    margin-bottom: 3px;
+    text-align: left;
+}
+
+.coastalynk-sts-children-popup-btn ul,.coastalynk-sts-parent-popup-btn ul {
+  list-style-type: none; /* Removes default bullets */
+  padding-left: 0; /* Adjust padding as needed */
+}
+
+.coastalynk-sts-children-popup-btn li::before, .coastalynk-sts-parent-popup-btn li::before {
+  content: "\f00c"; /* Unicode for the 'check' icon (fas fa-check) */
+  font-family: "FontAwesome"; 
+  font-weight: 900; /* Use 900 for solid icons (fas), 400 for regular (far) */
+  margin-right: 10px; /* Space between the icon and text */
+  color: #28a745; /* Customize icon color */
+  /* Additional styling for alignment */
+  display: inline-block;
+  width: 1em; /* Ensures consistent alignment if icons have different widths */
+}
+
+/***************************************Large Desktops/Laptops:***************************/
+/* Equivalent to min-width: 1200px */
+@media (min-width: 1400px) {
+  .coastalynk-sts-popup-content-box{
+    height: 37vh;
+  }
+  
+  .coastalynk-sts-popup-content-boxes{ 
+    row-gap: 5px;
+  }
+}
+/* Equivalent to min-width: 1200px */
+@media (max-width: 1400px) {
+  /* Styles for large desktops and monitors */
+   .coastalynk-sts-popup-content-box-list{
+        height: 184px;
+   }
+
+  .coastalynk-sts-popup-content-box h3{
+    font-size: 1em;
+  }
+  .coastalynk-sts-popup-top-bar-remarks, .coastalynk-sts-popup-top-bar-remarks span{
+    font-size: 1em;
+  }
+
+  .coastalynk-sts-popup-content h2{
+    font-size: 1.75em;
+  }
+
+  .coastalynk-sts-popup-content h2{
+    padding-bottom: 3px;
+    margin-top: 3px;
+  }
+  .coastalynk-sts-popup-content-boxes{ 
+    row-gap: 5px;
+  }
+}
+
+/* Equivalent to min-width: 1200px */
+@media (max-width: 1200px) {
+  .coastalynk-sts-popup-content-box h3{
+    font-size: 1em;
+  }
+   .coastalynk-sts-popup-content-box-list{
+        height: 184px;
+   } 
+  
+
+  .coastalynk-sts-popup-top-bar-remarks, .coastalynk-sts-popup-top-bar-remarks span{
+    font-size: 1em;
+  }
+
+  .coastalynk-sts-popup-content h2{
+    font-size: 1.75em;
+  }
+
+  .coastalynk-sts-popup-content h2{
+    padding-bottom: 3px;
+    margin-top: 3px;
+  }
+  .coastalynk-sts-popup-content-boxes{ 
+    row-gap: 5px;
+  }
+}
+
+/* Equivalent to min-width: 992px */
+@media (max-width: 992px) {
+    .coastalynk-sts-popup-content{
+        font-size: 12px;
+        width: 80%;
+    }
+  .coastalynk-sts-popup-content-box-list{
+    height: auto;
+    overflow-y: auto;
+  }
+  .coastalynk-sts-popup-content-box{
+    height: 40vh;
+  }
+
+  .coastalynk-sts-popup-content-box h3{
+    font-size: 1.25em;
+  }
+  .coastalynk-sts-popup-top-bar-remarks, .coastalynk-sts-popup-top-bar-remarks span{
+    font-size: 1em;
+  }
+
+  .coastalynk-sts-popup-content h2{
+    font-size: 1.75em;
+  }
+
+  .coastalynk-sts-popup-content h2{
+    padding-bottom: 3px;
+    margin-top: 3px;
+  }
+  .coastalynk-sts-popup-content-boxes{ 
+    row-gap: 3px;
+  }
 }
 /***************************************History End***************************/
 @media (max-width: 768px) {
@@ -237,7 +367,16 @@ input#caostalynk_sts_history_range {
 }
 
 @media (max-width: 480px) {
-   
+    .coastalynk-sts-popup-content-box-list {
+        height: auto;
+    }
+    .coastalynk-sts-popup-content-box-list li:last-child {
+        margin-bottom: 10px;
+    }
+    .coastalynk-sts-popup-content-box-list li {
+        font-size: 1rem;
+    }
+
     .coastalynk-sts-popup-content-boxes{
         overflow-y: scroll;
         height: 80vh;
@@ -255,4 +394,17 @@ input#caostalynk_sts_history_range {
         flex-direction: column;
         
     }
+
+    .coastalynk-sts-popup-content-boxes{ 
+        row-gap: 10px;
+    }
+}
+
+@media (max-width: 375px) {
+    .coastalynk-sts-popup-content-box-list {
+        height: auto;
+        max-height: 30vh;
+    }
+    
+    
 }
