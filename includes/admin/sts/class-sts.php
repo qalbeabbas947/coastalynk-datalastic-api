@@ -87,64 +87,37 @@ class CSM_STS_Admin_listing extends WP_List_Table {
      **************************************************************************/
     public function column_default($item, $column_name){
         switch($column_name){
-            case 'id':
-            case 'vessel1_uuid':
-            case 'vessel1_name':
-            case 'vessel1_mmsi':
-            case 'vessel1_imo':
-            case 'vessel1_country_iso':
-            case 'vessel1_type':
-            case 'vessel1_type_specific':
-            case 'vessel1_lat':
-            case 'vessel1_lon':
-            case 'vessel1_speed':
-            case 'vessel1_navigation_status':
-            case 'vessel1_draught':
-            case 'vessel1_completed_draught':
-            case 'vessel1_signal':
-            case 'vessel2_uuid':
-            case 'vessel2_name':
-            case 'vessel2_mmsi':
-            case 'vessel2_imo':
-            case 'vessel2_country_iso':
-            case 'vessel2_type':
-            case 'vessel2_type_specific':
-            case 'vessel2_lat':
-            case 'vessel2_lon':
-            case 'vessel2_speed':
-            case 'vessel2_navigation_status':
-            case 'vessel2_draught':
-            case 'vessel2_completed_draught':
-            case 'vessel2_signal':
-            case 'port':
-            case 'port_id':
-            case 'distance':
-            case 'event_ref_id':
-            case 'zone_type':
-            case 'zone_ship':    
-            case 'zone_terminal_name':
-            case 'remarks':
-            case 'event_percentage':
-            case 'draught_change':
-            case 'event_desc':
-            case 'cargo_category_type':
-            case 'risk_level':
-            case 'current_distance_nm':
-            case 'stationary_duration_hours':
-            case 'proximity_consistency':
-            case 'data_points_analyzed':
-            case 'estimated_cargo':
-            case 'operationmode':
-            case 'status':
-            case 'is_email_sent':
-            case 'is_complete':
-            case 'is_disappeared':
+            case  'id':
+            case  'uuid':
+            case  'name':
+            case  'mmsi':
+            case  'imo':
+            case  'country_iso':
+            case  'type':
+            case  'type_specific':
+            case  'lat':
+            case  'lon':
+            case  'speed':
+            case  'draught':
+            case  'completed_draught':
+            case  'ais_signal':
+            case  'deadweight':
+            case  'gross_tonnage':
+            case  'port':
+            case  'port_id':
+            case  'distance':
+            case  'event_ref_id':
+            case  'zone_type':
+            case  'zone_terminal_name':
+            case  'status':
+            case  'is_email_sent':
+            case  'is_complete':
+            case  'is_disappeared':
                 return $item[$column_name];
             case 'last_updated':
             case 'start_date':
             case 'end_date':
-            case 'vessel1_last_position_UTC':
-            case 'vessel2_last_position_UTC':
+            case 'last_position_UTC':
                 return get_date_from_gmt( $item[$column_name], CSM_DATE_FORMAT.' '.CSM_TIME_FORMAT );
             default:
                 return print_r($item,true);
@@ -168,67 +141,57 @@ class CSM_STS_Admin_listing extends WP_List_Table {
     public function get_columns(){
         
         $columns = [
-            'vessel1_name'                          => __( 'Vessel 1 Name', 'castalynkmap' ),
-            'id'                                    => __( 'ID', 'castalynkmap' ),
-            'vessel1_uuid'                          => __( 'Vessel 1 UUID', 'castalynkmap' ),
-            'vessel1_mmsi'                          => __( 'Vessel 1 MMSI', 'castalynkmap' ),
-            'vessel1_imo'                           => __( 'Vessel 1 IMO', 'castalynkmap' ),
-            'vessel1_country_iso'                   => __( 'Vessel 1 Country', 'castalynkmap' ),
-            'vessel1_type'                          => __( 'Vessel 1 Type', 'castalynkmap' ),
-            'vessel1_type_specific'                 => __( 'Vessel 1 Sub. Type', 'castalynkmap' ),
-            'vessel1_lat'                           => __( 'Vessel 1 Latitude', 'castalynkmap' ),
-            'vessel1_lon'                           => __( 'Vessel 1 Longitude', 'castalynkmap' ),
-            'vessel1_speed'                         => __( 'Vessel 1 Speed', 'castalynkmap' ),
-            'vessel1_navigation_status'             => __( 'Vessel 1 Nav. Status', 'castalynkmap' ),
-            'vessel1_draught'                       => __( 'Vessel 1 Before Draught', 'castalynkmap' ),
-            'vessel1_completed_draught'             => __( 'Vessel 1 After Draught', 'castalynkmap' ),
-            'vessel1_last_position_UTC'             => __( 'Vessel 1 Last Position', 'castalynkmap' ),
-            'vessel1_signal'                        => __( 'Vessel 1 Signal', 'castalynkmap' ),
-            'vessel2_uuid'                          => __( 'Vessel 2 UUID', 'castalynkmap' ),
-            'vessel2_name'                          => __( 'Vessel 2 Name', 'castalynkmap' ),
-            'vessel2_mmsi'                          => __( 'Vessel 2 MMSI', 'castalynkmap' ),
-            'vessel2_imo'                           => __( 'Vessel 2 IMO', 'castalynkmap' ),
-            'vessel2_country_iso'                   => __( 'Vessel 2 Country', 'castalynkmap' ),
-            'vessel2_type'                          => __( 'Vessel 2 Type', 'castalynkmap' ),
-            'vessel2_type_specific'                 => __( 'Vessel 2 Sub. Type', 'castalynkmap' ),
-            'vessel2_lat'                           => __( 'Vessel 2 Latitude', 'castalynkmap' ),
-            'vessel2_lon'                           => __( 'Vessel 2 Longitude', 'castalynkmap' ),
-            'vessel2_speed'                         => __( 'Vessel 2 Speed', 'castalynkmap' ),
-            'vessel2_navigation_status'             => __( 'Vessel 2 Nav. Status', 'castalynkmap' ),
-            'vessel2_draught'                       => __( 'Vessel 2 Before Draught', 'castalynkmap' ),
-            'vessel2_completed_draught'             => __( 'Vessel 2 After Draught', 'castalynkmap' ),
-            'vessel2_last_position_UTC'             => __( 'Vessel 2 Last Position', 'castalynkmap' ),
-            'vessel2_signal'                        => __( 'Vessel 2 Signal', 'castalynkmap' ),
-            'port'                                  => __( 'Port', 'castalynkmap' ),
-            'port_id'                               => __( 'Port ID', 'castalynkmap' ),
-            'distance'                              => __( 'distance', 'castalynkmap' ),
-            'event_ref_id'                          => __( 'Ref ID', 'castalynkmap' ),
-            'zone_type'                             => __( 'Zone Type', 'castalynkmap' ),
-            'zone_ship'                             => __( 'Zone Ship', 'castalynkmap' ),            
-            'zone_terminal_name'                    => __( 'Zone Name', 'castalynkmap' ),
-            'start_date'                            => __( 'Start Date', 'castalynkmap' ),
-            'end_date'                              => __( 'End Date', 'castalynkmap' ),
-            'remarks'                               => __( 'Remarks', 'castalynkmap' ),
-            'event_percentage'                      => __( 'Event Percentage', 'castalynkmap' ),
-            'event_desc'                            => __( 'Event Desc', 'castalynkmap' ),
-            'draught_change'                        => __( 'Draught Change', 'castalynkmap' ),
-            'cargo_category_type'                   => __( 'Cargo Type', 'castalynkmap' ),
-            'risk_level'                            => __( 'Risk Level', 'castalynkmap' ),
-            'current_distance_nm'                   => __( 'Distance(NM)', 'castalynkmap' ),
-            'stationary_duration_hours'             => __( 'Stationary hours', 'castalynkmap' ),
-            'proximity_consistency'                 => __( 'Proximity Consistency', 'castalynkmap' ),
-            'data_points_analyzed'                  => __( 'Data Points Analyzed', 'castalynkmap' ),
-            'estimated_cargo'                       => __( 'Estimated Cargo', 'castalynkmap' ),
-            'operationmode'                         => __( 'Operation Mode', 'castalynkmap' ),
-            'status'                                => __( 'Status', 'castalynkmap' ),
-            'is_email_sent'                         => __( 'Email Sent?', 'castalynkmap' ),
-            'is_complete'                           => __( 'Left Area?', 'castalynkmap' ),
-            'is_disappeared'                        => __( 'Is Disappeared?', 'castalynkmap' ),
-            'last_updated'                          => __( 'Last Updated', 'castalynkmap' ),
-            'view'                                  => __( 'View', 'castalynkmap' )
+            'id'                    => __( 'id', 'castalynkmap' ), 
+            'uuid'                  => __( 'uuid', 'castalynkmap'  ), 
+            'name'                  => __( 'name', 'castalynkmap'  ), 
+            'mmsi'                  => __( 'mmsi', 'castalynkmap'  ), 
+            'imo'                   => __( 'imo', 'castalynkmap'  ), 
+            'country_iso'           => __( 'country_iso', 'castalynkmap'  ), 
+            'type'                  => __( 'type', 'castalynkmap'  ), 
+            'type_specific'         => __( 'type_specific', 'castalynkmap'  ), 
+            'lat'                   => __( 'lat', 'castalynkmap'  ), 
+            'lon'                   => __( 'lon', 'castalynkmap'  ), 
+            'speed'                 => __( 'speed', 'castalynkmap'  ), 
+            'draught'               => __( 'draught', 'castalynkmap'  ), 
+            'completed_draught'     => __( 'completed_draught', 'castalynkmap'  ), 
+            'last_position_UTC'     => __( 'last_position_UTC', 'castalynkmap'  ), 
+            'ais_signal'            => __( 'ais_signal', 'castalynkmap'  ), 
+            'deadweight'            => __( 'deadweight', 'castalynkmap'  ), 
+            'gross_tonnage'         => __( 'gross_tonnage', 'castalynkmap'  ), 
+            'port'                  => __( 'port', 'castalynkmap'  ), 
+            'port_id'               => __( 'port_id', 'castalynkmap'  ), 
+            'distance'              => __( 'distance', 'castalynkmap'  ), 
+            'event_ref_id'          => __( 'event_ref_id', 'castalynkmap'  ), 
+            'zone_type'             => __( 'zone_type', 'castalynkmap'  ), 
+            'zone_terminal_name'    => __( 'zone_terminal_name', 'castalynkmap'  ), 
+            'start_date'            => __( 'start_date', 'castalynkmap'  ), 
+            'end_date'              => __( 'end_date', 'castalynkmap'  ), 
+            'status'                => __( 'status', 'castalynkmap'  ), 
+            'is_email_sent'         => __( 'is_email_sent', 'castalynkmap'  ), 
+            'is_complete'           => __( 'is_complete', 'castalynkmap'  ), 
+            'is_disappeared'        => __( 'is_disappeared', 'castalynkmap'  ), 
+            'last_updated'          => __( 'last_updated', 'castalynkmap'  ), 
+            'childern'              => __( 'Childern', 'castalynkmap'  ),
+            'view'                  => __( 'Delete', 'castalynkmap' )
         ];
 
         return $columns;
+    }
+
+    /**
+     * Will display a link to show popup for the subscription detail.
+     */
+    public function column_completed_draught( $item ){
+        
+        if( !empty( strip_tags( $item['id'] ) ) ) { 
+            if( floatval( $item['completed_draught'] ) > 0 ) { 
+                return $item['completed_draught'];
+            } else {
+                return __( "Cargo Inference: Not Eligible", "castalynkmap" );
+            } 
+        } else {
+            return Coastalynk_Admin::get_bar_preloader();
+        }    
     }
 
     /**
@@ -239,17 +202,59 @@ class CSM_STS_Admin_listing extends WP_List_Table {
         if( !empty( strip_tags( $item['id'] ) ) ) { 
             $attributes = '';
             foreach( $item as $key=>$val ) {
-
-                
-                if( in_array( $key, ['last_updated', 'start_date', 'end_date', 'vessel1_last_position_UTC', 'vessel2_last_position_UTC'] ) ) {
+                if( in_array( $key, ['last_updated', 'start_date', 'end_date', 'last_position_UTC'] ) ) {
                     $attributes .= ' data-'.$key.' = "'.get_date_from_gmt( $val, CSM_DATE_FORMAT.' '.CSM_TIME_FORMAT ).'"';
-                } else if( in_array( $key, ['vessel1_draught', 'vessel1_completed_draught', 'vessel2_draught', 'vessel2_completed_draught' ] ) ) {
+                } else if( in_array( $key, ['draught' ] ) ) {
                     $attributes .= ' data-'.$key.' = "'.( floatval( $val ) > 0?$val.'m':__( "Pending", "castalynkmap" )).'"';
+                } else if( in_array( $key, [ 'completed_draught', 'vessel1_completed_draught', 'vessel2_completed_draught' ] ) ) {
+                    $attributes .= ' data-'.$key.' = "'.( floatval( $val ) > 0?$val.'m':__( "Cargo Inference: Not Eligible", "castalynkmap" )).'"';
+                } else if( in_array( $key, [ 'draught_change' ] ) ) {
+                    $attributes .= ' data-'.$key.' = "'.( floatval( $val ) > 0?$val.'m':__( "Pending / AIS-limited", "castalynkmap" )).'"';
                 } else {
                     $attributes .= ' data-'.$key.' = "'.$val.'"';
                 }
             }
-            return '<a data-action="csm_view_sts" '.$attributes .' class="csm_view_sts" href="javascript:;"><span class="dashicons dashicons-search"></span></a> <a data-action="csm_delete_sts" data-id="'.$item['id'].'"  data-event_ref_id="'.$item['event_ref_id'].'" class="csm_delete_sts" href="javascript:;"><span class="dashicons dashicons-no-alt"></span></a>';
+
+            return '<a data-action="csm_delete_sts" data-id="'.$item['id'].'"  data-event_ref_id="'.$item['event_ref_id'].'" class="csm_delete_sts" href="javascript:;"><span class="dashicons dashicons-no-alt"></span></a>';
+        } else {
+            return Coastalynk_Admin::get_bar_preloader();
+        }    
+    }
+
+    /**
+     * Will display a link to show popup for the subscription detail.
+     */
+    public function column_childern( $item ){
+        
+        if( !empty( strip_tags( $item['id'] ) ) ) { 
+            global $wpdb;
+            
+            $event_table_mother = $wpdb->prefix . 'coastalynk_sts_events';
+            $event_table_daughter = $wpdb->prefix . 'coastalynk_sts_event_detail';
+            $vessel_data = $wpdb->get_results( "SELECT e.`id`,e.`uuid` as vessel1_uuid, e.`name` as vessel1_name, e.`mmsi` as vessel1_mmsi, e.`imo` as vessel1_imo, e.`country_iso` as vessel1_country_iso, e.`type` as vessel1_type, e.`type_specific` as vessel1_type_specific, e.`lat` as vessel1_lat, e.`lon` as vessel1_lon, e.`speed` as vessel1_speed, e.`navigation_status` as vessel1_navigation_status, e.`draught` as vessel1_draught, e.`completed_draught` as vessel1_completed_draught, e.`last_position_UTC` as vessel1_last_position_UTC, e.`ais_signal` as vessel1_signal,e.`deadweight` as vessel1_deadweight,e.`gross_tonnage` as vessel1_gross_tonnage,e.`port`,e.`port_id`, e.`distance`,e.`event_ref_id`, e.`zone_type`,e.`zone_ship`, e.`zone_terminal_name`,e.`start_date`,e.`end_date`,e.`status`,e.`is_email_sent`,e.`is_complete`,e.`is_disappeared`, e.`last_updated`, d.`event_id`,d.`uuid` as vessel2_uuid,d.`name` as vessel2_name,d.`mmsi` as vessel2_mmsi,d.`imo` as vessel2_imo,d.`country_iso` as vessel2_country_iso,d.`type` as vessel2_type,d.`type_specific` as vessel2_type_specific,d.`lat` as vessel2_lat,d.`lon` as vessel2_lon,d.`speed` as vessel2_speed,d.`navigation_status` as vessel2_navigation_status,d.`draught` as vessel2_draught,d.`completed_draught` as vessel2_completed_draught,d.`last_position_UTC` as vessel2_last_position_UTC,d.`deadweight` as vessel2_deadweight,d.`gross_tonnage` as vessel2_gross_tonnage,d.`draught_change`,d.`ais_signal` as vessel2_signal,d.`end_date` as vessel2_end_date, d.`distance`,d.`event_percentage`,d.`cargo_category_type`,d.`risk_level`,d.`stationary_duration_hours`,d.`proximity_consistency`,d.`data_points_analyzed`,d.`is_disappeared`,d.`operationmode`,d.`is_complete` as vessel2_is_complete,d.`last_updated` as vessel2_last_updated,d.`status` as vessel2_status   
+                from ".$event_table_mother." as e inner join ".$event_table_daughter." as d on(e.id=d.event_id) where d.event_id = '".$item['id']."'");
+            $childern = '<ul>';
+            foreach( $vessel_data as $item_data ) {
+                $attributes = '';
+                foreach( $item_data as $key=>$val ) {
+                    if( in_array( $key, ['last_updated', 'start_date', 'end_date', 'last_position_UTC'] ) ) {
+                        $attributes .= ' data-'.$key.' = "'.get_date_from_gmt( $val, CSM_DATE_FORMAT.' '.CSM_TIME_FORMAT ).'"';
+                    } else if( in_array( $key, ['draught' ] ) ) {
+                        $attributes .= ' data-'.$key.' = "'.( floatval( $val ) > 0?$val.'m':__( "Pending", "castalynkmap" )).'"';
+                    } else if( in_array( $key, [ 'completed_draught', 'vessel1_completed_draught', 'vessel2_completed_draught' ] ) ) {
+                        $attributes .= ' data-'.$key.' = "'.( floatval( $val ) > 0?$val.'m':__( "Cargo Inference: Not Eligible", "castalynkmap" )).'"';
+                    } else if( in_array( $key, [ 'draught_change' ] ) ) {
+                        $attributes .= ' data-'.$key.' = "'.( floatval( $val ) > 0?$val.'m':__( "Pending / AIS-limited", "castalynkmap" )).'"';
+                    } else {
+                        $attributes .= ' data-'.$key.' = "'.$val.'"';
+                    }
+                }
+
+                $childern .= '<li><a data-action="csm_view_sts" '.$attributes .' class="csm_view_sts" href="javascript:;">'.$item_data->vessel2_name.'</a></li>';
+            }
+            $childern .= '</ul>';
+
+            return $childern;
         } else {
             return Coastalynk_Admin::get_bar_preloader();
         }    
@@ -272,65 +277,37 @@ class CSM_STS_Admin_listing extends WP_List_Table {
     public function get_sortable_columns() {
         
         $sortable_columns = array(
-            'vessel1_name'                  => array( 'vessel1_name', false ),
-            'id'                            => array( 'id', false ),
-            'vessel1_uuid'                  => array( 'vessel1_uuid', false ),
-            'vessel1_mmsi'                  => array( 'vessel1_mmsi', false ),
-            'vessel1_imo'                   => array( 'vessel1_imo', false ),
-            'vessel1_country_iso'           => array( 'vessel1_country_iso', false ),
-            'vessel1_type'                  => array( 'vessel1_type', false ),
-            'vessel1_type_specific'         => array( 'vessel1_type_specific', false ),
-            'reason_type'                   => array( 'reason_type', false ),
-            'vessel1_lat'                   => array( 'vessel1_lat', false ),
-            'vessel1_lon'                   => array( 'vessel1_lon', false ),
-            'vessel1_speed'                 => array( 'vessel1_speed', false ),
-            'vessel1_navigation_status'     => array( 'vessel1_navigation_status', false ),
-            'vessel1_draught'               => array( 'vessel1_draught', false ),
-            'vessel1_completed_draught'     => array( 'vessel1_completed_draught', false ),
-            'vessel1_last_position_UTC'     => array( 'vessel1_last_position_UTC', false ),
-            'vessel1_signal'                => array( 'vessel1_signal', false ),
-            'vessel2_uuid'                  => array( 'vessel2_uuid', false ),
-            'vessel2_name'                  => array( 'vessel2_name', false ),
-            'vessel2_mmsi'                  => array( 'vessel2_mmsi', false ),
-            'vessel2_imo'                   => array( 'vessel2_imo', false ),
-            'vessel2_country_iso'           => array( 'vessel2_country_iso', false ),
-            'vessel2_type'                  => array( 'vessel2_type', false ),
-            'vessel2_type_specific'         => array( 'vessel2_type_specific', false ),
-            'vessel2_lat'                  => array( 'vessel2_lat', false ),
-            'vessel2_lon'                  => array( 'vessel2_lon', false ),
-            'vessel2_speed'                => array( 'vessel2_speed', false ),
-            'vessel2_navigation_status'    => array( 'vessel2_navigation_status', false ),
-            'vessel2_draught'              => array( 'vessel2_draught', false ),
-            'vessel2_completed_draught'    => array( 'vessel2_completed_draught', false ),
-            'vessel2_last_position_UTC'    => array( 'vessel2_last_position_UTC', false ),
-            'vessel2_signal'               => array( 'vessel2_signal', false ),
-            'port'                         => array( 'port', false ),
-            'port_id'                       => array( 'port_id', false ),
-            'distance'                      => array( 'distance', false ),
-            'event_ref_id'                  => array( 'event_ref_id', false ),
-            'zone_type'                     => array( 'zone_type', false ),
-            'zone_ship'                     => array( 'zone_ship', false ),
-            'zone_terminal_name'            => array( 'zone_terminal_name', false ),
-            'start_date'                    => array( 'start_date', false ),
-            'end_date'                      => array( 'end_date', false ),
-            'remarks'                       => array( 'remarks', false ),
-            'event_percentage'              => array( 'event_percentage', false ),
-            'event_desc'                    => array( 'event_desc', false ),
-            'draught_change'                => array( 'draught_change', false ),
-            'cargo_category_type'           => array( 'cargo_category_type', false ),
-            'risk_level'                    => array( 'risk_level', false ),
-            'current_distance_nm'           => array( 'current_distance_nm', false ),
-            'stationary_duration_hours'     => array( 'stationary_duration_hours', false ),
-            'proximity_consistency'         => array( 'proximity_consistency', false ),
-            'data_points_analyzed'          => array( 'data_points_analyzed', false ),
-            'estimated_cargo'               => array( 'estimated_cargo', false ),
-            'operationmode'                 => array( 'operationmode', false ),
-            'status'                        => array( 'status', false ),
-            'is_email_sent'                 => array( 'is_email_sent', false ),
-            'is_complete'                   => array( 'is_complete', false ),
-            'is_disappeared'                => array( 'is_disappeared', false ),
-            'last_updated'                  => array( 'last_updated', false )
-      );
+            'id'                    => array( 'id', false ), 
+            'uuid'                  => array( 'uuid', false ), 
+            'name'                  => array( 'name', false ), 
+            'mmsi'                  => array( 'mmsi', false ), 
+            'imo'                   => array( 'imo', false ), 
+            'country_iso'           => array( 'country_iso', false ), 
+            'type'                  => array( 'type', false ), 
+            'type_specific'         => array( 'type_specific', false ), 
+            'lat'                   => array( 'lat', false ), 
+            'lon'                   => array( 'lon', false ), 
+            'speed'                 => array( 'speed', false ), 
+            'draught'               => array( 'draught', false ), 
+            'completed_draught'     => array( 'completed_draught', false ), 
+            'last_position_UTC'     => array( 'last_position_UTC', false ), 
+            'ais_signal'            => array( 'ais_signal', false ), 
+            'deadweight'            => array( 'deadweight', false ), 
+            'gross_tonnage'         => array( 'gross_tonnage', false ), 
+            'port'                  => array( 'port', false ), 
+            'port_id'               => array( 'port_id', false ), 
+            'distance'              => array( 'distance', false ), 
+            'event_ref_id'          => array( 'event_ref_id', false ), 
+            'zone_type'             => array( 'zone_type', false ), 
+            'zone_terminal_name'    => array( 'zone_terminal_name', false ), 
+            'start_date'            => array( 'start_date', false ), 
+            'end_date'              => array( 'end_date', false ), 
+            'status'                => array( 'status', false ), 
+            'is_email_sent'         => array( 'is_email_sent', false ), 
+            'is_complete'           => array( 'is_complete', false ), 
+            'is_disappeared'        => array( 'is_disappeared', false ), 
+            'last_updated'          => array( 'last_updated', false )
+        );
          
         return $sortable_columns;
     }
@@ -392,7 +369,9 @@ class CSM_STS_Admin_listing extends WP_List_Table {
     public function prepare_items() {
         
         global $wpdb; //This is used only if making any database queries
-
+        
+        $event_table_mother = $wpdb->prefix . 'coastalynk_sts_events';
+        $event_table_daughter = $wpdb->prefix . 'coastalynk_sts_event_detail';
         /**
          * First, lets decide how many records per page to show
          */
@@ -405,68 +384,39 @@ class CSM_STS_Admin_listing extends WP_List_Table {
             $per_page = 10;
         }
 		if( ! wp_doing_ajax() ) {
-            
+      
 			$this->items = [
                 [
-                    'vessel1_name'                  => Coastalynk_Admin::get_bar_preloader(), 
-                    'id'                            => Coastalynk_Admin::get_bar_preloader(), 
-                    'vessel1_uuid'                  => Coastalynk_Admin::get_bar_preloader(), 
-                    'vessel1_mmsi'                  => Coastalynk_Admin::get_bar_preloader(), 
-                    'vessel1_imo'                   => Coastalynk_Admin::get_bar_preloader(), 
-                    'vessel1_country_iso'           => Coastalynk_Admin::get_bar_preloader(), 
-                    'vessel1_type'                  => Coastalynk_Admin::get_bar_preloader(), 
-                    'vessel1_type_specific'         => Coastalynk_Admin::get_bar_preloader(), 
-                    'reason_type'                   => Coastalynk_Admin::get_bar_preloader(), 
-                    'vessel1_lat'                   => Coastalynk_Admin::get_bar_preloader(), 
-                    'vessel1_lon'                   => Coastalynk_Admin::get_bar_preloader(), 
-                    'vessel1_speed'                 => Coastalynk_Admin::get_bar_preloader(), 
-                    'vessel1_navigation_status'     => Coastalynk_Admin::get_bar_preloader(), 
-                    'vessel1_draught'               => Coastalynk_Admin::get_bar_preloader(), 
-                    'vessel1_completed_draught'     => Coastalynk_Admin::get_bar_preloader(), 
-                    'vessel1_last_position_UTC'     => Coastalynk_Admin::get_bar_preloader(), 
-                    'vessel1_signal'                => Coastalynk_Admin::get_bar_preloader(), 
-                    'vessel2_uuid'                  => Coastalynk_Admin::get_bar_preloader(), 
-                    'vessel2_name'                  => Coastalynk_Admin::get_bar_preloader(), 
-                    'vessel2_mmsi'                  => Coastalynk_Admin::get_bar_preloader(), 
-                    'vessel2_imo'                   => Coastalynk_Admin::get_bar_preloader(), 
-                    'vessel2_country_iso'           => Coastalynk_Admin::get_bar_preloader(), 
-                    'vessel2_type'                  => Coastalynk_Admin::get_bar_preloader(), 
-                    'vessel2_type_specific'         => Coastalynk_Admin::get_bar_preloader(), 
-                    'vessel2_lat'                  => Coastalynk_Admin::get_bar_preloader(), 
-                    'vessel2_lon'                  => Coastalynk_Admin::get_bar_preloader(), 
-                    'vessel2_speed'                => Coastalynk_Admin::get_bar_preloader(), 
-                    'vessel2_navigation_status'    => Coastalynk_Admin::get_bar_preloader(), 
-                    'vessel2_draught'              => Coastalynk_Admin::get_bar_preloader(), 
-                    'vessel2_completed_draught'    => Coastalynk_Admin::get_bar_preloader(), 
-                    'vessel2_last_position_UTC'    => Coastalynk_Admin::get_bar_preloader(), 
-                    'vessel2_signal'               => Coastalynk_Admin::get_bar_preloader(), 
-                    'port'                         => Coastalynk_Admin::get_bar_preloader(), 
-                    'port_id'                       => Coastalynk_Admin::get_bar_preloader(), 
-                    'distance'                      => Coastalynk_Admin::get_bar_preloader(), 
-                    'event_ref_id'                  => Coastalynk_Admin::get_bar_preloader(), 
-                    'zone_type'                     => Coastalynk_Admin::get_bar_preloader(), 
-                    'zone_ship'                     => Coastalynk_Admin::get_bar_preloader(), 
-                    'zone_terminal_name'            => Coastalynk_Admin::get_bar_preloader(), 
-                    'start_date'                    => Coastalynk_Admin::get_bar_preloader(), 
-                    'end_date'                      => Coastalynk_Admin::get_bar_preloader(), 
-                    'remarks'                       => Coastalynk_Admin::get_bar_preloader(), 
-                    'event_percentage'              => Coastalynk_Admin::get_bar_preloader(), 
-                    'event_desc'                    => Coastalynk_Admin::get_bar_preloader(), 
-                    'draught_change'             => Coastalynk_Admin::get_bar_preloader(), 
-                    'cargo_category_type'           => Coastalynk_Admin::get_bar_preloader(), 
-                    'risk_level'                    => Coastalynk_Admin::get_bar_preloader(), 
-                    'current_distance_nm'           => Coastalynk_Admin::get_bar_preloader(), 
-                    'stationary_duration_hours'     => Coastalynk_Admin::get_bar_preloader(), 
-                    'proximity_consistency'         => Coastalynk_Admin::get_bar_preloader(), 
-                    'data_points_analyzed'          => Coastalynk_Admin::get_bar_preloader(), 
-                    'estimated_cargo'               => Coastalynk_Admin::get_bar_preloader(), 
-                    'operationmode'                 => Coastalynk_Admin::get_bar_preloader(), 
-                    'status'                        => Coastalynk_Admin::get_bar_preloader(), 
-                    'is_email_sent'                 => Coastalynk_Admin::get_bar_preloader(), 
-                    'is_complete'                   => Coastalynk_Admin::get_bar_preloader(), 
-                    'is_disappeared'                => Coastalynk_Admin::get_bar_preloader(), 
-                    'last_updated'                  => Coastalynk_Admin::get_bar_preloader(), 
-                    'view'                          => Coastalynk_Admin::get_bar_preloader()
+                    'id'                    => Coastalynk_Admin::get_bar_preloader(), 
+                    'uuid'                  => Coastalynk_Admin::get_bar_preloader(), 
+                    'name'                  => Coastalynk_Admin::get_bar_preloader(), 
+                    'mmsi'                  => Coastalynk_Admin::get_bar_preloader(), 
+                    'imo'                   => Coastalynk_Admin::get_bar_preloader(), 
+                    'country_iso'           => Coastalynk_Admin::get_bar_preloader(), 
+                    'type'                  => Coastalynk_Admin::get_bar_preloader(), 
+                    'type_specific'         => Coastalynk_Admin::get_bar_preloader(), 
+                    'lat'                   => Coastalynk_Admin::get_bar_preloader(), 
+                    'lon'                   => Coastalynk_Admin::get_bar_preloader(), 
+                    'speed'                 => Coastalynk_Admin::get_bar_preloader(), 
+                    'draught'               => Coastalynk_Admin::get_bar_preloader(), 
+                    'completed_draught'     => Coastalynk_Admin::get_bar_preloader(), 
+                    'last_position_UTC'     => Coastalynk_Admin::get_bar_preloader(), 
+                    'ais_signal'            => Coastalynk_Admin::get_bar_preloader(), 
+                    'deadweight'            => Coastalynk_Admin::get_bar_preloader(), 
+                    'gross_tonnage'         => Coastalynk_Admin::get_bar_preloader(), 
+                    'port'                  => Coastalynk_Admin::get_bar_preloader(), 
+                    'port_id'               => Coastalynk_Admin::get_bar_preloader(), 
+                    'distance'              => Coastalynk_Admin::get_bar_preloader(), 
+                    'event_ref_id'          => Coastalynk_Admin::get_bar_preloader(), 
+                    'zone_type'             => Coastalynk_Admin::get_bar_preloader(), 
+                    'zone_terminal_name'    => Coastalynk_Admin::get_bar_preloader(), 
+                    'start_date'            => Coastalynk_Admin::get_bar_preloader(), 
+                    'end_date'              => Coastalynk_Admin::get_bar_preloader(), 
+                    'status'                => Coastalynk_Admin::get_bar_preloader(), 
+                    'is_email_sent'         => Coastalynk_Admin::get_bar_preloader(), 
+                    'is_complete'           => Coastalynk_Admin::get_bar_preloader(), 
+                    'is_disappeared'        => Coastalynk_Admin::get_bar_preloader(), 
+                    'last_updated'          => Coastalynk_Admin::get_bar_preloader()
                 ]
             ];
 
@@ -524,7 +474,6 @@ class CSM_STS_Admin_listing extends WP_List_Table {
          * use sort and pagination data to build a custom query instead, as you'll
          * be able to use your precisely-queried data immediately.
          */
-
         $table_name = $wpdb->prefix.'coastalynk_sts'; 
         $where = " where 1 = 1";
        
@@ -537,11 +486,7 @@ class CSM_STS_Admin_listing extends WP_List_Table {
         }
 
         if( ! empty( $this->csm_vessel1_search1 ) ) {
-            $where .= " and ( vessel1_uuid like '%".$this->csm_vessel1_search1."%' or lower(vessel1_name) like '%".strtolower($this->csm_vessel1_search1)."%' or lower(vessel1_imo) like '%".strtolower($this->csm_vessel1_search1)."%' or lower(vessel1_mmsi) like '%".strtolower($this->csm_vessel1_search1)."%' or lower(vessel1_type_specific) like '%".strtolower($this->csm_vessel1_search1)."%' or lower(event_ref_id) like '%".strtolower($this->csm_vessel1_search1)."%' )";
-        }
-
-        if( ! empty( $this->csm_vessel2_search2 ) ) {
-            $where .= " and ( vessel2_uuid like '%".$this->csm_vessel2_search2."%' or lower(vessel2_name) like '%".strtolower($this->csm_vessel2_search2)."%' or lower(vessel2_imo) like '%".strtolower($this->csm_vessel2_search2)."%' or lower(vessel2_mmsi) like '%".strtolower($this->csm_vessel2_search2)."%' or lower(vessel2_type_specific) like '%".strtolower($this->csm_vessel2_search2)."%' or lower(event_ref_id) like '%".strtolower($this->csm_vessel2_search2)."%' )";
+            $where .= " and ( uuid like '%".$this->csm_vessel1_search1."%' or lower(name) like '%".strtolower($this->csm_vessel1_search1)."%' or lower(imo) like '%".strtolower($this->csm_vessel1_search1)."%' or lower(mmsi) like '%".strtolower($this->csm_vessel1_search1)."%' or lower(type_specific) like '%".strtolower($this->csm_vessel1_search1)."%' or lower(event_ref_id) like '%".strtolower($this->csm_vessel1_search1)."%' )";
         }
 
         if( !empty( $this->csm_history_range ) ) {
@@ -568,14 +513,15 @@ class CSM_STS_Admin_listing extends WP_List_Table {
         }
         
         $where .= ! empty( $this->selected_search ) ? " and ( vessel1_uuid like '%".$this->selected_search."%' or  vessel2_uuid like '%".$this->selected_search."%' or lower(vessel1_name) like '%".strtolower($this->selected_search)."%' or lower(vessel2_name) like '%".strtolower($this->selected_search)."%' or lower(vessel1_imo) like '%".strtolower($this->selected_search)."%' or lower(vessel2_imo) like '%".strtolower($this->selected_search)."%' or lower(vessel1_mmsi) like '%".strtolower($this->selected_search)."%' or lower(vessel2_mmsi) like '%".strtolower($this->selected_search)."%' or lower(vessel1_type_specific) like '%".strtolower($this->selected_search)."%' or lower(vessel2_type_specific) like '%".strtolower($this->selected_search)."%'  or lower(event_ref_id) like '%".strtolower($this->selected_search)."%' )" : '';
-        $total_items = $wpdb->get_var("SELECT COUNT(id) FROM $table_name".$where);
+        $total_items = $wpdb->get_var("SELECT count(id) from ".$event_table_mother."".$where);
         
         // prepare query params, as usual current page, order by and order direction
         $offset     = isset($paged) ? intval(($paged-1) * $per_page) : 0;
         $orderby    = (isset($_REQUEST['orderby']) && in_array($_REQUEST['orderby'], array_keys($this->get_sortable_columns()))) ? sanitize_text_field( $_REQUEST['orderby'] ) : 'last_updated';
         $order      = (isset($_REQUEST['order']) && in_array($_REQUEST['order'], array('asc', 'desc'))) ? sanitize_text_field( $_REQUEST['order'] ) : 'desc';
-        $result     = $wpdb->get_results( "SELECT vessel1_name,id, vessel1_uuid, vessel1_mmsi,vessel1_imo,vessel1_country_iso,vessel1_type,vessel1_type_specific, vessel1_lat,vessel1_lon,vessel1_speed,vessel1_navigation_status,vessel1_draught,vessel1_completed_draught,vessel1_last_position_UTC,vessel1_signal,vessel2_uuid,vessel2_name,vessel2_mmsi,vessel2_imo,vessel2_country_iso, vessel2_type,vessel2_type_specific,vessel2_lat,vessel2_lon,vessel2_speed,vessel2_navigation_status,vessel2_draught,vessel2_completed_draught,vessel2_last_position_UTC,vessel2_signal,port,port_id,distance, event_ref_id, zone_type, zone_ship, zone_terminal_name,start_date,end_date,remarks,event_percentage,event_desc, draught_change,cargo_category_type,risk_level,current_distance_nm,stationary_duration_hours,proximity_consistency,data_points_analyzed,estimated_cargo,mother_vessel_number,operationmode,status,is_email_sent,is_complete,is_disappeared,last_updated FROM $table_name $where ORDER BY $orderby $order LIMIT $per_page OFFSET $offset", ARRAY_A );
-//        echo "SELECT vessel1_name,id, vessel1_uuid, vessel1_mmsi,vessel1_imo,vessel1_country_iso,vessel1_type,vessel1_type_specific, vessel1_lat,vessel1_lon,vessel1_speed,vessel1_navigation_status,vessel1_draught,vessel1_completed_draught,vessel1_last_position_UTC,vessel1_signal,vessel2_uuid,vessel2_name,vessel2_mmsi,vessel2_imo,vessel2_country_iso, vessel2_type,vessel2_type_specific,vessel2_lat,vessel2_lon,vessel2_speed,vessel2_navigation_status,vessel2_draught,vessel2_completed_draught,vessel2_last_position_UTC,vessel2_signal,port,port_id,distance, event_ref_id, zone_type, zone_ship, zone_terminal_name,start_date,end_date,remarks,event_percentage,event_desc, draught_change,cargo_category_type,risk_level,current_distance_nm,stationary_duration_hours,proximity_consistency,data_points_analyzed,estimated_cargo,mother_vessel_number,operationmode,status,is_email_sent,is_complete,is_disappeared,last_updated FROM $table_name $where ORDER BY $orderby $order LIMIT $per_page OFFSET $offset";   
+        $result     = $wpdb->get_results( "SELECT * from ".$event_table_mother." $where ORDER BY $orderby $order LIMIT $per_page OFFSET $offset", ARRAY_A );
+
+//        echo "SELECT vessel1_name,id, vessel1_uuid, vessel1_mmsi,vessel1_imo,vessel1_country_iso,vessel1_type,vessel1_type_specific, vessel1_lat,vessel1_lon,vessel1_speed,vessel1_navigation_status,vessel1_draught,vessel1_completed_draught,vessel1_last_position_UTC,vessel1_signal,vessel2_uuid,vessel2_name,vessel2_mmsi,vessel2_imo,vessel2_country_iso, vessel2_type,vessel2_type_specific,vessel2_lat,vessel2_lon,vessel2_speed,vessel2_navigation_status,vessel2_draught,vessel2_completed_draught,vessel2_last_position_UTC,vessel2_signal,port,port_id,distance, event_ref_id, zone_type, zone_ship, zone_terminal_name,start_date,end_date,event_percentage,draught_change,cargo_category_type,risk_level,current_distance_nm,stationary_duration_hours,proximity_consistency,data_points_analyzed,mother_vessel_number,operationmode,status,is_email_sent,is_complete,is_disappeared,last_updated FROM $table_name $where ORDER BY $orderby $order LIMIT $per_page OFFSET $offset";   
         $data = []; 
         $count = 0;
         if( isset($result) && is_array($result) && count($result) > 0 ) {
@@ -583,7 +529,13 @@ class CSM_STS_Admin_listing extends WP_List_Table {
                 $user_id = 0;
                 foreach( $res as $key => $value ) {
                     
-                    if( empty( $value ) ) {
+                    if( in_array( $key, ['draught' ] ) ) {
+                        $data[$count][$key] = ( floatval( $value ) > 0?$value:__( "Pending", "castalynkmap" )).'"';
+                    } else if( in_array( $key, [ 'completed_draught' ] ) ) {
+                        $data[$count][$key] = ( floatval( $value ) > 0?$value:__( "Cargo Inference: Not Eligible", "castalynkmap" )).'"';
+                    } else if( in_array( $key, [ 'draught_change' ] ) ) {
+                        $data[$count][$key] = ( floatval( $value ) > 0?$value:__( "Pending / AIS-limited", "castalynkmap" )).'"';
+                    } else if( empty( $value ) ) {
                         $value = '-';
                     }    
                     $data[$count][$key] = $value;

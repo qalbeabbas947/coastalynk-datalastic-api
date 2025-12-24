@@ -118,7 +118,7 @@ input#caostalynk_sts_history_range {
     background-repeat: no-repeat;
     background-position: center bottom;
     padding-bottom: 16px;
-    text-align: center;
+    text-align: left;
     font-size: 1.75rem;
     font-weight: bold;
     color: white;
@@ -127,6 +127,10 @@ input#caostalynk_sts_history_range {
     margin-top: 15px;
     align-items: center
 } 
+.coastalynk-sts-popup-content p{
+    font-size: 0.75rem;
+    color: white;
+}
 .coastalynk-sts-popup-top-bar {
     display: flex;
     flex-direction: row;
@@ -146,10 +150,10 @@ input#caostalynk_sts_history_range {
     width: 20px;
     height: 20px;
 }
-.coastalynk-sts-popup-content-box{
+.coastalynk-sts-popup-content-box, .coastalynk-sts-popup-content-box-wide{
     padding-left: 20px;
 }
-.coastalynk-sts-popup-content-box h3 {
+.coastalynk-sts-popup-content-box h3, .coastalynk-sts-popup-content-box-wide h3 {
     font-size: 1.375rem;
     color: var(--wp--preset--color--text-blue);
     margin-top: 22px;
@@ -205,9 +209,17 @@ input#caostalynk_sts_history_range {
     row-gap: 20px;
 }
 
-.coastalynk-sts-popup-content-boxes > div{
+.coastalynk-sts-popup-content-boxes > div.coastalynk-sts-popup-content-box{
     background-color: white;
     flex: 0 0 48.5%;
+}
+.coastalynk-sts-popup-content-boxes > .coastalynk-sts-popup-content-box-wide{
+    background-color: white;
+    flex: 0 0 100%;
+}
+
+table#coastalynk-sts-popup-table {
+    width: 100%;
 }
 
 .coastalynk-sts-retrieve-popup-btn{
@@ -220,7 +232,28 @@ input#caostalynk_sts_history_range {
     text-decoration: none;
     cursor: pointer;
 }
-.coastalynk-sts-focus-marker-btn{
+.coastalynk-sts-popup-content-top-heading{
+    color: white;
+    font-size: 1.375rem;
+}
+
+.coastalynk-sts-popup-content-box-close-daughtship-detail{
+    background-color: #f0f0f1;
+    color: var(--wp--preset--color--text-blue);
+    padding: 12px;
+    border-radius: 5px;
+    outline: none;
+    border: none;
+    margin: 5px 0;
+}
+
+.coastalynk-sts-popup-content-box-close-daughtship-detail:hover{
+    background-color: #f0f0f0;
+    transition: border 0.4s ease-in;
+    cursor: pointer;
+}
+
+input[type="button"].coastalynk-sts-focus-marker-btn, .coastalynk-sts-retrieve-full-popup-btn, .coastalynk-sts-retrieve-popup-daughtership-btn{
     background-color: var(--wp--preset--color--logoblue);
     color: white;
     padding: 12px;
@@ -228,16 +261,17 @@ input#caostalynk_sts_history_range {
     outline: none;
     border: none;
 }
+.coastalynk-sts-popup-content-box-daughterships-loader-container {
+    display: inline-block;
 
-.coastalynk-sts-focus-marker-btn:hover{
+    
+}
+input[type="button"].coastalynk-sts-focus-marker-btn:hover, .coastalynk-sts-retrieve-full-popup-btn:hover, .coastalynk-sts-retrieve-popup-daughtership-btn:hover{
     background-color: var(--wp--preset--color--text-blue);
     transition: border 0.4s ease-in;
     cursor: pointer;
 }
-.coastalynk-sts-popup-top-bar-remarks, .coastalynk-sts-popup-top-bar-remarks span{
-    color: white;
-    font-size: 1rem;
-}
+
 .coastalynk-sts-children-popup-btn li, .coastalynk-sts-parent-popup-btn li{
     margin-bottom: 3px;
     text-align: left;
@@ -280,9 +314,6 @@ input#caostalynk_sts_history_range {
   .coastalynk-sts-popup-content-box h3{
     font-size: 1em;
   }
-  .coastalynk-sts-popup-top-bar-remarks, .coastalynk-sts-popup-top-bar-remarks span{
-    font-size: 1em;
-  }
 
   .coastalynk-sts-popup-content h2{
     font-size: 1.75em;
@@ -305,11 +336,6 @@ input#caostalynk_sts_history_range {
    .coastalynk-sts-popup-content-box-list{
         height: 184px;
    } 
-  
-
-  .coastalynk-sts-popup-top-bar-remarks, .coastalynk-sts-popup-top-bar-remarks span{
-    font-size: 1em;
-  }
 
   .coastalynk-sts-popup-content h2{
     font-size: 1.75em;
@@ -340,9 +366,6 @@ input#caostalynk_sts_history_range {
 
   .coastalynk-sts-popup-content-box h3{
     font-size: 1.25em;
-  }
-  .coastalynk-sts-popup-top-bar-remarks, .coastalynk-sts-popup-top-bar-remarks span{
-    font-size: 1em;
   }
 
   .coastalynk-sts-popup-content h2{

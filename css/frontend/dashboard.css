@@ -561,6 +561,28 @@ table.dataTable tbody tr.selected {
 		-webkit-animation-delay:0.75s;
 		-moz-animation-delay:0.75s;
 }
+
+.coastalynk-tooltip {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.coastalynk-tooltiptext {
+  visibility: hidden;
+  width: 130px;
+  background-color: black;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px 0;
+  position: absolute;
+  z-index: 1;
+}
+
+.coastalynk-tooltip:hover > .coastalynk-tooltiptext {
+  visibility: visible;
+}
 /********************************Preloader css********************/
 #coastalynk-field-column-loader{
 	width:110px;

@@ -239,9 +239,6 @@ input#caostalynk_sts_history_range {
     flex: 0 0 46.5%;
 }
 
-.coastalynk-popup-top-bar-remarks, .coastalynk-popup-top-bar-remarks span{
-    font-size: 1rem;
-}
 /***************************************Popup End***************************/
 /***************************************Popup Progress Bar***************************/
 .coastalynk-progress-bar {

@@ -47,9 +47,7 @@ class CSM_STS_Log_Admin_Menu {
             'port',
             'distance',
             'zone_type','zone_ship',
-            'remarks',
             'event_percentage',
-            'event_desc', 
             'draught_change',
             'cargo_category_type',
             'risk_level',
@@ -57,7 +55,6 @@ class CSM_STS_Log_Admin_Menu {
             'stationary_duration_hours',
             'proximity_consistency',
             'data_points_analyzed',
-            'estimated_cargo',
             'operationmode',
             'is_email_sent',
             'is_complete',
@@ -137,7 +134,7 @@ class CSM_STS_Log_Admin_Menu {
             }
         }
 
-        $vessle_recs     = $wpdb->get_results( "SELECT id, vessel1_uuid, vessel1_name,vessel1_mmsi,vessel1_imo,vessel1_country_iso,vessel1_type,vessel1_type_specific, vessel1_lat,vessel1_lon,vessel1_speed,vessel1_navigation_status,vessel1_draught,vessel1_completed_draught,vessel1_last_position_UTC,vessel1_signal,vessel2_uuid,vessel2_name,vessel2_mmsi,vessel2_imo,vessel2_country_iso, vessel2_type,vessel2_type_specific,vessel2_lat,vessel2_lon,vessel2_speed,vessel2_navigation_status,vessel2_draught,vessel2_completed_draught,vessel2_last_position_UTC,vessel2_signal,port,port_id,distance,event_ref_id,zone_type, zone_ship,zone_terminal_name,start_date,end_date,remarks,event_percentage,event_desc, draught_change,cargo_category_type,risk_level,current_distance_nm,stationary_duration_hours,proximity_consistency,data_points_analyzed,estimated_cargo,mother_vessel_number,operationmode,status,is_email_sent,is_complete,is_disappeared,last_updated FROM $table_name $where ORDER BY last_updated desc", ARRAY_A );
+        $vessle_recs     = $wpdb->get_results( "SELECT id, vessel1_uuid, vessel1_name,vessel1_mmsi,vessel1_imo,vessel1_country_iso,vessel1_type,vessel1_type_specific, vessel1_lat,vessel1_lon,vessel1_speed,vessel1_navigation_status,vessel1_draught,vessel1_completed_draught,vessel1_last_position_UTC,vessel1_signal,vessel2_uuid,vessel2_name,vessel2_mmsi,vessel2_imo,vessel2_country_iso, vessel2_type,vessel2_type_specific,vessel2_lat,vessel2_lon,vessel2_speed,vessel2_navigation_status,vessel2_draught,vessel2_completed_draught,vessel2_last_position_UTC,vessel2_signal,port,port_id,distance,event_ref_id,zone_type, zone_ship,zone_terminal_name,start_date,end_date,event_percentage, draught_change,cargo_category_type,risk_level,current_distance_nm,stationary_duration_hours,proximity_consistency,data_points_analyzed,mother_vessel_number,operationmode,status,is_email_sent,is_complete,is_disappeared,last_updated FROM $table_name $where ORDER BY last_updated desc", ARRAY_A );
 
         $fp = fopen('php://output', 'w'); 
         header('Content-Type: text/csv');
@@ -145,7 +142,7 @@ class CSM_STS_Log_Admin_Menu {
         header('Pragma: no-cache');    
         header('Expires: 0');
         
-        $headers = ['id', 'vessel1_uuid', 'vessel1_name','vessel1_mmsi','vessel1_imo','vessel1_country_iso','vessel1_type','vessel1_type_specific', 'vessel1_lat','vessel1_lon','vessel1_speed','vessel1_navigation_status','vessel1_draught','vessel1_completed_draught','vessel1_last_position_UTC','vessel1_signal','vessel2_uuid','vessel2_name','vessel2_mmsi','vessel2_imo','vessel2_country_iso', 'vessel2_type','vessel2_type_specific','vessel2_lat','vessel2_lon','vessel2_speed','vessel2_navigation_status','vessel2_draught','vessel2_completed_draught','vessel2_last_position_UTC','vessel2_signal','port','port_id','distance','event_ref_id','zone_type', 'zone_ship','zone_terminal_name','start_date','end_date','remarks','event_percentage','event_desc', 'draught_change','cargo_category_type','risk_level','current_distance_nm','stationary_duration_hours','proximity_consistency','data_points_analyzed','estimated_cargo','mother_vessel_number','operationmode','status','is_email_sent','is_complete','is_disappeared','last_updated'];
+        $headers = ['id', 'vessel1_uuid', 'vessel1_name','vessel1_mmsi','vessel1_imo','vessel1_country_iso','vessel1_type','vessel1_type_specific', 'vessel1_lat','vessel1_lon','vessel1_speed','vessel1_navigation_status','vessel1_draught','vessel1_completed_draught','vessel1_last_position_UTC','vessel1_signal','vessel2_uuid','vessel2_name','vessel2_mmsi','vessel2_imo','vessel2_country_iso', 'vessel2_type','vessel2_type_specific','vessel2_lat','vessel2_lon','vessel2_speed','vessel2_navigation_status','vessel2_draught','vessel2_completed_draught','vessel2_last_position_UTC','vessel2_signal','port','port_id','distance','event_ref_id','zone_type', 'zone_ship','zone_terminal_name','start_date','end_date','event_percentage', 'draught_change','cargo_category_type','risk_level','current_distance_nm','stationary_duration_hours','proximity_consistency','data_points_analyzed','mother_vessel_number','operationmode','status','is_email_sent','is_complete','is_disappeared','last_updated'];
         if( ! empty( $vessle_recs ) && is_array( $vessle_recs ) ) {
             $headers = array_keys( $vessle_recs[0] );
         }
@@ -189,8 +186,7 @@ class CSM_STS_Log_Admin_Menu {
             'vessel1_completed_draught' => $vessel1_after_draught,
             'vessel2_draught' => $vessel2_before_draught,
             'vessel2_completed_draught' => $vessel2_after_draught,
-            'status' => $status,
-            'remarks' => $comments
+            'status' => $status
         );
         $where_condition = array(
             'id' => $id,
@@ -457,11 +453,7 @@ class CSM_STS_Log_Admin_Menu {
                         <label class="coastalynk-percentage-label"><?php _e( "End", "castalynkmap" );?></label>
                     </div>
                 </div>
-                <div class="coastalynk-popup-top-bar">
-                    <div class="coastalynk-popup-top-bar-remarks">
-                        <?php _e( "Remarks:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-remarks"></span>
-                    </div>
-                </div>
+                
                 <div class="coastalynk-popup-content-boxes coastalynk-popup-sts-content-boxes">
                     <div class="coastalynk-popup-content-box">
                         <h3><?php _e( "Vessel 1", "castalynkmap" );?><span title = "<?php _e( "Mother Ship", "castalynkmap" );?>" class="coastalynk-popup-vessel1-parent" style="display:none;"><i class="fa fa-cogs" aria-hidden="true"></i></span></h3>
@@ -479,7 +471,6 @@ class CSM_STS_Log_Admin_Menu {
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Nav. Status:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel1_navigation_status"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Signal:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel1-ais-signal"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Last Position:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel1_last_position_UTC"></span></li>
-                            <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Event:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-event_desc"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Draught Change:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-draught_change"></span></li> -->
                         </ul>
                     </div>
@@ -512,7 +503,6 @@ class CSM_STS_Log_Admin_Menu {
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Start Date:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-start_date"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "End Date:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-end_date"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Cargo Type:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-cargo_category_type"></span></li>
-                            <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Estimated Cargo:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-estimated_cargo"></span></li>
                         </ul>
                     </div>
                     <div class="coastalynk-popup-content-box">

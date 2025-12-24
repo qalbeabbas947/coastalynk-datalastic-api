@@ -123,17 +123,14 @@ class CSM_STS_Log_Admin_listing extends WP_List_Table {
             case 'zone_type':
             case 'zone_ship':    
             case 'zone_terminal_name':
-            case 'remarks':
             case 'event_percentage':
             case 'draught_change':
-            case 'event_desc':
             case 'cargo_category_type':
             case 'risk_level':
             case 'current_distance_nm':
             case 'stationary_duration_hours':
             case 'proximity_consistency':
             case 'data_points_analyzed':
-            case 'estimated_cargo':
             case 'operationmode':
             case 'status':
             case 'is_email_sent':
@@ -208,9 +205,7 @@ class CSM_STS_Log_Admin_listing extends WP_List_Table {
             'zone_terminal_name'                    => __( 'Zone Name', 'castalynkmap' ),
             'start_date'                            => __( 'Start Date', 'castalynkmap' ),
             'end_date'                              => __( 'End Date', 'castalynkmap' ),
-            'remarks'                               => __( 'Remarks', 'castalynkmap' ),
             'event_percentage'                      => __( 'Event Percentage', 'castalynkmap' ),
-            'event_desc'                            => __( 'Event Desc', 'castalynkmap' ),
             'draught_change'                        => __( 'Draught Change', 'castalynkmap' ),
             'cargo_category_type'                   => __( 'Cargo Type', 'castalynkmap' ),
             'risk_level'                            => __( 'Risk Level', 'castalynkmap' ),
@@ -218,7 +213,6 @@ class CSM_STS_Log_Admin_listing extends WP_List_Table {
             'stationary_duration_hours'             => __( 'Stationary hours', 'castalynkmap' ),
             'proximity_consistency'                 => __( 'Proximity Consistency', 'castalynkmap' ),
             'data_points_analyzed'                  => __( 'Data Points Analyzed', 'castalynkmap' ),
-            'estimated_cargo'                       => __( 'Estimated Cargo', 'castalynkmap' ),
             'operationmode'                         => __( 'Operation Mode', 'castalynkmap' ),
             'status'                                => __( 'Status', 'castalynkmap' ),
             'is_email_sent'                         => __( 'Email Sent?', 'castalynkmap' ),
@@ -313,9 +307,7 @@ class CSM_STS_Log_Admin_listing extends WP_List_Table {
             'zone_terminal_name'            => array( 'zone_terminal_name', false ),
             'start_date'                    => array( 'start_date', false ),
             'end_date'                      => array( 'end_date', false ),
-            'remarks'                       => array( 'remarks', false ),
             'event_percentage'              => array( 'event_percentage', false ),
-            'event_desc'                    => array( 'event_desc', false ),
             'draught_change'                => array( 'draught_change', false ),
             'cargo_category_type'           => array( 'cargo_category_type', false ),
             'risk_level'                    => array( 'risk_level', false ),
@@ -323,7 +315,6 @@ class CSM_STS_Log_Admin_listing extends WP_List_Table {
             'stationary_duration_hours'     => array( 'stationary_duration_hours', false ),
             'proximity_consistency'         => array( 'proximity_consistency', false ),
             'data_points_analyzed'          => array( 'data_points_analyzed', false ),
-            'estimated_cargo'               => array( 'estimated_cargo', false ),
             'operationmode'                 => array( 'operationmode', false ),
             'status'                        => array( 'status', false ),
             'is_email_sent'                 => array( 'is_email_sent', false ),
@@ -449,9 +440,7 @@ class CSM_STS_Log_Admin_listing extends WP_List_Table {
                     'zone_terminal_name'            => Coastalynk_Admin::get_bar_preloader(), 
                     'start_date'                    => Coastalynk_Admin::get_bar_preloader(), 
                     'end_date'                      => Coastalynk_Admin::get_bar_preloader(), 
-                    'remarks'                       => Coastalynk_Admin::get_bar_preloader(), 
                     'event_percentage'              => Coastalynk_Admin::get_bar_preloader(), 
-                    'event_desc'                    => Coastalynk_Admin::get_bar_preloader(), 
                     'draught_change'             => Coastalynk_Admin::get_bar_preloader(), 
                     'cargo_category_type'           => Coastalynk_Admin::get_bar_preloader(), 
                     'risk_level'                    => Coastalynk_Admin::get_bar_preloader(), 
@@ -459,7 +448,6 @@ class CSM_STS_Log_Admin_listing extends WP_List_Table {
                     'stationary_duration_hours'     => Coastalynk_Admin::get_bar_preloader(), 
                     'proximity_consistency'         => Coastalynk_Admin::get_bar_preloader(), 
                     'data_points_analyzed'          => Coastalynk_Admin::get_bar_preloader(), 
-                    'estimated_cargo'               => Coastalynk_Admin::get_bar_preloader(), 
                     'operationmode'                 => Coastalynk_Admin::get_bar_preloader(), 
                     'status'                        => Coastalynk_Admin::get_bar_preloader(), 
                     'is_email_sent'                 => Coastalynk_Admin::get_bar_preloader(), 
@@ -574,7 +562,7 @@ class CSM_STS_Log_Admin_listing extends WP_List_Table {
         $offset     = isset($paged) ? intval(($paged-1) * $per_page) : 0;
         $orderby    = (isset($_REQUEST['orderby']) && in_array($_REQUEST['orderby'], array_keys($this->get_sortable_columns()))) ? sanitize_text_field( $_REQUEST['orderby'] ) : 'last_updated';
         $order      = (isset($_REQUEST['order']) && in_array($_REQUEST['order'], array('asc', 'desc'))) ? sanitize_text_field( $_REQUEST['order'] ) : 'desc';
-        $result     = $wpdb->get_results( "SELECT vessel1_name,id, vessel1_uuid, vessel1_mmsi,vessel1_imo,vessel1_country_iso,vessel1_type,vessel1_type_specific, vessel1_lat,vessel1_lon,vessel1_speed,vessel1_navigation_status,vessel1_draught,vessel1_completed_draught,vessel1_last_position_UTC,vessel1_signal,vessel2_uuid,vessel2_name,vessel2_mmsi,vessel2_imo,vessel2_country_iso, vessel2_type,vessel2_type_specific,vessel2_lat,vessel2_lon,vessel2_speed,vessel2_navigation_status,vessel2_draught,vessel2_completed_draught,vessel2_last_position_UTC,vessel2_signal,port,port_id,distance, event_ref_id, zone_type, zone_ship, zone_terminal_name,start_date,end_date,remarks,event_percentage,event_desc, draught_change,cargo_category_type,risk_level,current_distance_nm,stationary_duration_hours,proximity_consistency,data_points_analyzed,estimated_cargo,mother_vessel_number,operationmode,status,is_email_sent,is_complete,is_disappeared,last_updated FROM $table_name $where ORDER BY $orderby $order LIMIT $per_page OFFSET $offset", ARRAY_A );
+        $result     = $wpdb->get_results( "SELECT vessel1_name,id, vessel1_uuid, vessel1_mmsi,vessel1_imo,vessel1_country_iso,vessel1_type,vessel1_type_specific, vessel1_lat,vessel1_lon,vessel1_speed,vessel1_navigation_status,vessel1_draught,vessel1_completed_draught,vessel1_last_position_UTC,vessel1_signal,vessel2_uuid,vessel2_name,vessel2_mmsi,vessel2_imo,vessel2_country_iso, vessel2_type,vessel2_type_specific,vessel2_lat,vessel2_lon,vessel2_speed,vessel2_navigation_status,vessel2_draught,vessel2_completed_draught,vessel2_last_position_UTC,vessel2_signal,port,port_id,distance, event_ref_id, zone_type, zone_ship, zone_terminal_name,start_date,end_date,event_percentage, draught_change,cargo_category_type,risk_level,current_distance_nm,stationary_duration_hours,proximity_consistency,data_points_analyzed,mother_vessel_number,operationmode,status,is_email_sent,is_complete,is_disappeared,last_updated FROM $table_name $where ORDER BY $orderby $order LIMIT $per_page OFFSET $offset", ARRAY_A );
         // echo "SELECT * FROM $table_name $where ORDER BY $orderby $order LIMIT $per_page OFFSET $offset";   
         $data = []; 
         $count = 0;
