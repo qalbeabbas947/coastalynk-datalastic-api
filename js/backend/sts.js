@@ -11,6 +11,8 @@
                 CSM_STS.display_sts_search_submit();
                 CSM_STS.display_sts();
                 CSM_STS.remove_sts();
+                CSM_STS.load_daughtership_data();
+                CSM_STS.close_daughtership_data();
                 CSM_STS.load_popup();
                 CSM_STS.close_popup();
                 CSM_STS.edit_information();
@@ -115,6 +117,65 @@
                     
                 });
             },
+            close_daughtership_data: function() {
+
+                $('.coastalynk-sts-popup-content-box-close-daughtship-detail').on('click', function(event) {
+                    event.preventDefault();
+                    $('.coastalynk-sts-popup-content-box-daughtship-detail').hide();
+                    $('.coastalynk-sts-popup-content-box-close-daughtship-detail').hide();
+                    $('.coastalynk-sts-popup-content-box-wide').show();
+                    $('.coastalynk-popup-sts-content-boxes').css( 'display', 'flex' );
+                    $('.coastalynk-popup-top-bar').css( 'display', 'block' );
+                    $('.coastalynk-edit-sts-button').css( 'display', 'inline-block' );
+                    $('.coastalynk-popup-sts-content-form').css( 'display', 'none' );
+                    $('.coastalynk-update-sts-button').css( 'display', 'none' );
+                    $('.coastalynk-cancel-sts-button').css( 'display', 'none' );
+                    $('.coastalynk-popup-top-message').css( 'display', 'none' );
+                });
+            },  
+            load_daughtership_data : function() {
+                $('.coastalynk-sts-popup-content-box-daughterships').on('click', '.coastalynk-sts-retrieve-popup-daughtership-btn', function(event) {
+                    event.preventDefault();
+                    console.log($(this).data());
+                    var data = $(this).data();
+                    
+                    $(".coastalynk-sts-popup-content-vessel2_name").html(data.name);
+                    $(".coastalynk-sts-popup-content-vessel2_mmsi").html(data.mmsi);
+                    $(".coastalynk-sts-popup-content-vessel2_imo").html(data.imo);
+                    $(".coastalynk-sts-popup-content-coordinate").html('['+ data.lat +', '+data.lon+']');
+                    $(".coastalynk-sts-popup-content-vessel2_tonnage").html(data.gross_tonnage);
+                    $(".coastalynk-sts-popup-content-vessel2_type").html(data.type);
+                    $(".coastalynk-sts-popup-content-vessel2_type_specific").html(data.type_specific);
+                    $(".coastalynk-sts-popup-content-vessel2_draught").html(data.draught);
+                    $(".coastalynk-sts-popup-content-vessel2_completed_draught").html(data.completed_draught);
+                    $(".coastalynk-sts-popup-content-vessel2_country_iso").html(data.country_iso);
+                    $(".coastalynk-sts-popup-content-vessel2_speed").html(data.speed);
+                    $(".coastalynk-sts-popup-content-vessel2_deadweight").html(data.deadweight);
+                    $(".coastalynk-sts-popup-content-vessel2_ais_signal").html(data.ais_signal);
+                    $(".coastalynk-sts-popup-content-vessel2_operationmode").html(data.operationmode);
+                    $(".coastalynk-sts-popup-content-vessel2_proximity_consistency").html(data.proximity_consistency);
+                    $(".coastalynk-sts-popup-content-operationmode").html('(' + data.operationmode + ')');
+                    $(".coastalynk-sts-popup-content-vessel2_joining_date").html(data.joining_date);
+                    $(".coastalynk-sts-popup-content-vessel2_lock_time").html(data.lock_time);
+                    $(".coastalynk-sts-popup-content-vessel2_risk_level").html(data.risk_level);
+                    $(".coastalynk-sts-popup-content-vessel2_stationary_duration_hours").html(data.stationary_duration_hours);
+                    $(".coastalynk-sts-popup-content-vessel2_distance").html(data.distance);
+                    $(".coastalynk-sts-popup-content-vessel2_end_date").html(data.end_date);
+                    $(".coastalynk-sts-popup-content-vessel2_navigation_status").html(data.navigation_status);
+                    $(".coastalynk-sts-popup-content-vessel2_cargo_category_type").html(data.cargo_category_type);
+                    $(".coastalynk-sts-popup-content-vessel2_data_points_analyzed").html(data.data_points_analyzed);
+                    $(".coastalynk-sts-popup-content-vessel2_draught_change").html(data.draught_change);
+                    $(".coastalynk-sts-popup-content-vessel2_event_percentage").html(data.event_percentage);
+                    $(".coastalynk-sts-popup-content-vessel2_status").html(data.status);
+                    $(".coastalynk-sts-popup-content-vessel2_last_position_utc").html(data.last_position_utc);
+                    $(".coastalynk-sts-popup-content-vessel2_last_updated").html(data.last_updated);
+                    $(".coastalynk-sts-popup-content-vessel2_outcome_status").html(data.outcome_status);
+                    $(".coastalynk-sts-popup-content-vessel2_flag_status").html(data.flag_status);
+                    $('.coastalynk-sts-popup-content-box-daughtship-detail').show();
+                    $('.coastalynk-sts-popup-content-box-close-daughtship-detail').show();
+                    $('.coastalynk-sts-popup-content-box-wide').hide();
+                });
+            }, 
             close_popup: function() {
                 document.querySelector('#coastalynk-popup-close').addEventListener( 'click', (event) => {
                 
@@ -136,93 +197,52 @@
                     console.log(data);
                     $(".coastalynk-popup-overlay").show();
                     $(".coastalynk-popup-content").show();;
-
-                    // $.ajax({
-                    //     type: 'POST',
-                    //     aSync: false,
-                    //     dataType: "html",
-                    //     url: ajaxurl, // URL from our localized variable
-                    //     data: {
-                    //         action: 'coastalynk_retrieve_tonnage', // The WordPress hook to trigger
-                    //         nonce: CSM_ADMIN.nonce,     // The nonce value
-                    //         selected_uuid: data.vessel1_uuid,
-                    //         selected_name: data.vessel1_name
-                    //     },
-                    //     success: function(response) {
-                    //         $(".coastalynk-sts-popup-content-vessel1_tonnage").html(response);
-                    //     },
-                    //     error: function(jqXHR, textStatus, errorThrown) {
-                    //     }
-                    // });
-                    // $.ajax({
-                    //     type: 'POST',
-                    //     aSync: false,
-                    //     dataType: "html",
-                    //     url: ajaxurl, // URL from our localized variable
-                    //     data: {
-                    //         action: 'coastalynk_retrieve_tonnage', // The WordPress hook to trigger
-                    //         nonce: CSM_ADMIN.nonce,     // The nonce value
-                    //         selected_uuid: data.vessel2_uuid,
-                    //         selected_name: data.vessel2_name
-                    //     },
-                    //     success: function(response) {
-                    //         $(".coastalynk-sts-popup-content-vessel2_tonnage").html(response);
-
-                    //     },
-                    //     error: function(jqXHR, textStatus, errorThrown) {
-                    //     }
-                    // });
-                    $(".coastalynk-sts-popup-content-vessel1_tonnage").html('<div id="coastalynk-field-column-loader"><div id="coastalynk-field-column-blockG_1" class="coastalynk-field-column-blockG"></div><div id="coastalynk-field-column-blockG_2" class="coastalynk-field-column-blockG"></div><div id="coastalynk-field-column-blockG_3" class="coastalynk-field-column-blockG"></div></div>')
-                    $(".coastalynk-sts-popup-content-vessel2_tonnage").html('<div id="coastalynk-field-column-loader"><div id="coastalynk-field-column-blockG_1" class="coastalynk-field-column-blockG"></div><div id="coastalynk-field-column-blockG_2" class="coastalynk-field-column-blockG"></div><div id="coastalynk-field-column-blockG_3" class="coastalynk-field-column-blockG"></div></div>')        
-                    $(".coastalynk-sts-popup-content-vessel1_name").html(data.vessel1_name)
-
-                    $(".coastalynk-popup-vessel1-parent").css('display', 'none');  
-                    $(".coastalynk-popup-vessel1-daughter").css('display', 'none');  
-                    $(".coastalynk-popup-vessel2-parent").css('display', 'none');  
-                    $(".coastalynk-popup-vessel2-daughter").css('display', 'none');  
-                    if( parseInt(data.mother_vessel_number ) == 1 ) {
-                        $(".coastalynk-popup-vessel1-parent").css('display', 'inline-block');  
-                        $(".coastalynk-popup-vessel2-daughter").css('display', 'inline-block');  
-                    } else if( parseInt(data.mother_vessel_number ) == 2 ) {
-                        $(".coastalynk-popup-vessel2-parent").css('display', 'inline-block');
-                        $(".coastalynk-popup-vessel1-daughter").css('display', 'inline-block');
-                    }
+                    $(".coastalynk-sts-popup-content-box-daughterships-loader").show();
+                    $(".coastalynk-sts-popup-content-box-daughterships").html('');
+                    $.ajax({
+                        type: 'POST',
+                        aSync: false,
+                        dataType: "html",
+                        url: ajaxurl, // URL from our localized variable
+                        data: {
+                            action: 'coastalynk_retrieve_daughterships', // The WordPress hook to trigger
+                            nonce: CSM_ADMIN.nonce,     // The nonce value
+                            event_id: data.id,
+                            uuid: data.uuid,
+                            name: data.name
+                        },
+                        success: function(response) {
+                            $(".coastalynk-sts-popup-content-box-daughterships").html(response);
+                            $(".coastalynk-sts-popup-content-box-daughterships-loader").hide(); 
+                            $(".coastalynk-sts-popup-content-vessel1_draught_change").html($("#coastalynk-sts-popup-calculated-draught-change").val());
+                        },
+                        error: function(jqXHR, textStatus, errorThrown) {
+                        }
+                    });
+                    $(".coastalynk-sts-popup-content-vessel1_tonnage").html(data.gross_tonnage);;
+                    $(".coastalynk-sts-popup-content-vessel1_name").html(data.name);
+                    $(".coastalynk-sts-popup-content-vessel1_mmsi").html(data.mmsi);
+                    $(".coastalynk-sts-popup-content-vessel1_imo").html(data.imo);
+                    $(".coastalynk-sts-popup-content-vessel1_country_iso").html(data.country_iso);
+                    $(".coastalynk-sts-popup-content-vessel1_type").html(data.type);
+                    $(".coastalynk-sts-popup-content-vessel1_type_specific").html(data.type_specific);
+                    $(".coastalynk-sts-popup-content-vessel1_speed").html(data.speed);
+                    $(".coastalynk-sts-popup-content-vessel1_navigation_status").html(data.navigation_status);
+                    $(".coastalynk-sts-popup-content-vessel1_draught").html(data.draught);
+                    $(".coastalynk-sts-popup-content-vessel1_completed_draught").html(data.completed_draught);
+                    $(".coastalynk-sts-popup-content-vessel1_last_position_UTC").html(data.last_position_utc);
+                    $(".coastalynk-sts-popup-content-draught_change").html(data.draught_change);
+                    $(".coastalynk-sts-popup-content-vessel1_last_position_UTC").html(data.last_position_utc);
+                    $(".coastalynk-sts-popup-content-coordinates").html("["+data.lat+","+data.lon+"]");
                     
-                    $(".coastalynk-sts-popup-content-vessel1_tonnage").html(data.vessel1_gross_tonnage);
-                    $(".coastalynk-sts-popup-content-vessel2_tonnage").html(data.vessel2_gross_tonnage);
-
-                    $('#coastalynk-field-start-date').val(data.start_date);
-                    $('#coastalynk-field-end-date').val(data.end_date);
-                    $('#coastalynk-field-port-zone').val(data.zone_terminal_name);
-                    $('#coastalynk-field-vessel1-before-draught').val(data.vessel1_draught);
-                    $('#coastalynk-field-vessel1-after-draught').val(data.vessel1_completed_draught);
-                    $('#coastalynk-field-vessel2-before-draught').val(data.vessel2_draught);
-                    $('#coastalynk-field-vessel2-after-draught').val(data.vessel2_completed_draught);
-                    $('#coastalynk-field-status').val(data.status);
-                    $('#coastalynk-field-id').val(data.id);
-
-                    $(".coastalynk-sts-popup-content-vessel1_mmsi").html(data.vessel1_mmsi)
-                    $(".coastalynk-sts-popup-content-vessel1_imo").html(data.vessel1_imo)
-                    $(".coastalynk-sts-popup-content-vessel1_country_iso").html(data.vessel1_country_iso)
-                    $(".coastalynk-sts-popup-content-vessel1_type").html(data.vessel1_type)
-                    $(".coastalynk-sts-popup-content-vessel1_type_specific").html(data.vessel1_type_specific)
-                    $(".coastalynk-sts-popup-content-vessel1_speed").html(data.vessel1_speed)
-                    $(".coastalynk-sts-popup-content-vessel1_navigation_status").html(data.vessel1_navigation_status)
-                    $(".coastalynk-sts-popup-content-vessel1_draught").html(data.vessel1_draught)
-                    $(".coastalynk-sts-popup-content-vessel1_completed_draught").html(data.vessel1_completed_draught)
-                    $(".coastalynk-sts-popup-content-vessel1_last_position_UTC").html(data.vessel1_last_position_utc)
-                    $(".coastalynk-sts-popup-content-vessel2_name").html(data.vessel2_name)
-                    $(".coastalynk-sts-popup-content-vessel2_mmsi").html(data.vessel2_mmsi)
-                    $(".coastalynk-sts-popup-content-vessel2_imo").html(data.vessel2_imo)
-                    $(".coastalynk-sts-popup-content-vessel2_country_iso").html(data.vessel2_country_iso)
-                    $(".coastalynk-sts-popup-content-vessel2_type").html(data.vessel2_type)
-                    $(".coastalynk-sts-popup-content-vessel2_type_specific").html(data.vessel2_type_specific)
-                    $(".coastalynk-sts-popup-content-vessel2_speed").html(data.vessel2_speed)
-                    $(".coastalynk-sts-popup-content-vessel2_navigation_status").html(data.vessel2_navigation_status)
-                    $(".coastalynk-sts-popup-content-vessel2_draught").html(data.vessel2_draught)
-                    $(".coastalynk-sts-popup-content-vessel2_completed_draught").html(data.vessel2_completed_draught)
-                    $(".coastalynk-sts-popup-content-vessel2_last_position_UTC").html(data.vessel1_last_position_utc)
-                    console.log(data.zone_terminal_name);
+                    $("#coastalynk-field-start-date").val(data.start_date);
+                    $("#coastalynk-field-end-date").html(data.end_date);
+                    $("#coastalynk-field-port-zone").html(data.zone_terminal_name);
+                    $("#coastalynk-field-vessel1-before-draught").html(data.draught);
+                    $("#coastalynk-field-vessel1-after-draught").html(data.completed_draught);
+                    $("#coastalynk-field-status").html(data.status);
+                    $("#coastalynk-field-comments").html(data.end_date);
+                    
                     if( data.zone_terminal_name != '' ) {
                         $(".coastalynk-popup-approved-zone").css('display', 'inline-block');
                         $(".coastalynk-popup-unapproved-zone").css('display', 'none');
@@ -230,46 +250,33 @@
                         $(".coastalynk-popup-unapproved-zone").css('display', 'inline-block');
                         $(".coastalynk-popup-approved-zone").css('display', 'none');
                     }
-                    $(".coastalynk-sts-popup-content-port").html(data.port);
 
-                    if( data.vessel1_signal == 'AIS Consistent' ) {
-                        $(".coastalynk-sts-popup-content-vessel1-ais-signal").html(data.vessel1_signal + ' <i class="fa fa-check-square" aria-hidden="true"></i>');
-                    } else if( data.vessel1_signal == 'AIS Gap' ) {
-                        $(".coastalynk-sts-popup-content-vessel1-ais-signal").html(data.vessel1_signal + ' <i class="fa fa-exclamation" aria-hidden="true"></i>');
-                    }
+                    $(".coastalynk-sts-popup-content-port").html(data.zone_terminal_name);
                     
-                    if( data.vessel2_signal == 'AIS Consistent' ) {
-                        $(".coastalynk-sts-popup-content-vessel2-ais-signal").html(data.vessel2_signal + ' <i class="fa fa-check-square" aria-hidden="true"></i>');
-                    } else if( data.vessel1_signal == 'AIS Gap' ) {
-                        $(".coastalynk-sts-popup-content-vessel2-ais-signal").html(data.vessel2_signal + ' <i class="fa fa-exclamation" aria-hidden="true"></i>');
+                    if( data.ais_signal == 'AIS Consistent' ) {
+                        $(".coastalynk-sts-popup-content-vessel1-ais-signal").html(data.ais_signal + ' <i class="fa fa-check-square" aria-hidden="true"></i>');
+                    } else if( data.ais_signal == 'AIS Gap' ) {
+                        $(".coastalynk-sts-popup-content-vessel1-ais-signal").html(data.ais_signal + ' <i class="fa fa-exclamation" aria-hidden="true"></i>');
                     }
 
                     $(".coastalynk-sts-popup-content-event_ref_id").html(data.event_ref_id);
-                    $(".coastalynk-sts-popup-content-zone_type").html(data.zone_type=='-' || data.zone_type==''?'Unknown':data.zone_type);
-                   
-                    $(".coastalynk-sts-popup-content-zone_ship").html(data.zone_ship=='-' || data.zone_ship==''?'Unknown':data.zone_ship);
-                    $(".coastalynk-sts-popup-content-zone_terminal_name").html(data.zone_terminal_name);
+                    $(".coastalynk-sts-popup-content-zone_type").html(data.zone_type);
+                    $(".coastalynk-sts-popup-content-zone_ship").html(data.zone_ship);
                     $(".coastalynk-sts-popup-content-start_date").html(data.start_date);
                     $(".coastalynk-sts-popup-content-end_date").html(data.end_date);
+                    $(".coastalynk-sts-popup-content-deadweight").html(data.deadweight);
                     $(".coastalynk-sts-popup-content-event_percentage").html(data.event_percentage);
-                    $(".coastalynk-popup-risk-level-top").html('Risk: ' + data.event_percentage + "%");
-                    if( parseFloat( data.event_percentage ) <= 30 ) {
-                        $(".coastalynk-popup-risk-level-top").css( 'background-color', 'green' );
-                    } else if( parseFloat( data.event_percentage ) <= 70 ) {
-                        $(".coastalynk-popup-risk-level-top").css( 'background-color', 'yellow' );
-                    } else {
-                        $(".coastalynk-popup-risk-level-top").css( 'background-color', 'red' );
-                    }
-
                     $(".coastalynk-sts-popup-content-cargo_category_type").html(data.cargo_category_type);
                     $(".coastalynk-sts-popup-content-risk_level").html(data.risk_level);
-                    $(".coastalynk-sts-popup-content-current_distance_nm").html(data.current_distance_nm);
+                    $(".coastalynk-sts-popup-content-distance").html(data.distance);
                     $(".coastalynk-sts-popup-content-stationary_duration_hours").html(data.stationary_duration_hours);
                     $(".coastalynk-sts-popup-content-proximity_consistency").html(data.proximity_consistency);
                     $(".coastalynk-sts-popup-content-data_points_analyzed").html(data.data_points_analyzed);
-                    $(".coastalynk-sts-popup-content-operationmode").html(data.operationmode);
                     $(".coastalynk-sts-popup-content-status").html(data.status);
                     $(".coastalynk-sts-popup-content-last_updated").html(data.last_updated);
+                    $('.coastalynk-sts-popup-content-box-daughtship-detail').hide();
+                    $('.coastalynk-sts-popup-content-box-close-daughtship-detail').hide();
+                    $('.coastalynk-sts-popup-content-box-wide').show();
                 });
             },
             /**

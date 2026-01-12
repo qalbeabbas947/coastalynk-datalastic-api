@@ -8,23 +8,6 @@
                 this.mark_active();
                 this.checkScreenSize();
                 this.on_resize();
-                this.load_tooltip();
-            },
-            load_tooltip: function(){
-                $( document ).tooltip({
-                    position: {
-                        my: "center bottom-20",
-                        at: "center top",
-                        using: function( position, feedback ) {
-                            $( this ).css( position );
-                            $( "<div>" )
-                                .addClass( "arrow" )
-                                .addClass( feedback.vertical )
-                                .addClass( feedback.horizontal )
-                                .appendTo( this );
-                        }
-                    }
-                });
             },
             on_resize: function(){
                 $(window).on('resize', function() {

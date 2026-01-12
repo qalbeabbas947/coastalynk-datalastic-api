@@ -141,9 +141,9 @@ class CSM_STS_Admin_listing extends WP_List_Table {
     public function get_columns(){
         
         $columns = [
+           'name'                  => __( 'name', 'castalynkmap'  ), 
             'id'                    => __( 'id', 'castalynkmap' ), 
             'uuid'                  => __( 'uuid', 'castalynkmap'  ), 
-            'name'                  => __( 'name', 'castalynkmap'  ), 
             'mmsi'                  => __( 'mmsi', 'castalynkmap'  ), 
             'imo'                   => __( 'imo', 'castalynkmap'  ), 
             'country_iso'           => __( 'country_iso', 'castalynkmap'  ), 
@@ -215,7 +215,7 @@ class CSM_STS_Admin_listing extends WP_List_Table {
                 }
             }
 
-            return '<a data-action="csm_delete_sts" data-id="'.$item['id'].'"  data-event_ref_id="'.$item['event_ref_id'].'" class="csm_delete_sts" href="javascript:;"><span class="dashicons dashicons-no-alt"></span></a>';
+            return '<a data-action="csm_view_sts" '.$attributes.' data-id="'.$item['id'].'"  data-event_ref_id="'.$item['event_ref_id'].'" class="csm_view_sts" href="javascript:;"><span class="dashicons dashicons-search"></span></a>&nbsp;<a data-action="csm_delete_sts" data-id="'.$item['id'].'"  data-event_ref_id="'.$item['event_ref_id'].'" class="csm_delete_sts" href="javascript:;"><span class="dashicons dashicons-no-alt"></span></a>';
         } else {
             return Coastalynk_Admin::get_bar_preloader();
         }    
@@ -231,17 +231,16 @@ class CSM_STS_Admin_listing extends WP_List_Table {
             
             $event_table_mother = $wpdb->prefix . 'coastalynk_sts_events';
             $event_table_daughter = $wpdb->prefix . 'coastalynk_sts_event_detail';
-            $vessel_data = $wpdb->get_results( "SELECT e.`id`,e.`uuid` as vessel1_uuid, e.`name` as vessel1_name, e.`mmsi` as vessel1_mmsi, e.`imo` as vessel1_imo, e.`country_iso` as vessel1_country_iso, e.`type` as vessel1_type, e.`type_specific` as vessel1_type_specific, e.`lat` as vessel1_lat, e.`lon` as vessel1_lon, e.`speed` as vessel1_speed, e.`navigation_status` as vessel1_navigation_status, e.`draught` as vessel1_draught, e.`completed_draught` as vessel1_completed_draught, e.`last_position_UTC` as vessel1_last_position_UTC, e.`ais_signal` as vessel1_signal,e.`deadweight` as vessel1_deadweight,e.`gross_tonnage` as vessel1_gross_tonnage,e.`port`,e.`port_id`, e.`distance`,e.`event_ref_id`, e.`zone_type`,e.`zone_ship`, e.`zone_terminal_name`,e.`start_date`,e.`end_date`,e.`status`,e.`is_email_sent`,e.`is_complete`,e.`is_disappeared`, e.`last_updated`, d.`event_id`,d.`uuid` as vessel2_uuid,d.`name` as vessel2_name,d.`mmsi` as vessel2_mmsi,d.`imo` as vessel2_imo,d.`country_iso` as vessel2_country_iso,d.`type` as vessel2_type,d.`type_specific` as vessel2_type_specific,d.`lat` as vessel2_lat,d.`lon` as vessel2_lon,d.`speed` as vessel2_speed,d.`navigation_status` as vessel2_navigation_status,d.`draught` as vessel2_draught,d.`completed_draught` as vessel2_completed_draught,d.`last_position_UTC` as vessel2_last_position_UTC,d.`deadweight` as vessel2_deadweight,d.`gross_tonnage` as vessel2_gross_tonnage,d.`draught_change`,d.`ais_signal` as vessel2_signal,d.`end_date` as vessel2_end_date, d.`distance`,d.`event_percentage`,d.`cargo_category_type`,d.`risk_level`,d.`stationary_duration_hours`,d.`proximity_consistency`,d.`data_points_analyzed`,d.`is_disappeared`,d.`operationmode`,d.`is_complete` as vessel2_is_complete,d.`last_updated` as vessel2_last_updated,d.`status` as vessel2_status   
-                from ".$event_table_mother." as e inner join ".$event_table_daughter." as d on(e.id=d.event_id) where d.event_id = '".$item['id']."'");
+            $vessel_data = $wpdb->get_results( "SELECT * from ".$event_table_daughter." where event_id = '".$item['id']."'");
             $childern = '<ul>';
             foreach( $vessel_data as $item_data ) {
                 $attributes = '';
                 foreach( $item_data as $key=>$val ) {
-                    if( in_array( $key, ['last_updated', 'start_date', 'end_date', 'last_position_UTC'] ) ) {
+                    if( in_array( $key, ['last_updated', 'lock_time', 'joining_date', 'end_date', 'last_position_UTC'] ) ) {
                         $attributes .= ' data-'.$key.' = "'.get_date_from_gmt( $val, CSM_DATE_FORMAT.' '.CSM_TIME_FORMAT ).'"';
                     } else if( in_array( $key, ['draught' ] ) ) {
                         $attributes .= ' data-'.$key.' = "'.( floatval( $val ) > 0?$val.'m':__( "Pending", "castalynkmap" )).'"';
-                    } else if( in_array( $key, [ 'completed_draught', 'vessel1_completed_draught', 'vessel2_completed_draught' ] ) ) {
+                    } else if( in_array( $key, [ 'completed_draught' ] ) ) {
                         $attributes .= ' data-'.$key.' = "'.( floatval( $val ) > 0?$val.'m':__( "Cargo Inference: Not Eligible", "castalynkmap" )).'"';
                     } else if( in_array( $key, [ 'draught_change' ] ) ) {
                         $attributes .= ' data-'.$key.' = "'.( floatval( $val ) > 0?$val.'m':__( "Pending / AIS-limited", "castalynkmap" )).'"';
@@ -250,7 +249,7 @@ class CSM_STS_Admin_listing extends WP_List_Table {
                     }
                 }
 
-                $childern .= '<li><a data-action="csm_view_sts" '.$attributes .' class="csm_view_sts" href="javascript:;">'.$item_data->vessel2_name.'</a></li>';
+                $childern .= '<li><a data-action="csm_view_sts" '.$attributes .' class="csm_view_sts" href="javascript:;">'.$item_data->name.'</a></li>';
             }
             $childern .= '</ul>';
 
@@ -277,9 +276,9 @@ class CSM_STS_Admin_listing extends WP_List_Table {
     public function get_sortable_columns() {
         
         $sortable_columns = array(
+            'name'                  => array( 'name', false ), 
             'id'                    => array( 'id', false ), 
             'uuid'                  => array( 'uuid', false ), 
-            'name'                  => array( 'name', false ), 
             'mmsi'                  => array( 'mmsi', false ), 
             'imo'                   => array( 'imo', false ), 
             'country_iso'           => array( 'country_iso', false ), 
@@ -520,7 +519,7 @@ class CSM_STS_Admin_listing extends WP_List_Table {
         $orderby    = (isset($_REQUEST['orderby']) && in_array($_REQUEST['orderby'], array_keys($this->get_sortable_columns()))) ? sanitize_text_field( $_REQUEST['orderby'] ) : 'last_updated';
         $order      = (isset($_REQUEST['order']) && in_array($_REQUEST['order'], array('asc', 'desc'))) ? sanitize_text_field( $_REQUEST['order'] ) : 'desc';
         $result     = $wpdb->get_results( "SELECT * from ".$event_table_mother." $where ORDER BY $orderby $order LIMIT $per_page OFFSET $offset", ARRAY_A );
-
+ 
 //        echo "SELECT vessel1_name,id, vessel1_uuid, vessel1_mmsi,vessel1_imo,vessel1_country_iso,vessel1_type,vessel1_type_specific, vessel1_lat,vessel1_lon,vessel1_speed,vessel1_navigation_status,vessel1_draught,vessel1_completed_draught,vessel1_last_position_UTC,vessel1_signal,vessel2_uuid,vessel2_name,vessel2_mmsi,vessel2_imo,vessel2_country_iso, vessel2_type,vessel2_type_specific,vessel2_lat,vessel2_lon,vessel2_speed,vessel2_navigation_status,vessel2_draught,vessel2_completed_draught,vessel2_last_position_UTC,vessel2_signal,port,port_id,distance, event_ref_id, zone_type, zone_ship, zone_terminal_name,start_date,end_date,event_percentage,draught_change,cargo_category_type,risk_level,current_distance_nm,stationary_duration_hours,proximity_consistency,data_points_analyzed,mother_vessel_number,operationmode,status,is_email_sent,is_complete,is_disappeared,last_updated FROM $table_name $where ORDER BY $orderby $order LIMIT $per_page OFFSET $offset";   
         $data = []; 
         $count = 0;

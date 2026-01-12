@@ -4,6 +4,7 @@
     margin: 20px 0;
     overflow-x: scroll;
     padding: 0px 20px !important;
+    width: 100%;
 }
 .coastalynk-popup-approved-zone, .coastalynk-popup-unapproved-zone{
     display: none;
@@ -98,11 +99,13 @@ input#caostalynk_sts_history_range {
     padding: 20px;
     border-radius: 5px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    width: 55%;
-    height: 96vh;
+    z-index: 1005;
+    width: 60%;
+    max-height: 95vh;
 }
-
+#coastalynk-sts-popup-table th{
+    text-align: left;
+}
 .coastalynk-sts-popup-overlay {
     display: none; /* Hidden by default */
     position: fixed;
@@ -149,6 +152,7 @@ input#caostalynk_sts_history_range {
     font-size: 1rem;
     width: 20px;
     height: 20px;
+    text-align: center;
 }
 .coastalynk-sts-popup-content-box, .coastalynk-sts-popup-content-box-wide{
     padding-left: 20px;
@@ -216,6 +220,7 @@ input#caostalynk_sts_history_range {
 .coastalynk-sts-popup-content-boxes > .coastalynk-sts-popup-content-box-wide{
     background-color: white;
     flex: 0 0 100%;
+    width: 100%;
 }
 
 table#coastalynk-sts-popup-table {
@@ -260,11 +265,19 @@ input[type="button"].coastalynk-sts-focus-marker-btn, .coastalynk-sts-retrieve-f
     border-radius: 5px;
     outline: none;
     border: none;
+    cursor: pointer;
 }
 .coastalynk-sts-popup-content-box-daughterships-loader-container {
     display: inline-block;
 
     
+}
+.coastalynk-sts-popup-content-box-daughterships{
+    width: 100%;
+    overflow-x: scroll;
+}
+.coastalynk-sts-focus-marker-btn{
+    cursor: pointer;
 }
 input[type="button"].coastalynk-sts-focus-marker-btn:hover, .coastalynk-sts-retrieve-full-popup-btn:hover, .coastalynk-sts-retrieve-popup-daughtership-btn:hover{
     background-color: var(--wp--preset--color--text-blue);
@@ -295,7 +308,7 @@ input[type="button"].coastalynk-sts-focus-marker-btn:hover, .coastalynk-sts-retr
 
 /***************************************Large Desktops/Laptops:***************************/
 /* Equivalent to min-width: 1200px */
-@media (min-width: 1400px) {
+/* @media (min-width: 1400px) {
   .coastalynk-sts-popup-content-box{
     height: 37vh;
   }
@@ -303,12 +316,12 @@ input[type="button"].coastalynk-sts-focus-marker-btn:hover, .coastalynk-sts-retr
   .coastalynk-sts-popup-content-boxes{ 
     row-gap: 5px;
   }
-}
+} */
 /* Equivalent to min-width: 1200px */
-@media (max-width: 1400px) {
+@media (max-width: 1920px) {
   /* Styles for large desktops and monitors */
    .coastalynk-sts-popup-content-box-list{
-        height: 184px;
+        height: 27vh;
    }
 
   .coastalynk-sts-popup-content-box h3{
@@ -329,12 +342,12 @@ input[type="button"].coastalynk-sts-focus-marker-btn:hover, .coastalynk-sts-retr
 }
 
 /* Equivalent to min-width: 1200px */
-@media (max-width: 1200px) {
+@media (max-width: 1600px) {
   .coastalynk-sts-popup-content-box h3{
     font-size: 1em;
   }
    .coastalynk-sts-popup-content-box-list{
-        height: 184px;
+        height: 27vh;
    } 
 
   .coastalynk-sts-popup-content h2{
@@ -391,7 +404,7 @@ input[type="button"].coastalynk-sts-focus-marker-btn:hover, .coastalynk-sts-retr
 
 @media (max-width: 480px) {
     .coastalynk-sts-popup-content-box-list {
-        height: auto;
+        height: 80%;
     }
     .coastalynk-sts-popup-content-box-list li:last-child {
         margin-bottom: 10px;
@@ -417,9 +430,15 @@ input[type="button"].coastalynk-sts-focus-marker-btn:hover, .coastalynk-sts-retr
         flex-direction: column;
         
     }
-
+    #coastalynk-sts-popup-table tr th:nth-child(n+3):not(:nth-last-child(-n+1)), #coastalynk-sts-popup-table td:nth-child(n+3):not(:nth-last-child(-n+1)) {
+        display: none;
+    }
     .coastalynk-sts-popup-content-boxes{ 
         row-gap: 10px;
+    }
+    .coastalynk-sts-popup-content-boxes > div.coastalynk-sts-popup-content-box{
+        background-color: white;
+        flex: 0 0 100%;
     }
 }
 
@@ -428,6 +447,7 @@ input[type="button"].coastalynk-sts-focus-marker-btn:hover, .coastalynk-sts-retr
         height: auto;
         max-height: 30vh;
     }
-    
-    
+    #coastalynk-sts-popup-table tr th:nth-child(n+3):not(:nth-last-child(-n+1)), #coastalynk-sts-popup-table td:nth-child(n+3):not(:nth-last-child(-n+1)) {
+        display: none;
+    }
 }

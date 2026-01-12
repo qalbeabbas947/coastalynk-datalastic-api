@@ -74,7 +74,7 @@
 }
 
 .coastalyn-flag-port-listing{
-    width:80px;
+    width:40px;
 }
 .vessel-dashboard-container{
     display: flex;
@@ -455,6 +455,12 @@ div.dt-container .dt-paging .dt-paging-button.current:hover{
     border: 5px solid #C1D8EE !important;
     color: white !important;
 }
+.dt-paging button:hover{
+    background: var(--wp--preset--color--text-blue) !important;
+    border-radius: 50% !important;
+    border: 5px solid #C1D8EE !important;
+    color: white !important;
+}
 table.dataTable tbody tr.odd,
     table.dataTable tbody tr.even {
         background-color: transparent !important; /* or a specific color like #FFFFFF */
@@ -496,7 +502,6 @@ table.dataTable tbody tr.selected {
 }
 /********************************Preloader css********************/
 #coastalynk-column-loader{
-	width:110px;
 	height: 16px;
 	display: block;
 	position: relative;
@@ -509,7 +514,7 @@ table.dataTable tbody tr.selected {
 	float:left;
 	height:20px;
 	margin-left:7px;
-	width:23px;
+	width:10px;
 	opacity:0.1;
 	animation-name:bounceG;
 		-o-animation-name:bounceG;

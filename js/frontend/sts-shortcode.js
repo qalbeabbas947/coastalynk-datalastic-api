@@ -121,6 +121,8 @@
             $(".coastalynk-sts-popup-content-vessel2_stationary_duration_hours").html(data.stationary_duration_hours);
             $(".coastalynk-sts-popup-content-vessel2_distance").html(data.distance);
             $(".coastalynk-sts-popup-content-vessel2_end_date").html(data.end_date);
+            $(".coastalynk-sts-popup-content-vessel2_joining_date").html(data.joining_date);
+            $(".coastalynk-sts-popup-content-vessel2_lock_time").html(data.lock_time);
             $(".coastalynk-sts-popup-content-vessel2_navigation_status").html(data.navigation_status);
             $(".coastalynk-sts-popup-content-vessel2_cargo_category_type").html(data.cargo_category_type);
             $(".coastalynk-sts-popup-content-vessel2_data_points_analyzed").html(data.data_points_analyzed);
@@ -129,7 +131,8 @@
             $(".coastalynk-sts-popup-content-vessel2_status").html(data.status);
             $(".coastalynk-sts-popup-content-vessel2_last_position_utc").html(data.last_position_utc);
             $(".coastalynk-sts-popup-content-vessel2_last_updated").html(data.last_updated);
-
+            $(".coastalynk-sts-popup-content-vessel2_outcome_status").html(data.outcome_status);console.log(data.outcome_status);
+            $(".coastalynk-sts-popup-content-vessel2_flag_status").html(data.flag_status);
             $('.coastalynk-sts-popup-content-box-daughtship-detail').show();
             $('.coastalynk-sts-popup-content-box-close-daughtship-detail').show();
             $('.coastalynk-sts-popup-content-box-wide').hide();
@@ -160,7 +163,7 @@
             $(".coastalynk-sts-popup-overlay").show();
             $(".coastalynk-sts-popup-content").show();;
             $(".coastalynk-sts-popup-content-box-daughterships-loader").show();
-            
+            $(".coastalynk-sts-popup-content-box-daughterships").html('');
             $.ajax({
                 type: 'POST',
                 aSync: false,
@@ -212,7 +215,6 @@
             } else if( data.ais_signal == 'AIS Gap' ) {
                 $(".coastalynk-sts-popup-content-vessel1-ais-signal").html(data.ais_signal + ' <i class="fa fa-exclamation" aria-hidden="true"></i>');
             }
-            
 
             $(".coastalynk-sts-popup-content-event_ref_id").html(data.event_ref_id);
             $(".coastalynk-sts-popup-content-zone_type").html(data.zone_type);
@@ -232,9 +234,9 @@
             $(".coastalynk-sts-popup-content-status").html(data.status);
             $(".coastalynk-sts-popup-content-last_updated").html(data.last_updated);
             
-
-            
-            
+            $('.coastalynk-sts-popup-content-box-daughtship-detail').hide();
+            $('.coastalynk-sts-popup-content-box-close-daughtship-detail').hide();
+            $('.coastalynk-sts-popup-content-box-wide').show();
             button.style.display = "block";
             //loader.style.display = "none";
         });
