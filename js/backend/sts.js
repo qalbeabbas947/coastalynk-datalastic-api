@@ -209,7 +209,8 @@
                             nonce: CSM_ADMIN.nonce,     // The nonce value
                             event_id: data.id,
                             uuid: data.uuid,
-                            name: data.name
+                            name: data.name,
+                            port: data.zone_terminal_name
                         },
                         success: function(response) {
                             $(".coastalynk-sts-popup-content-box-daughterships").html(response);
@@ -253,9 +254,9 @@
 
                     $(".coastalynk-sts-popup-content-port").html(data.zone_terminal_name);
                     
-                    if( data.ais_signal == 'AIS Consistent' ) {
+                    if( data.ais_signal == 'AIS  Consistent Signal Detected' ) {
                         $(".coastalynk-sts-popup-content-vessel1-ais-signal").html(data.ais_signal + ' <i class="fa fa-check-square" aria-hidden="true"></i>');
-                    } else if( data.ais_signal == 'AIS Gap' ) {
+                    } else if( data.ais_signal == 'AIS Signal Gap Detected' ) {
                         $(".coastalynk-sts-popup-content-vessel1-ais-signal").html(data.ais_signal + ' <i class="fa fa-exclamation" aria-hidden="true"></i>');
                     }
 

@@ -379,16 +379,8 @@ class CSM_STS_Admin_Menu {
                             <select name="coastalynk-field-status" id="coastalynk-field-status">
                                 <option value=""><?php _e( "Status", "castalynkmap" );?></option>
                                 <option value="Detected"><?php _e( "Detected", "castalynkmap" );?></option>
-                                <option value="Ongoing"><?php _e( "Ongoing", "castalynkmap" );?></option>
-                                <option value="Increase"><?php _e( "Increase", "castalynkmap" );?></option>
-                                <option value="Decrease"><?php _e( "Decrease", "castalynkmap" );?></option>
-                                <option value="No Change"><?php _e( "No Change", "castalynkmap" );?></option>
-                                <option value="Awaiting Draught Update"><?php _e( "Awaiting Draught Update", "castalynkmap" );?></option>
-                                <option value="Inconclusive"><?php _e( "Inconclusive", "castalynkmap" );?></option>
-                                <option value="Error"><?php _e( "Error", "castalynkmap" );?></option>
                                 <option value="Completed"><?php _e( "Completed", "castalynkmap" );?></option>
-                                <option value="Pending Manual Review"><?php _e( "Pending Review", "castalynkmap" );?></option>
-                                <option value="Verified"><?php _e( "Verified", "castalynkmap" );?></option>
+                                <option value="Concluded"><?php _e( "Concluded", "castalynkmap" );?></option>
                             </select>
                             <select name="coastalynk-field-risk-level" id="coastalynk-field-risk-level">
                                 <option value=""><?php _e( "Risk Level", "castalynkmap" );?></option>
@@ -472,8 +464,8 @@ class CSM_STS_Admin_Menu {
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Last Updated:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-last_updated"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Nav. Status:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel1_navigation_status"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Draught Change:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel1_draught_change"></span></li>
-                            <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Signal:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel1-ais-signal"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Last Position:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel1_last_position_UTC"></span></li>
+                            <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Signal:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel1-ais-signal"></span></li>
                         </ul>
                     </div>
                     <div class="coastalynk-sts-popup-content-box-wide">
@@ -497,7 +489,7 @@ class CSM_STS_Admin_Menu {
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Speed:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel2_speed"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Dead Weight:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel2_deadweight"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Signal:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel2_ais_signal"></span></li>
-                            <!-- <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Opertion Mode:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel2_operationmode"></span></li> -->
+                            <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Operation Mode:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel2_operationmode"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Proximity:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel2_proximity_consistency"></span></li>
                             
                         </ul>

@@ -187,7 +187,7 @@ class CSM_STS_Admin_listing extends WP_List_Table {
             if( floatval( $item['completed_draught'] ) > 0 ) { 
                 return $item['completed_draught'];
             } else {
-                return __( "Cargo Inference: Not Eligible", "castalynkmap" );
+                return __( "Not Eligible", "castalynkmap" );
             } 
         } else {
             return Coastalynk_Admin::get_bar_preloader();
@@ -207,9 +207,11 @@ class CSM_STS_Admin_listing extends WP_List_Table {
                 } else if( in_array( $key, ['draught' ] ) ) {
                     $attributes .= ' data-'.$key.' = "'.( floatval( $val ) > 0?$val.'m':__( "Pending", "castalynkmap" )).'"';
                 } else if( in_array( $key, [ 'completed_draught', 'vessel1_completed_draught', 'vessel2_completed_draught' ] ) ) {
-                    $attributes .= ' data-'.$key.' = "'.( floatval( $val ) > 0?$val.'m':__( "Cargo Inference: Not Eligible", "castalynkmap" )).'"';
+                    $attributes .= ' data-'.$key.' = "'.( floatval( $val ) > 0?$val.'m':__( "Not Eligible", "castalynkmap" )).'"';
                 } else if( in_array( $key, [ 'draught_change' ] ) ) {
                     $attributes .= ' data-'.$key.' = "'.( floatval( $val ) > 0?$val.'m':__( "Pending / AIS-limited", "castalynkmap" )).'"';
+                } else if( in_array( $key, [ 'status' ] ) ) {
+                    $attributes .= ' data-'.$key.' = "'.( $val == 'Completed'?__( "Concluded", "castalynkmap" ):$val).'"';
                 } else {
                     $attributes .= ' data-'.$key.' = "'.$val.'"';
                 }
@@ -241,10 +243,12 @@ class CSM_STS_Admin_listing extends WP_List_Table {
                     } else if( in_array( $key, ['draught' ] ) ) {
                         $attributes .= ' data-'.$key.' = "'.( floatval( $val ) > 0?$val.'m':__( "Pending", "castalynkmap" )).'"';
                     } else if( in_array( $key, [ 'completed_draught' ] ) ) {
-                        $attributes .= ' data-'.$key.' = "'.( floatval( $val ) > 0?$val.'m':__( "Cargo Inference: Not Eligible", "castalynkmap" )).'"';
+                        $attributes .= ' data-'.$key.' = "'.( floatval( $val ) > 0?$val.'m':__( "Not Eligible", "castalynkmap" )).'"';
                     } else if( in_array( $key, [ 'draught_change' ] ) ) {
                         $attributes .= ' data-'.$key.' = "'.( floatval( $val ) > 0?$val.'m':__( "Pending / AIS-limited", "castalynkmap" )).'"';
-                    } else {
+                    } else if( in_array( $key, [ 'status' ] ) ) {
+                        $attributes .= ' data-'.$key.' = "'.( $val == 'Completed'?__( "Concluded", "castalynkmap" ):$val).'"';
+                    }  else {
                         $attributes .= ' data-'.$key.' = "'.$val.'"';
                     }
                 }
@@ -523,6 +527,7 @@ class CSM_STS_Admin_listing extends WP_List_Table {
 //        echo "SELECT vessel1_name,id, vessel1_uuid, vessel1_mmsi,vessel1_imo,vessel1_country_iso,vessel1_type,vessel1_type_specific, vessel1_lat,vessel1_lon,vessel1_speed,vessel1_navigation_status,vessel1_draught,vessel1_completed_draught,vessel1_last_position_UTC,vessel1_signal,vessel2_uuid,vessel2_name,vessel2_mmsi,vessel2_imo,vessel2_country_iso, vessel2_type,vessel2_type_specific,vessel2_lat,vessel2_lon,vessel2_speed,vessel2_navigation_status,vessel2_draught,vessel2_completed_draught,vessel2_last_position_UTC,vessel2_signal,port,port_id,distance, event_ref_id, zone_type, zone_ship, zone_terminal_name,start_date,end_date,event_percentage,draught_change,cargo_category_type,risk_level,current_distance_nm,stationary_duration_hours,proximity_consistency,data_points_analyzed,mother_vessel_number,operationmode,status,is_email_sent,is_complete,is_disappeared,last_updated FROM $table_name $where ORDER BY $orderby $order LIMIT $per_page OFFSET $offset";   
         $data = []; 
         $count = 0;
+        
         if( isset($result) && is_array($result) && count($result) > 0 ) {
             foreach( $result as $res ) {
                 $user_id = 0;
@@ -531,9 +536,11 @@ class CSM_STS_Admin_listing extends WP_List_Table {
                     if( in_array( $key, ['draught' ] ) ) {
                         $data[$count][$key] = ( floatval( $value ) > 0?$value:__( "Pending", "castalynkmap" )).'"';
                     } else if( in_array( $key, [ 'completed_draught' ] ) ) {
-                        $data[$count][$key] = ( floatval( $value ) > 0?$value:__( "Cargo Inference: Not Eligible", "castalynkmap" )).'"';
+                        $data[$count][$key] = ( floatval( $value ) > 0?$value:__( "Not Eligible", "castalynkmap" )).'"';
                     } else if( in_array( $key, [ 'draught_change' ] ) ) {
                         $data[$count][$key] = ( floatval( $value ) > 0?$value:__( "Pending / AIS-limited", "castalynkmap" )).'"';
+                    }  else if( $key == 'status' ) {
+                        $data[$count][$key] = ( $value == 'Completed'?__( "Concluded", "castalynkmap" ):$value);
                     } else if( empty( $value ) ) {
                         $value = '-';
                     }    

@@ -71,7 +71,7 @@ class Coastalynk_Sea_Vessel_Map_Front {
     /**
      * enque dashboard.
      */
-    function coastalynk_retrieve_daughterships_callback() {
+    function coastalynk_retrieve_daughterships_callback() { 
         
         global $wpdb;
         if ( ! check_ajax_referer( 'coastalynk_secure_ajax_nonce', 'nonce', false ) ) {
@@ -80,6 +80,7 @@ class Coastalynk_Sea_Vessel_Map_Front {
         }
 
         $event_id = sanitize_text_field( $_POST['event_id'] );
+        $port = sanitize_text_field( $_POST['port'] );
         $event_table_daughter = $wpdb->prefix . 'coastalynk_sts_event_detail';
         $table_listing = $wpdb->get_results( $wpdb->prepare( "SELECT * from ".$event_table_daughter." where event_id = %d", $event_id ),ARRAY_A );   
         $draught_change = 0;
@@ -93,7 +94,6 @@ class Coastalynk_Sea_Vessel_Map_Front {
                         <th><?php _e( "IMO", "castalynkmap" );?></th>
                         <th><?php _e( "Type", "castalynkmap" );?></th>
                         <th><?php _e( "Tonnage", "castalynkmap" );?></th>
-                        <th><?php _e( "Status", "castalynkmap" );?></th>
                         <th><?php _e( "Detail", "castalynkmap" );?></th>
                     </tr>
                 </thead>
@@ -114,19 +114,25 @@ class Coastalynk_Sea_Vessel_Map_Front {
                             <td><?php echo $vessel['imo']; ?></td>
                             <td><?php echo coastalynk_get_vessel_short_types( $vessel['type']); ?></td>
                             <td><?php echo $vessel['gross_tonnage']; ?></td>
-                            <td><?php echo $vessel['status']; ?></td>
+                            
                             <td>
                                 <?php
                                     $attributes = '';
                                     foreach( $vessel as $key=>$val ) {
+
+                                        
                                         if( in_array( $key, ['last_updated', 'start_date', 'lock_time', 'joining_date', 'end_date'] ) && !empty($val)) {
                                             $attributes .= ' data-'.$key.' = "'.get_date_from_gmt( $val, CSM_DATE_FORMAT.' '.CSM_TIME_FORMAT ).'"';
+                                        } else if( in_array( $key, ['remarks' ] ) ) {
+                                            $attributes .= ' data-'.$key.' = "'.$this->generateSTSRemark($vessel['proximity_consistency'], $vessel['speed'], $vessel['stationary_duration_hours'], $port, $vessel['risk_level']).'"';
                                         } else if( in_array( $key, ['draught' ] ) ) {
                                             $attributes .= ' data-'.$key.' = "'.( floatval( $val ) > 0?$val.'m':__( "Pending", "castalynkmap" )).'"';
                                         } else if( in_array( $key, [ 'completed_draught' ] ) ) {
-                                            $attributes .= ' data-'.$key.' = "'.( floatval( $val ) > 0?$val.'m':__( "Cargo Inference: Not Eligible", "castalynkmap" )).'"';
+                                            $attributes .= ' data-'.$key.' = "'.( floatval( $val ) > 0?$val.'m':__( "Not Eligible", "castalynkmap" )).'"';
                                         } else if( in_array( $key, [ 'draught_change' ] ) ) {
                                             $attributes .= ' data-'.$key.' = "'.( floatval( $val ) > 0?$val.'m':__( "Pending / AIS-limited", "castalynkmap" )).'"';
+                                        } else if( in_array( $key, [ 'status' ] ) ) {
+                                            $attributes .= ' data-'.$key.' = "'.( $val == 'Completed'?__( "Concluded", "castalynkmap" ):$val).'"';
                                         } else {
                                             $attributes .= ' data-'.$key.' = "'.$val.'"';
                                         }
@@ -146,6 +152,36 @@ class Coastalynk_Sea_Vessel_Map_Front {
         exit;
     }
 
+    function generateSTSRemark($proximity, $speed, $duration, $location, $confidence) {
+        // Format proximity with nm
+        $formattedProximity = is_numeric($proximity) ? number_format($proximity, 2) . 'nm' : $proximity;
+        
+        // Format speed with kn and determine description
+        $speedDesc = '';
+        if (is_numeric($speed)) {
+            $formattedSpeed = number_format($speed, 1) . 'kn';
+            $speedDesc = $speed <= 1.0 ? 'low' : ($speed <= 3.0 ? 'moderate' : 'high');
+        } else {
+            $formattedSpeed = $speed;
+        }
+        
+        // Format duration
+        $formattedDuration = '';
+        if (is_numeric($duration)) {
+            $hours = floor($duration / 60);
+            $minutes = $duration % 60;
+            $formattedDuration = $hours > 0 ? $hours . 'h' : '';
+            $formattedDuration .= $minutes > 0 ? ($hours > 0 ? ' ' : '') . $minutes . 'm' : '';
+        } else {
+            $formattedDuration = $duration;
+        }
+        
+        // Format confidence with proper case
+        $formattedConfidence = ucfirst(strtolower($confidence));
+        
+        // Build the remark
+        return "STS likely ongoing — maintained close contact (~$formattedProximity proximity) at $speedDesc speed (~$formattedSpeed) for ~$formattedDuration within $location. Confidence: $formattedConfidence.";
+    }
     /**
      * enque dashboard.
      */
@@ -261,7 +297,7 @@ class Coastalynk_Sea_Vessel_Map_Front {
                                 <td class="header-td">'.__( "Before Draught", "castalynkmap" ).'</td>
                                 <td class="data-td">'.$record['vessel1_draught'].'</td>
                                 <td class="header-td">'.__( "After Draught", "castalynkmap" ).'</td>
-                                <td class="data-td">'.( floatval( $record['vessel1_completed_draught'] ) > 0?$record['vessel1_completed_draught']:__( "Cargo Inference: Not Eligible", "castalynkmap" )).'</td>
+                                <td class="data-td">'.( floatval( $record['vessel1_completed_draught'] ) > 0?$record['vessel1_completed_draught']:__( "Not Eligible", "castalynkmap" )).'</td>
                             </tr>
                             <tr>
                                 <td class="header-td">'.__( "Last Position", "castalynkmap" ).'</td>
@@ -299,7 +335,7 @@ class Coastalynk_Sea_Vessel_Map_Front {
                                 <td class="header-td">'.__( "Before Draught", "castalynkmap" ).'</td>
                                 <td class="data-td">'.$record['vessel2_draught'].'</td>
                                 <td class="header-td">'.__( "After Draught", "castalynkmap" ).'</td>
-                                <td class="data-td">'.( floatval( $record['vessel2_completed_draught'] ) > 0?$record['vessel2_completed_draught']:__( "Cargo Inference: Not Eligible", "castalynkmap" )).'</td>
+                                <td class="data-td">'.( floatval( $record['vessel2_completed_draught'] ) > 0?$record['vessel2_completed_draught']:__( "Not Eligible", "castalynkmap" )).'</td>
                             </tr>
                             <tr>
                                 <td class="header-td">'.__( "Last Position", "castalynkmap" ).'</td>
