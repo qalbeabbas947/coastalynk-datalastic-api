@@ -135,6 +135,7 @@ input#caostalynk_sts_history_range {
     font-size: 1rem;
     width: 20px;
     height: 20px;
+    display: inline-block;
 }
 .coastalynk-popup-content-box, .coastalynk-sts-popup-content-box{
     padding-left: 20px;
@@ -299,7 +300,20 @@ input.coastalynk-sts-retrieve-popup-daughtership-btn {
 .coastalynk-sts-popup-content-box-list .fa-angle-right:before {
     content: "\f105";
 }
-
+button.coastalynk-sts-history-buttons-popup-export-pdf {
+    padding: 3px;
+    border-radius: 5px;
+    color: var(--wp--preset--color--text-blue);
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    cursor: pointer;
+}
+.coastalynk-sts-history-buttons-popup-export-pdf:hover{
+    background-color: #f0f0f0;
+    transition: border 0.4s ease-in;
+    cursor: pointer;
+}
 #coastalynk-sts-popup-table{
     width: 100%;
 }

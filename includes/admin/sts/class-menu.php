@@ -409,15 +409,30 @@ class CSM_STS_Admin_Menu {
             </div>
             <div class="coastalynk-popup-overlay"></div>
             <div class="coastalynk-popup-content">
-                <h2>
-                    <div> 
-                        <span class="coastalynk-sts-popup-content-top-heading"><?php _e( "STS Activity", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-top-heading-status"></span></span><span class="coastalynk-sts-popup-content-operationmode"></span>
-                        <span class="coastalynk-popup-approved-zone"><i class="fa fa-check-square" aria-hidden="true"></i></span>
-                        <span class="coastalynk-popup-unapproved-zone"><i class="fa fa-exclamation" aria-hidden="true"></i></span>
-                        <span class="coastalynk-popup-risk-level-top"></span>
-                    </div>
-                    <div id="coastalynk-popup-close"><span class="dashicons dashicons-no"></span></div>
-                </h2>
+                <form method="post" id="coastalynk-port-sts-popup-history-form" action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" name="coastalynk-port-sts-popup-history-form">
+                    <h2>
+                        <div> 
+                            <span class="coastalynk-sts-popup-content-top-heading"><?php _e( "STS Activity", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-top-heading-status"></span></span><span class="coastalynk-sts-popup-content-operationmode"></span>
+                            <span class="coastalynk-popup-approved-zone"><i class="fa fa-check-square" aria-hidden="true"></i></span>
+                            <span class="coastalynk-popup-unapproved-zone"><i class="fa fa-exclamation" aria-hidden="true"></i></span>
+                            <span class="coastalynk-popup-risk-level-top"></span>
+                        </div>
+                        <div>
+                            <button class="coastalynk-sts-history-buttons-popup-export-pdf" data-id="export-pdf">
+                                <?php _e( "Export PDF", "castalynkmap" );?>
+                                <div id="coastalynk-column-loader" class="coastalynk-column-loader" style="display:none;">
+                                    <div id="coastalynk-column-blockG_1" class="coastalynk-column-blockG"></div>
+                                    <div id="coastalynk-column-blockG_2" class="coastalynk-column-blockG"></div>
+                                    <div id="coastalynk-column-blockG_3" class="coastalynk-column-blockG"></div>
+                                </div>
+                            </button>
+                            <div id="coastalynk-popup-close"><span class="dashicons dashicons-no"></span></div>
+                        </div>
+                    </h2>
+                    <?php wp_nonce_field( 'coastalynk_sts_popup_history_load', 'coastalynk_sts_popup_history_load_nonce' ); ?>
+                    <input type="hidden" id="coastalynk_sts_popup_history_load_vessel_id_ctrl" name="event_id" value="0" />
+                    <input type="hidden" id="coastalynk_sts_popup_history_load_action_ctrl" name="action" value="coastalynk_sts_popup_history_export_single_event_id" />
+                </form>
                 <p><?php _e( "Proximity, stationary behavior, and time persistence align with established STS criteria.", "castalynkmap" );?></p>
                 <div class="coastalynk-popup-top-message" style="display:none;"></div>
                 <!-- <div class="coastalynk-popup-top-progress-bar" data-percentage="10">

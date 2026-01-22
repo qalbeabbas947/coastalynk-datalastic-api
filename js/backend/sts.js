@@ -21,6 +21,14 @@
                 CSM_STS.load_datetime_pickers();
                 CSM_STS.load_date_range_js();
                 CSM_STS.popup_top_progress_bar();
+                CSM_STS.submit_export_popup_event();
+            },
+            submit_export_popup_event: function(){
+                $('#coastalynk-port-sts-popup-history-form').on('click', '.coastalynk-sts-history-buttons-popup-export-pdf', function(event) {
+                    event.preventDefault();
+                    let btn = $(this).data('id');
+                    $("#coastalynk-port-sts-popup-history-form").submit();
+                });
             },
             popup_top_progress_bar: function() {
                 var percentage = $(".coastalynk-popup-top-progress-bar").data('percentage');
@@ -220,6 +228,8 @@
                         error: function(jqXHR, textStatus, errorThrown) {
                         }
                     });
+                    $("#coastalynk_sts_popup_history_load_vessel_id_ctrl").val(data.id);
+
                     $(".coastalynk-sts-popup-content-vessel1_tonnage").html(data.gross_tonnage);;
                     $(".coastalynk-sts-popup-content-vessel1_name").html(data.name);
                     $(".coastalynk-sts-popup-content-vessel1_mmsi").html(data.mmsi);
