@@ -411,7 +411,7 @@ class CSM_STS_Admin_Menu {
             <div class="coastalynk-popup-content">
                 <h2>
                     <div> 
-                        <?php _e( "STS Activity", "castalynkmap" );?><span class="coastalynk-sts-popup-content-operationmode"></span>
+                        <span class="coastalynk-sts-popup-content-top-heading"><?php _e( "STS Activity", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-top-heading-status"></span></span><span class="coastalynk-sts-popup-content-operationmode"></span>
                         <span class="coastalynk-popup-approved-zone"><i class="fa fa-check-square" aria-hidden="true"></i></span>
                         <span class="coastalynk-popup-unapproved-zone"><i class="fa fa-exclamation" aria-hidden="true"></i></span>
                         <span class="coastalynk-popup-risk-level-top"></span>
@@ -455,7 +455,7 @@ class CSM_STS_Admin_Menu {
                         <h3><?php _e( "Mothership Status", "castalynkmap" );?><span title = "<?php _e( "Mother", "castalynkmap" );?>" class="coastalynk-popup-vessel2-parent" style="display:none;"><?php _e( "(Mother)", "castalynkmap" );?></span><span title = "<?php _e( "Daughter", "castalynkmap" );?>" class="coastalynk-popup-vessel2-daughter" style="display:none;"><?php _e( "(Daughter)", "castalynkmap" );?></span></h3>
                         <ul class="coastalynk-popup-content-box-list">
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Port:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-port"></span></li>
-                            <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Distance:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-distance"></span></li>
+                            <!-- <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Distance:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-distance"></span>m</li> -->
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Ref#:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-event_ref_id"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Start Date:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-start_date"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "End Date:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-end_date"></span></li>
@@ -497,7 +497,7 @@ class CSM_STS_Admin_Menu {
                     <div class="coastalynk-sts-popup-content-box coastalynk-sts-popup-content-box-daughtship-detail" style="display: none;">
                         <h3><?php _e( "Daughtership Status", "castalynkmap" );?></h3>
                         <ul class="coastalynk-sts-popup-content-box-list">
-                            <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Distance:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel2_distance"></span></li>
+                            <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Distance:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel2_distance"></span>m</li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Joining Date:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel2_joining_date"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Lock Time:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel2_lock_time"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "End Date:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel2_end_date"></span></li>

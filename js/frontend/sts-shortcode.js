@@ -119,7 +119,7 @@
             $(".coastalynk-popup-sts-remarks").html(data.remarks);
             $(".coastalynk-sts-popup-content-vessel2_risk_level").html(data.risk_level);
             $(".coastalynk-sts-popup-content-vessel2_stationary_duration_hours").html(data.stationary_duration_hours);
-            $(".coastalynk-sts-popup-content-vessel2_distance").html(data.distance);
+            $(".coastalynk-sts-popup-content-vessel2_distance").html(data.distance.toFixed(2));
             $(".coastalynk-sts-popup-content-vessel2_end_date").html(data.end_date);
             $(".coastalynk-sts-popup-content-vessel2_joining_date").html(data.joining_date);
             $(".coastalynk-sts-popup-content-vessel2_lock_time").html(data.lock_time);
@@ -237,14 +237,14 @@
             $(".coastalynk-sts-popup-content-event_percentage").html(data.event_percentage);
             $(".coastalynk-sts-popup-content-cargo_category_type").html(data.cargo_category_type);
             $(".coastalynk-sts-popup-content-risk_level").html(data.risk_level);
-            $(".coastalynk-sts-popup-content-distance").html(data.distance);
+            // $(".coastalynk-sts-popup-content-distance").html(data.distance);
             $(".coastalynk-sts-popup-content-stationary_duration_hours").html(data.stationary_duration_hours);
             $(".coastalynk-sts-popup-content-proximity_consistency").html(data.proximity_consistency);
             $(".coastalynk-sts-popup-content-data_points_analyzed").html(data.data_points_analyzed);
             $(".coastalynk-sts-popup-content-operationmode").html(data.operationmode);
             $(".coastalynk-sts-popup-content-status").html(data.status);
-            $(".coastalynk-sts-popup-content-last_updated").html(data.last_updated);
-            
+            $(".coastalynk-sts-popup-content-top-heading-status").html(data.status);
+            $(".coastalynk-sts-popup-content-last_updated").html(data.last_updated);            
             $('.coastalynk-sts-popup-content-box-daughtship-detail').hide();
             $('.coastalynk-sts-popup-content-box-close-daughtship-detail').hide();
             $('.coastalynk-sts-popup-content-box-wide').show();

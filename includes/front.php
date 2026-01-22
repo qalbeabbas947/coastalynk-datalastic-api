@@ -124,7 +124,31 @@ class Coastalynk_Sea_Vessel_Map_Front {
                                         if( in_array( $key, ['last_updated', 'start_date', 'lock_time', 'joining_date', 'end_date'] ) && !empty($val)) {
                                             $attributes .= ' data-'.$key.' = "'.get_date_from_gmt( $val, CSM_DATE_FORMAT.' '.CSM_TIME_FORMAT ).'"';
                                         } else if( in_array( $key, ['remarks' ] ) ) {
-                                            $attributes .= ' data-'.$key.' = "'.$this->generateSTSRemark($vessel['proximity_consistency'], $vessel['speed'], $vessel['stationary_duration_hours'], $port, $vessel['risk_level']).'"';
+                                            $end_date = date( 'Y-m-d H:i:s' );
+                                            if( !empty( $vessel['end_date'] ) ) {
+                                                $end_date = $vessel['end_date'];
+                                            } else if( !empty( $vessel['last_updated'] ) ) {
+                                                $end_date = $vessel['last_updated'];
+                                            }
+
+                                            $dateTime1 = new DateTime($end_date);
+                                            $dateTime2 = new DateTime($vessel['joining_date']);
+                                            $interval = $dateTime2->diff($dateTime1);
+                                            $totalMinutes = ($interval->days * 24 * 60) + ($interval->h * 60) + $interval->i;
+
+                                            $total_hours = ( $interval->days * 24 + $interval->h ).'h '. $interval->i.'m';
+
+                                            $stationary_duration_mins   = ( floatval( $vessel['stationary_duration_hours'] ) * 60 );
+                                            $confidence_level = 'Low';
+                                            if( $stationary_duration_mins < 30 ) {
+                                                $confidence_level = 'Low';
+                                            } else if( $stationary_duration_mins >= 30 && $stationary_duration_mins <= 90 ) {
+                                                $confidence_level = 'Medium';
+                                            } else if( $stationary_duration_mins > 90 && ( $vessel['distance'] < 10 || $vessel['speed'] < 2 ) ) {
+                                                $confidence_level = 'High';
+                                            }
+
+                                            $attributes .= ' data-'.$key.' = "'.$this->generateSTSRemark($vessel['proximity_consistency'], number_format($vessel['distance'], 1), number_format($vessel['speed'], 1), $total_hours, strtoupper($port), $confidence_level, $vessel['status'],  $vessel['stationary_duration_hours']).'"';
                                         } else if( in_array( $key, ['draught' ] ) ) {
                                             $attributes .= ' data-'.$key.' = "'.( floatval( $val ) > 0?$val.'m':__( "Pending", "castalynkmap" )).'"';
                                         } else if( in_array( $key, [ 'completed_draught' ] ) ) {
@@ -152,35 +176,59 @@ class Coastalynk_Sea_Vessel_Map_Front {
         exit;
     }
 
-    function generateSTSRemark($proximity, $speed, $duration, $location, $confidence) {
+    function generateSTSRemark($proximity, $distance, $speed, $duration, $location, $confidence, $status, $stationary_duration_hours) {
         // Format proximity with nm
-        $formattedProximity = is_numeric($proximity) ? number_format($proximity, 2) . 'nm' : $proximity;
         
-        // Format speed with kn and determine description
-        $speedDesc = '';
-        if (is_numeric($speed)) {
-            $formattedSpeed = number_format($speed, 1) . 'kn';
-            $speedDesc = $speed <= 1.0 ? 'low' : ($speed <= 3.0 ? 'moderate' : 'high');
-        } else {
-            $formattedSpeed = $speed;
-        }
+        return $string = sprintf( __( 'Distance: %sm | Speed: %skn | Duration: %s | Confidence: %s | Zone: %s', "castalynkmap" ), $distance, $speed, $duration, $confidence, $location );
+
+        // $formattedProximity = is_numeric($proximity) ? number_format($proximity, 2) . 'nm' : $proximity;
+        // $formattedProximitystr = '';
+        // if( floatval($proximity) > 70 ) {
+        //     $formattedProximitystr = sprintf( __( 'maintained close contact (~%s proximity)', "castalynkmap" ), $formattedProximity );
+        // } else {
+        //     $formattedProximitystr = sprintf( __( 'about to maintain a contact (~%s proximity)', "castalynkmap" ), $formattedProximity );
+        // }
+       
+        // // Format speed with kn and determine description
+        // $speedDesc = '';
+        // if (is_numeric($speed)) {
+        //     $formattedSpeed = number_format($speed, 1) . 'kn';
+        //     $speedDesc = $speed <= 1.0 ? 'low' : ($speed <= 3.0 ? 'moderate' : 'high');
+        // } else {
+        //     $formattedSpeed = $speed;
+        // }
         
-        // Format duration
-        $formattedDuration = '';
-        if (is_numeric($duration)) {
-            $hours = floor($duration / 60);
-            $minutes = $duration % 60;
-            $formattedDuration = $hours > 0 ? $hours . 'h' : '';
-            $formattedDuration .= $minutes > 0 ? ($hours > 0 ? ' ' : '') . $minutes . 'm' : '';
-        } else {
-            $formattedDuration = $duration;
-        }
+        // // Format duration
+        // $formattedDuration = '';
+        // if (is_numeric($duration)) {
+        //     $hours = floor($duration / 60);
+        //     $minutes = $duration % 60;
+        //     $formattedDuration = $hours > 0 ? $hours . 'h' : '';
+        //     $formattedDuration .= $minutes > 0 ? ($hours > 0 ? ' ' : '') . $minutes . 'm' : '';
+        // } else {
+        //     $formattedDuration = $duration;
+        // }
         
-        // Format confidence with proper case
-        $formattedConfidence = ucfirst(strtolower($confidence));
+        // // Format confidence with proper case
+        // $formattedConfidence = ucfirst(strtolower($confidence));
         
-        // Build the remark
-        return "STS likely ongoing — maintained close contact (~$formattedProximity proximity) at $speedDesc speed (~$formattedSpeed) for ~$formattedDuration within $location. Confidence: $formattedConfidence.";
+        // $statusDesc = '';
+        // switch ($status) {
+        //     case 'tentative':
+        //         $statusDesc = __( 'Uncertain STS progress — ', "castalynkmap" );
+        //         break;
+        //     case 'ended':
+        //         $statusDesc = __( 'STS progress is complete — ', "castalynkmap" );
+        //         break;
+        //     case 'active':
+        //         $statusDesc = __( 'STS likely ongoing — ', "castalynkmap" );
+        //         break;
+        //     default:
+        //         $statusDesc = '';
+        //         break;
+        // }
+        // // Build the remark
+        // return $statusDesc.$formattedProximitystr." at $speedDesc speed (~$formattedSpeed) for ~$formattedDuration within $location. Confidence: $formattedConfidence.";
     }
     /**
      * enque dashboard.

@@ -76,7 +76,7 @@ class Coastalynk_STS_Shortcode {
         }
 
         $vessel_data = $wpdb->get_results( "SELECT e.id, e.id as did, e.uuid as vessel1_uuid, e.mmsi as vessel1_mmsi,e.name as vessel1_name,e.imo as vessel1_imo,e.country_iso as vessel1_country_iso, 
-        e.type as vessel1_type, e.type_specific as vessel1_type_specific, e.last_position_UTC as vessel1_last_position_UTC , e.navigation_status as vessel1_navigation_status, e.draught as vessel1_draught, e.speed as vessel1_speed,e.distance,e.last_updated, e.port, e.zone_terminal_name,
+        e.type as vessel1_type, e.type_specific as vessel1_type_specific, e.last_position_UTC as vessel1_last_position_UTC , e.navigation_status as vessel1_navigation_status, e.draught as vessel1_draught, e.speed as vessel1_speed,d.distance,e.last_updated, e.port, e.zone_terminal_name,
         e.lat as vessel1_lat, e.lon as vessel1_lon, d.uuid as vessel2_uuid, d.mmsi as vessel2_mmsi,d.name as vessel2_name,d.imo as vessel2_imo,d.country_iso as vessel2_country_iso, 
         d.type as vessel2_type, d.type_specific as vessel2_type_specific, d.speed as vessel2_speed, e.last_position_UTC as vessel2_last_position_UTC, d.navigation_status as vessel2_navigation_status, d.draught as vessel2_draught, d.lat as vessel2_lat, d.lon as vessel2_lon  
         from ".$event_table_mother." as e inner join ".$event_table_daughter." as d on(e.id=d.event_id) where e.is_disappeared = 'No'");
@@ -241,7 +241,7 @@ class Coastalynk_STS_Shortcode {
             <div class="coastalynk-sts-popup-content">
                 <h2>
                     <div>
-                        <span class="coastalynk-sts-popup-content-top-heading coastalynk-tooltip"><?php _e( "STS Activity Detected", "castalynkmap" );?><span class="coastalynk-tooltiptext">Some tooltip text</span></span>
+                        <span class="coastalynk-sts-popup-content-top-heading"><?php _e( "STS Activity", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-top-heading-status"></span></span>
                         <span class="coastalynk-popup-approved-zone"><i class="fa fa-check-square" aria-hidden="true"></i></span>
                         <span class="coastalynk-popup-unapproved-zone"><i class="fa fa-exclamation" aria-hidden="true"></i></span>
                         <p class="coastalynk-popup-sts-remarks"><?php _e( "Proximity, stationary behavior, and time persistence align with established STS criteria.", "castalynkmap" );?></p>
@@ -269,7 +269,7 @@ class Coastalynk_STS_Shortcode {
                         <h3><?php _e( "Mothership Status", "castalynkmap" );?></h3>
                         <ul class="coastalynk-sts-popup-content-box-list">
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Port:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-port"></span></li>
-                            <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Distance:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-distance"></span></li>
+                            <!-- <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Distance:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-distance"></span>m</li> -->
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Ref#:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-event_ref_id"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Start Date:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-start_date"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "End Date:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-end_date"></span></li>
@@ -311,7 +311,7 @@ class Coastalynk_STS_Shortcode {
                     <div class="coastalynk-sts-popup-content-box coastalynk-sts-popup-content-box-daughtship-detail" style="display: none;">
                         <h3><?php _e( "Daughtership Status", "castalynkmap" );?></h3>
                         <ul class="coastalynk-sts-popup-content-box-list">
-                            <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Distance:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel2_distance"></span></li>
+                            <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Distance:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel2_distance"></span>m</li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Joining Date:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel2_joining_date"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Lock Time:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel2_lock_time"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "End Date:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel2_end_date"></span></li>
