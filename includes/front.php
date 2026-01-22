@@ -54,6 +54,10 @@ class Coastalynk_Sea_Vessel_Map_Front {
         add_action('admin_post_coastalynk_sts_history_load_action_ctrl_csv', [ $this, 'coastalynk_sts_history_load_action_ctrl_csv_callback' ]);
         add_action('admin_post_nopriv_coastalynk_sts_history_load_action_ctrl_csv', [ $this, 'coastalynk_sts_history_load_action_ctrl_csv_callback' ]);
 
+
+        add_action('admin_post_coastalynk_sts_popup_history_export_single_event_id', [ $this, 'coastalynk_sts_popup_history_export_single_event_id_callback' ]);
+        add_action('admin_post_nopriv_coastalynk_sts_popup_history_export_single_event_id', [ $this, 'coastalynk_sts_popup_history_export_single_event_id_callback' ]);
+
         add_action('admin_post_coastalynk_sts_history_load_action_ctrl_pdf', [ $this, 'coastalynk_sts_history_load_action_ctrl_pdf_callback' ]);
         add_action('admin_post_nopriv_coastalynk_sts_history_load_action_ctrl_pdf', [ $this, 'coastalynk_sts_history_load_action_ctrl_pdf_callback' ]);
 
@@ -229,6 +233,273 @@ class Coastalynk_Sea_Vessel_Map_Front {
         // }
         // // Build the remark
         // return $statusDesc.$formattedProximitystr." at $speedDesc speed (~$formattedSpeed) for ~$formattedDuration within $location. Confidence: $formattedConfidence.";
+    }
+
+    /**
+     * Export Single Event PDF
+     */
+    function coastalynk_sts_popup_history_export_single_event_id_callback() {
+
+        if (!isset($_POST['coastalynk_sts_popup_history_load_nonce']) || !wp_verify_nonce($_POST['coastalynk_sts_popup_history_load_nonce'], 'coastalynk_sts_popup_history_load')) {
+            
+            echo $error_url = add_query_arg('form_error', 'Security verification failed', wp_get_referer());exit;
+            wp_redirect($error_url);
+            exit;
+        }
+
+        $event_id = intval( $_POST['event_id'] );
+        if( $event_id <= 0 ) {
+            $error_url = add_query_arg('form_error', 'Event ID is required', wp_get_referer());
+            wp_redirect($error_url);
+            exit;
+        }
+
+        global $wpdb;
+
+            
+
+        $event_table_mother = $wpdb->prefix . 'coastalynk_sts_events';
+        $event_table_daughter = $wpdb->prefix . 'coastalynk_sts_event_detail';
+        //$vessle_recs = $wpdb->get_results( $wpdb->prepare( "SELECT e.`id`,e.`uuid` as vessel1_uuid, e.`name` as vessel1_name, e.`mmsi` as vessel1_mmsi, e.`imo` as vessel1_imo, e.`country_iso` as vessel1_country_iso, e.`type` as vessel1_type, e.`type_specific` as vessel1_type_specific, e.`lat` as vessel1_lat, e.`lon` as vessel1_lon, e.`speed` as vessel1_speed, e.`navigation_status` as vessel1_navigation_status, e.`draught` as vessel1_draught, e.`completed_draught` as vessel1_completed_draught, e.`last_position_UTC` as vessel1_last_position_UTC, e.`ais_signal` as vessel1_signal,e.`deadweight` as vessel1_deadweight,e.`gross_tonnage` as vessel1_gross_tonnage,e.`port`,e.`port_id`, e.`distance`,e.`event_ref_id`, e.`zone_type`,e.`zone_ship`, e.`zone_terminal_name`,e.`start_date`,e.`end_date`,e.`status`,e.`is_email_sent`,e.`is_complete`,e.`is_disappeared`, e.`last_updated`, d.`event_id`,d.`uuid` as vessel2_uuid,d.`name` as vessel2_name,d.`mmsi` as vessel2_mmsi,d.`imo` as vessel2_imo,d.`country_iso` as vessel2_country_iso,d.`type` as vessel2_type,d.`type_specific` as vessel2_type_specific,d.`lat` as vessel2_lat,d.`lon` as vessel2_lon,d.`speed` as vessel2_speed,d.`navigation_status` as vessel2_navigation_status,d.`draught` as vessel2_draught,d.`completed_draught` as vessel2_completed_draught,d.`last_position_UTC` as vessel2_last_position_UTC,d.`deadweight` as vessel2_deadweight,d.`gross_tonnage` as vessel2_gross_tonnage,d.`draught_change`,d.`ais_signal` as vessel2_signal,d.`end_date` as vessel2_end_date, d.`distance`,d.`event_percentage`,d.`cargo_category_type`,d.`risk_level`,d.`stationary_duration_hours`,d.`proximity_consistency`,d.`data_points_analyzed`,d.`is_disappeared`,d.`operationmode`,d.`is_complete` as vessel2_is_complete,d.`last_updated` as vessel2_last_updated,d.`status` as vessel2_status,d.`outcome_status`,d.`flag_status` from ".$event_table_mother." as e inner join ".$event_table_daughter." as d on(e.id=d.event_id) where e.id = %d", $event_id), ARRAY_A );
+        
+        $vessle_recs = $wpdb->get_results( $wpdb->prepare( "SELECT * from ".$event_table_mother." where id = %d", $event_id), ARRAY_A );
+        
+        require( CSM_LIB_DIR.'vendor/autoload.php' );
+        $options = new Dompdf\Options();
+        $options->set('isRemoteEnabled', true);
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('chroot', __DIR__); // Set base directory
+        $options->set('defaultFont', 'Helvetica');
+
+        // Create PDF instance
+        $dompdf = new Dompdf\Dompdf();
+
+        //$imageData = base64_encode(file_get_contents(get_template_directory_uri().'/assets/images/main_logo-footer.png'));
+        $imageData = base64_encode(file_get_contents('https://coastalynk.com/staging/wp-content/themes/coastalynk/assets/images/main_logo-footer.png'));
+        $base64Image = 'data:image/jpeg;base64,' . $imageData;
+
+        // HTML content
+        $html = '
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                body { font-family: Arial, sans-serif; }
+                .currency{font-family: "DejaVu Sans Mono", monospace;}
+                h1 { color: #333; }
+                .header-td { background-color: #ddd;border: 1px solid #ddd;padding: 8px; }
+                .data-td { background-color: #eee;border: 1px solid #ddd;padding: 8px; }
+                .content { margin: 0px; }
+                footer{ background-color:#317ec6; color:white; padding:5px;}
+            </style>
+        </head>
+        <body>
+            <div class="content">
+                <table width="100%" cellpadding="5px" cellspacing="0">
+                    
+                
+                    <tr style="background-color:#317ec6;">
+                        <td width="35%" style="background-color:#317ec6;"><img width=""171px src="'.$base64Image.'" /></td>
+                        <td width="65%" valign="" style="background-color:#317ec6;color:white;"><h2>'.__( "Coastalynk STS Report", "castalynkmap" ).'</h2><span style="font-size:13px; color: white;">'.__( "Digital Maritime Intelligence Platform", "castalynkmap" ).'</span></td>
+                    </tr>
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td>&nbsp;</td>
+                    </tr>
+                    
+                    ';
+                    
+                    foreach( $vessle_recs as $record ) {
+                        $html .= '<tr><td colspan="2"><table width="100%" cellpadding="5px" cellspacing="0">
+                        <tr><td class="data-td" colspan="6">'.__( "Mother Vessel:", "castalynkmap" ).'</td></tr>
+                        <tr>
+                            <td class="header-td">'.__( "Event ID", "castalynkmap" ).'</td>
+                            <td class="data-td">'.$record['event_ref_id'].'</td>
+                            <td class="header-td">'.__( "Start Date", "castalynkmap" ).'</td>
+                            <td class="data-td">'.$record['start_date'].'</td>
+                            <td class="header-td">'.__( "End Date", "castalynkmap" ).'</td>
+                            <td class="data-td">'.$record['end_date'].'</td>
+                        </tr>
+                        <tr>
+                            <td class="header-td">'.__( "Name", "castalynkmap" ).'</td>
+                            <td class="data-td">'.$record['name'].'</td>
+                            <td class="header-td">'.__( "MMSI", "castalynkmap" ).'</td>
+                            <td class="data-td">'.$record['mmsi'].'</td>
+                            <td class="header-td">'.__( "IMP", "castalynkmap" ).'</td>
+                            <td class="data-td">'.$record['imo'].'</td>
+                        </tr>
+                        <tr>
+                            <td class="header-td">'.__( "Country", "castalynkmap" ).'</td>
+                            <td class="data-td">'.$record['country_iso'].'</td>
+                            <td class="header-td">'.__( "Type", "castalynkmap" ).'</td>
+                            <td class="data-td">'.$record['type'].'</td>
+                            <td class="header-td">'.__( "Sub. Type", "castalynkmap" ).'</td>
+                            <td class="data-td">'.$record['type_specific'].'</td>
+                        </tr>
+                        <tr>
+                            <td class="header-td">'.__( "Lattitude", "castalynkmap" ).'</td>
+                            <td class="data-td">'.$record['lat'].'</td>
+                            <td class="header-td">'.__( "Longitude", "castalynkmap" ).'</td>
+                            <td class="data-td">'.$record['lon'].'</td>
+                            <td class="header-td">'.__( "Speed", "castalynkmap" ).'</td>
+                            <td class="data-td">'.$record['speed'].'</td>
+                        </tr>
+                        <tr>
+                            <td class="header-td">'.__( "Nav. Status", "castalynkmap" ).'</td>
+                            <td class="data-td">'.$record['navigation_status'].'</td>
+                            <td class="header-td">'.__( "Before Draught", "castalynkmap" ).'</td>
+                            <td class="data-td">'.$record['draught'].'</td>
+                            <td class="header-td">'.__( "After Draught", "castalynkmap" ).'</td>
+                            <td class="data-td">'.( floatval( $record['completed_draught'] ) > 0?$record['completed_draught']:__( "Not Eligible", "castalynkmap" )).'</td>
+                        </tr>
+                        <tr>
+                            <td class="header-td">'.__( "Signal", "castalynkmap" ).'</td>
+                            <td class="data-td">'.$record['ais_signal'].'</td>
+                            <td class="header-td">'.__( "Dead Weight", "castalynkmap" ).'</td>
+                            <td class="data-td">'.$record['deadweight'].'</td>
+                            <td class="header-td">'.__( "Tonnage", "castalynkmap" ).'</td>
+                            <td class="data-td">'.$record['gross_tonnage'].'</td>
+                        </tr>
+                        <tr>
+                            <td class="header-td">'.__( "Port", "castalynkmap" ).'</td>
+                            <td class="data-td">'.$record['zone_terminal_name'].'</td>
+                            <td class="header-td">'.__( "Distance", "castalynkmap" ).'</td>
+                            <td class="data-td">'.$record['distance'].'</td>
+                            <td class="header-td">'.__( "Zone Type", "castalynkmap" ).'</td>
+                            <td class="data-td">'.$record['zone_type'].'</td>
+                        </tr>
+                        <tr>
+                            <td class="header-td">'.__( "Status", "castalynkmap" ).'</td>
+                            <td class="data-td">'.$record['status'].'</td>
+                            <td class="header-td">'.__( "Last Updated", "castalynkmap" ).'</td>
+                            <td class="data-td">'.$record['last_updated'].'</td>
+                            <td class="header-td">'.__( "Last Position", "castalynkmap" ).'</td>
+                            <td class="data-td">'.$record['last_position_UTC'].'</td>
+                            
+                        </tr>';
+                        $html .= '</table></td> </tr>';
+                        $daughter_recs = $wpdb->get_results( $wpdb->prepare( "SELECT * from ".$event_table_daughter." where event_id = %d", $record['id']), ARRAY_A );
+                        $index = 1;
+                        foreach( $daughter_recs as $daughter ) {
+
+                            $html .= '<tr><td><table><tr><td class="data-td" colspan="6">'.__( "Daughter Vessel ", "castalynkmap" ).($index++).':</td></tr>
+                            <tr>
+                                <td class="header-td">'.__( "Name", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$daughter['name'].'</td>
+                                <td class="header-td">'.__( "MMSI", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$daughter['mmsi'].'</td>
+                                <td class="header-td">'.__( "IMP", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$daughter['imo'].'</td>
+                            </tr>
+                            <tr>
+                                <td class="header-td">'.__( "Country", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$daughter['country_iso'].'</td>
+                                <td class="header-td">'.__( "Type", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$daughter['type'].'</td>
+                                <td class="header-td">'.__( "Sub. Type", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$daughter['type_specific'].'</td>
+                            </tr>
+                            <tr>
+                                <td class="header-td">'.__( "Lattitude", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$daughter['lat'].'</td>
+                                <td class="header-td">'.__( "Longitude", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$daughter['lon'].'</td>
+                                <td class="header-td">'.__( "Speed", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$daughter['speed'].'</td>
+                            </tr>
+                            <tr>
+                                <td class="header-td">'.__( "Nav. Status", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$daughter['navigation_status'].'</td>
+                                <td class="header-td">'.__( "Before Draught", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$daughter['draught'].'</td>
+                                <td class="header-td">'.__( "After Draught", "castalynkmap" ).'</td>
+                                <td class="data-td">'.( floatval( $daughter['completed_draught'] ) > 0?$daughter['completed_draught']:__( "Not Eligible", "castalynkmap" )).'</td>
+                            </tr>
+                            <tr>
+                                <td class="header-td">'.__( "Joining Date", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$daughter['joining_date'].'</td>
+                                <td class="header-td">'.__( "Locking Time", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$daughter['lock_time'].'</td>
+                                <td class="header-td">'.__( "End Date", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$daughter['end_date'].'</td>
+                            </tr>
+                            <tr>
+                                <td class="header-td">'.__( "Signal", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$daughter['ais_signal'].'</td>
+                                <td class="header-td">'.__( "Dead Weight", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$daughter['deadweight'].'</td>
+                                <td class="header-td">'.__( "Tonnage", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$daughter['gross_tonnage'].'</td>
+                            </tr>
+                            <tr>
+                                <td class="header-td">'.__( "Distance", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$daughter['distance'].'</td>
+                                <td class="header-td">'.__( "Stationary(hrs)", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$daughter['stationary_duration_hours'].'</td>
+                                <td class="header-td">'.__( "Proximity", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$daughter['proximity_consistency'].'</td>
+                            </tr>
+                            <tr>    
+                                <td class="header-td">'.__( "Percentage", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$daughter['event_percentage'].'</td>
+                                <td class="header-td">'.__( "Cargo Type", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$daughter['cargo_category_type'].'</td>
+                                <td class="header-td">'.__( "Risk Status", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$daughter['risk_level'].'</td>
+                            </tr>
+                            <tr>
+                                <td class="header-td">'.__( "Data Points", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$daughter['data_points_analyzed'].'</td>
+                                <td class="header-td">'.__( "Operation Mode", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$daughter['operationmode'].'</td>
+                                <td class="header-td">'.__( "Last Updated", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$daughter['last_updated'].'</td>
+                            </tr> 
+                            <tr>
+                                <td class="header-td">'.__( "Last Position", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$daughter['last_position_UTC'].'</td>
+                                <td class="header-td">'.__( "Outcome Classification", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$daughter['outcome_status'].'</td>
+                                <td class="header-td">'.__( "Review / Workflow Flags", "castalynkmap" ).'</td>
+                                <td class="data-td">'.$daughter['flag_status'].'</td>
+                            </tr>                                            
+                            <tr>
+                                <td class="header-td">'.__( "Last Updated", "castalynkmap" ).'</td>
+                                <td class="data-td" colspan="5">'.$daughter['last_updated'].'</td>
+                            </tr>
+                            <tr>
+                                <td class="header-td">'.__( "Remarks", "castalynkmap" ).'</td>
+                                <td class="data-td" colspan="5">'.$daughter['remarks'].'</td>
+                            </tr>
+                            <tr>
+                                <td colspan="6">&nbsp;</td>
+                            </tr>';
+                            $html .= '</table></td> </tr>';
+                        }
+                    }    
+                        
+                    $html .= '</table></td> </tr>';
+        $html .= '</table>
+            </div>
+            <footer>Generated by Coastalynk STS - Pilot Version.</footer>
+        </body>
+        </html>';
+
+        // Load HTML content
+        $dompdf->loadHtml($html);
+
+        // Set paper size and orientation
+        $dompdf->setPaper('A4', 'portrait');
+
+        // Render PDF
+        $dompdf->render();
+
+        // Output the PDF
+        $dompdf->stream("document.pdf", array("Attachment" => false));
+
+        
+
+        exit;
     }
     /**
      * enque dashboard.

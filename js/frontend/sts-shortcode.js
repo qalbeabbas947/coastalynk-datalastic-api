@@ -15,6 +15,7 @@
         this.close_popup();
         this.goto_map();
         this.submit_export();
+        this.submit_export_popup_event();
         this.display_tonnage();
         
         },
@@ -46,6 +47,13 @@
                     error: function(jqXHR, textStatus, errorThrown) {
                     }
                 });
+            });
+        },
+        submit_export_popup_event: function(){
+            $('#coastalynk-port-sts-popup-history-form').on('click', '.coastalynk-sts-history-buttons-popup-export-pdf', function(event) {
+                event.preventDefault();
+                let btn = $(this).data('id');
+                $("#coastalynk-port-sts-popup-history-form").submit();
             });
         },
         submit_export: function() {
@@ -193,6 +201,9 @@
                 error: function(jqXHR, textStatus, errorThrown) {
                 }
             });
+
+            
+            $("#coastalynk_sts_popup_history_load_vessel_id_ctrl").val(data.id);
             $(".coastalynk-sts-popup-content-vessel1_tonnage").html(data.gross_tonnage);;
             $(".coastalynk-sts-popup-content-vessel1_name").html(data.name);
             $(".coastalynk-sts-popup-content-vessel1_mmsi").html(data.mmsi);
