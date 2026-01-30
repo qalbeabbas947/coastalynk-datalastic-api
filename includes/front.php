@@ -349,8 +349,8 @@ class Coastalynk_Sea_Vessel_Map_Front {
                             <td class="data-td">'.$record['navigation_status'].'</td>
                             <td class="header-td">'.__( "Before Draught", "castalynkmap" ).'</td>
                             <td class="data-td">'.$record['draught'].'</td>
-                            <td class="header-td">'.__( "After Draught", "castalynkmap" ).'</td>
-                            <td class="data-td">'.( floatval( $record['completed_draught'] ) > 0?$record['completed_draught']:__( "Not Eligible", "castalynkmap" )).'</td>
+                            <td class="header-td"></td>
+                            <td class="data-td"></td>
                         </tr>
                         <tr>
                             <td class="header-td">'.__( "Signal", "castalynkmap" ).'</td>
@@ -412,8 +412,8 @@ class Coastalynk_Sea_Vessel_Map_Front {
                                 <td class="data-td">'.$daughter['navigation_status'].'</td>
                                 <td class="header-td">'.__( "Before Draught", "castalynkmap" ).'</td>
                                 <td class="data-td">'.$daughter['draught'].'</td>
-                                <td class="header-td">'.__( "After Draught", "castalynkmap" ).'</td>
-                                <td class="data-td">'.( floatval( $daughter['completed_draught'] ) > 0?$daughter['completed_draught']:__( "Not Eligible", "castalynkmap" )).'</td>
+                                <td class="header-td"></td>
+                                <td class="data-td"></td>
                             </tr>
                             <tr>
                                 <td class="header-td">'.__( "Joining Date", "castalynkmap" ).'</td>
@@ -614,13 +614,8 @@ class Coastalynk_Sea_Vessel_Map_Front {
                                 <td class="data-td">'.$record['vessel1_navigation_status'].'</td>
                                 <td class="header-td">'.__( "Before Draught", "castalynkmap" ).'</td>
                                 <td class="data-td">'.$record['vessel1_draught'].'</td>
-                                <td class="header-td">'.__( "After Draught", "castalynkmap" ).'</td>
-                                <td class="data-td">'.( floatval( $record['vessel1_completed_draught'] ) > 0?$record['vessel1_completed_draught']:__( "Not Eligible", "castalynkmap" )).'</td>
-                            </tr>
-                            <tr>
                                 <td class="header-td">'.__( "Last Position", "castalynkmap" ).'</td>
-                                <td class="data-td" colspan="5">'.$record['vessel1_last_position_UTC'].'</td>
-                                
+                                <td class="data-td">'.$record['vessel1_last_position_UTC'].'</td>
                             </tr>
                             <tr><td class="data-td" colspan="6">'.__( "Vessel 2:", "castalynkmap" ).'</td></tr>
                             <tr>
@@ -652,16 +647,8 @@ class Coastalynk_Sea_Vessel_Map_Front {
                                 <td class="data-td">'.$record['vessel2_navigation_status'].'</td>
                                 <td class="header-td">'.__( "Before Draught", "castalynkmap" ).'</td>
                                 <td class="data-td">'.$record['vessel2_draught'].'</td>
-                                <td class="header-td">'.__( "After Draught", "castalynkmap" ).'</td>
-                                <td class="data-td">'.( floatval( $record['vessel2_completed_draught'] ) > 0?$record['vessel2_completed_draught']:__( "Not Eligible", "castalynkmap" )).'</td>
-                            </tr>
-                            <tr>
                                 <td class="header-td">'.__( "Last Position", "castalynkmap" ).'</td>
                                 <td class="data-td">'.$record['vessel2_last_position_UTC'].'</td>
-                                <td class="header-td"></td>
-                                <td class="data-td"></td>
-                                <td class="header-td"></td>
-                                <td class="data-td"></td>
                             </tr>
                             
                             <tr><td class="data-td" colspan="6">'.__( "General detail:", "castalynkmap" ).'</td></tr>
