@@ -118,7 +118,11 @@ class CSM_STS_Admin_listing extends WP_List_Table {
             case 'start_date':
             case 'end_date':
             case 'last_position_UTC':
-                return get_date_from_gmt( $item[$column_name], CSM_DATE_FORMAT.' '.CSM_TIME_FORMAT );
+                if( ! empty( $val ) && $val != '-' ) {
+                    return get_date_from_gmt( $item[$column_name], CSM_DATE_FORMAT.' '.CSM_TIME_FORMAT );
+                } else {
+                    return '';
+                }
             default:
                 return print_r($item,true);
         }
@@ -203,15 +207,23 @@ class CSM_STS_Admin_listing extends WP_List_Table {
             $attributes = '';
             foreach( $item as $key=>$val ) {
                 if( in_array( $key, ['last_updated', 'start_date', 'end_date', 'last_position_UTC'] ) ) {
-                    $attributes .= ' data-'.$key.' = "'.get_date_from_gmt( $val, CSM_DATE_FORMAT.' '.CSM_TIME_FORMAT ).'"';
+                    if( !empty( $val ) && $val != '-' ) {
+                        $attributes .= ' data-'.$key.' = "'.get_date_from_gmt( $val, CSM_DATE_FORMAT.' '.CSM_TIME_FORMAT ).'"';
+                    } else {
+                        $attributes .= ' data-'.$key.' = ""';
+                    }
                 } else if( in_array( $key, ['draught' ] ) ) {
                     $attributes .= ' data-'.$key.' = "'.( floatval( $val ) > 0?$val.'m':__( "Pending", "castalynkmap" )).'"';
                 } else if( in_array( $key, [ 'completed_draught', 'vessel1_completed_draught', 'vessel2_completed_draught' ] ) ) {
                     $attributes .= ' data-'.$key.' = "'.( floatval( $val ) > 0?$val.'m':__( "Not Eligible", "castalynkmap" )).'"';
-                } else if( in_array( $key, [ 'draught_change' ] ) ) {
-                    $attributes .= ' data-'.$key.' = "'.( floatval( $val ) > 0?$val.'m':__( "Pending / AIS-limited", "castalynkmap" )).'"';
+                } else if( in_array( $key, ['draught_change' ] ) ) {
+                    if( floatval( $val ) > 0 || floatval( $val ) > 0 ) {
+                        $attributes .= ' data-'.$key.' = "'.floatval( $val ).'m"';
+                    } else {
+                        $attributes .= ' data-'.$key.' = "'.__( "No Change", "castalynkmap" ).'"';
+                    }
                 } else if( in_array( $key, [ 'status' ] ) ) {
-                    $attributes .= ' data-'.$key.' = "'.( $val == 'Completed'?__( "Concluded", "castalynkmap" ):$val).'"';
+                    $attributes .= ' data-'.$key.' = "'.( $val == 'Completed'?__( "Concluded", "castalynkmap" ):($val == 'Detected'?__( "Ongoing", "castalynkmap" ):$val)).'"';
                 } else {
                     $attributes .= ' data-'.$key.' = "'.$val.'"';
                 }
@@ -236,24 +248,7 @@ class CSM_STS_Admin_listing extends WP_List_Table {
             $vessel_data = $wpdb->get_results( "SELECT * from ".$event_table_daughter." where event_id = '".$item['id']."'");
             $childern = '<ul>';
             foreach( $vessel_data as $item_data ) {
-                $attributes = '';
-                foreach( $item_data as $key=>$val ) {
-                    if( in_array( $key, ['last_updated', 'lock_time', 'joining_date', 'end_date', 'last_position_UTC'] ) ) {
-                        $attributes .= ' data-'.$key.' = "'.get_date_from_gmt( $val, CSM_DATE_FORMAT.' '.CSM_TIME_FORMAT ).'"';
-                    } else if( in_array( $key, ['draught' ] ) ) {
-                        $attributes .= ' data-'.$key.' = "'.( floatval( $val ) > 0?$val.'m':__( "Pending", "castalynkmap" )).'"';
-                    } else if( in_array( $key, [ 'completed_draught' ] ) ) {
-                        $attributes .= ' data-'.$key.' = "'.( floatval( $val ) > 0?$val.'m':__( "Not Eligible", "castalynkmap" )).'"';
-                    } else if( in_array( $key, [ 'draught_change' ] ) ) {
-                        $attributes .= ' data-'.$key.' = "'.( floatval( $val ) > 0?$val.'m':__( "Pending / AIS-limited", "castalynkmap" )).'"';
-                    } else if( in_array( $key, [ 'status' ] ) ) {
-                        $attributes .= ' data-'.$key.' = "'.( $val == 'Completed'?__( "Concluded", "castalynkmap" ):$val).'"';
-                    }  else {
-                        $attributes .= ' data-'.$key.' = "'.$val.'"';
-                    }
-                }
-
-                $childern .= '<li><a data-action="csm_view_sts" '.$attributes .' class="csm_view_sts" href="javascript:;">'.$item_data->name.'</a></li>';
+                $childern .= '<li>'.$item_data->name.'</li>';
             }
             $childern .= '</ul>';
 
@@ -537,8 +532,12 @@ class CSM_STS_Admin_listing extends WP_List_Table {
                         $data[$count][$key] = ( floatval( $value ) > 0?$value:__( "Pending", "castalynkmap" )).'"';
                     } else if( in_array( $key, [ 'completed_draught' ] ) ) {
                         $data[$count][$key] = ( floatval( $value ) > 0?$value:__( "Not Eligible", "castalynkmap" )).'"';
-                    } else if( in_array( $key, [ 'draught_change' ] ) ) {
-                        $data[$count][$key] = ( floatval( $value ) > 0?$value:__( "Pending / AIS-limited", "castalynkmap" )).'"';
+                    } else if( in_array( $key, ['draught_change' ] ) ) {
+                        if( floatval( $value ) > 0 || floatval( $value ) > 0 ) {
+                            $attributes .= ' data-'.$key.' = "'.floatval( $value ).'m"';
+                        } else {
+                            $attributes .= ' data-'.$key.' = "'.__( "No Change", "castalynkmap" ).'"';
+                        }
                     }  else if( $key == 'status' ) {
                         $data[$count][$key] = ( $value == 'Completed'?__( "Concluded", "castalynkmap" ):$value);
                     } else if( empty( $value ) ) {
@@ -574,7 +573,8 @@ class CSM_STS_Admin_listing extends WP_List_Table {
         
         $this->add_table_styles();
 	}
-private function add_table_styles() {
+    
+    private function add_table_styles() {
         ?>
         <style>
         .fixed-column-table-container {

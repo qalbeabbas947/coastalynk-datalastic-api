@@ -113,6 +113,7 @@ class Coastalynk_STS_Shortcode {
                 </header>
                 <div class="dashboard-sts">
                      <div id="map" style="height: 80vh; width: 100%; min-width:100%;"></div>
+                     <div id="coastalynk-sts-map-notification" class="coastalynk-sts-map-notification"><?php _e( "Showing offshore operational activity reconstructed from AIS data", "castalynkmap" );?></div>
                 </div>
                 
                 <form method="post" id="coastalynk-port-sts-history-form" action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" name="coastalynk-port-sts-history-form">
@@ -160,7 +161,7 @@ class Coastalynk_STS_Shortcode {
                             <tr>
                                 <th></th>
                                 <th><?php _e( "Name", "castalynkmap" );?></th>
-                                <th><?php _e( "MMSI", "castalynkmap" );?></th>
+                                <th><?php _e( "Vessel IDs", "castalynkmap" );?></th>
                                 <th><?php _e( "Status", "castalynkmap" );?></th>
                                 <th><?php _e( "Draught", "castalynkmap" );?></th>
                                 <th><?php _e( "Port", "castalynkmap" );?></th>
@@ -181,7 +182,7 @@ class Coastalynk_STS_Shortcode {
                                         ?>
                                     </td>
                                     <td><?php echo $vessel['name']; ?></td>
-                                    <td><?php echo $vessel['mmsi']; ?></td>
+                                    <td><?php echo $vessel['mmsi']; ?>/<?php echo $vessel['imo']; ?></td>
                                     <td class="<?php echo coastalynk_get_vessel_navigation_status_class( $vessel['navigation_status']); ?>"><?php echo $vessel['navigation_status']; ?></td>
                                     <td>
                                         <input type="button" class="coastalynk-retrieve-draught-btn" data-name="<?php echo $vessel['name']; ?>" data-uuid="<?php echo $vessel['uuid']; ?>" value="<?php _e( "Draught", "castalynkmap" );?>">
@@ -208,16 +209,24 @@ class Coastalynk_STS_Shortcode {
                                         <?php
                                             $attributes = '';
                                             foreach( $vessel as $key=>$val ) {
-                                                if( in_array( $key, ['last_updated', 'start_date', 'end_date'] ) && !empty($val)) {
-                                                    $attributes .= ' data-'.$key.' = "'.get_date_from_gmt( $val, CSM_DATE_FORMAT.' '.CSM_TIME_FORMAT ).'"';
+                                                if( in_array( $key, ['last_updated', 'start_date', 'end_date'] ) ) {
+                                                    if( !empty( $val ) && $val != '-' ) {
+                                                        $attributes .= ' data-'.$key.' = "'.get_date_from_gmt( $val, CSM_DATE_FORMAT.' '.CSM_TIME_FORMAT ).'"';
+                                                    } else {
+                                                        $attributes .= ' data-'.$key.' = ""';
+                                                    }
                                                 } else if( in_array( $key, ['draught' ] ) ) {
                                                     $attributes .= ' data-'.$key.' = "'.( floatval( $val ) > 0?$val.'m':__( "Pending", "castalynkmap" )).'"';
                                                 } else if( in_array( $key, [ 'completed_draught' ] ) ) {
                                                     $attributes .= ' data-'.$key.' = "'.( floatval( $val ) > 0?$val.'m':__( "Not Eligible", "castalynkmap" )).'"';
                                                 } else if( in_array( $key, [ 'draught_change' ] ) ) {
-                                                    $attributes .= ' data-'.$key.' = "'.( floatval( $val ) > 0?$val.'m':__( "Pending / AIS-limited", "castalynkmap" )).'"';
+                                                    if( floatval( $val ) > 0 || floatval( $val ) > 0 ) {
+                                                        $attributes .= ' data-'.$key.' = "'.floatval( $val ).'m"';
+                                                    } else {
+                                                        $attributes .= ' data-'.$key.' = "'.__( "No Change", "castalynkmap" ).'"';
+                                                    }
                                                 } else if( in_array( $key, [ 'status' ] ) ) {
-                                                    $attributes .= ' data-'.$key.' = "'.( $val == 'Completed'?__( "Concluded", "castalynkmap" ):$val).'"';
+                                                    $attributes .= ' data-'.$key.' = "'.( $val == 'Completed'?__( "Concluded", "castalynkmap" ):($val == 'Detected'?__( "Ongoing", "castalynkmap" ):$val)).'"';
                                                 } else {
                                                     $attributes .= ' data-'.$key.' = "'.$val.'"';
                                                 }
@@ -240,13 +249,13 @@ class Coastalynk_STS_Shortcode {
             <div class="coastalynk-sts-popup-overlay"></div>
             <div class="coastalynk-sts-popup-content">
                 <form method="post" id="coastalynk-port-sts-popup-history-form" action="<?php echo esc_url( admin_url('admin-post.php') ); ?>" name="coastalynk-port-sts-popup-history-form">
-
                     <h2>
                         <div>
                             <span class="coastalynk-sts-popup-content-top-heading"><?php _e( "STS Activity", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-top-heading-status"></span></span>
                             <span class="coastalynk-popup-approved-zone"><i class="fa fa-check-square" aria-hidden="true"></i></span>
-                            <span class="coastalynk-popup-unapproved-zone"><i class="fa fa-exclamation" aria-hidden="true"></i></span>
+                            <span class="coastalynk-popup-unapproved-zone"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i></span>
                             <p class="coastalynk-popup-sts-remarks"><?php _e( "Proximity, stationary behavior, and time persistence align with established STS criteria.", "castalynkmap" );?></p>
+                            <p class="coastalynk-popup-sts-transfer-status"></p>
                         </div>
                         <div>
                             <button class="coastalynk-sts-history-buttons-popup-export-pdf" data-id="export-pdf">
@@ -271,8 +280,8 @@ class Coastalynk_STS_Shortcode {
                         <h3><?php _e( "Mothership", "castalynkmap" );?></h3>
                         <ul class="coastalynk-sts-popup-content-box-list">
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Name:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel1_name"></span></li>
-                            <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "MMSI:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel1_mmsi"></span></li>
-                            <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "IMO:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel1_imo"></span></li>
+                            <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Vessel IDs:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel1_mmsi"></span></li>
+                            <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "AIS Continuity:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel1_ais_continuity"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Tonnage:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel1_tonnage"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Type:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel1_type"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Sub Type:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel1_type_specific"></span></li>
@@ -286,7 +295,7 @@ class Coastalynk_STS_Shortcode {
                     <div class="coastalynk-sts-popup-content-box">
                         <h3><?php _e( "Mothership Status", "castalynkmap" );?></h3>
                         <ul class="coastalynk-sts-popup-content-box-list">
-                            <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Port:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-port"></span></li>
+                            <li style="display:none;"><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Port:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-port"></span></li>
                             <!-- <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Distance:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-distance"></span>m</li> -->
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Ref#:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-event_ref_id"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Start Date:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-start_date"></span></li>
@@ -297,7 +306,7 @@ class Coastalynk_STS_Shortcode {
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Nav. Status:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel1_navigation_status"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Draught Change:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel1_draught_change"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Last Position:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel1_last_position_UTC"></span></li>
-                            <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Signal:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel1-ais-signal"></span></li>
+                            <li style="display: none;"><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Signal:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel1-ais-signal"></span></li>
                         </ul>
                     </div>
                     <div class="coastalynk-sts-popup-content-box-wide">
@@ -309,18 +318,23 @@ class Coastalynk_STS_Shortcode {
                         <h3><?php _e( "Daughtership", "castalynkmap" );?></h3>
                         <ul class="coastalynk-sts-popup-content-box-list">
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Name:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel2_name"></span></li>
-                            <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "MMSI:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel2_mmsi"></span></li>
-                            <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "IMO:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel2_imo"></span></li>
+                            <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Vessel IDs:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel2_mmsi"></span></li>
+                            <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "AIS Continuity:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel2_ais_continuity"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Coordinates:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-coordinate"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Tonnage:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel2_tonnage"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Type:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel2_type"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Sub Type:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel2_type_specific"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Before Draught:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel2_draught"></span></li>
                             <!-- <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "After Draught:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel2_completed_draught"></span></li> -->
+
+                            <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Proximity Signal:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel2_proximity_signal"></span></li>
+                            <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Draught Evidence:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel2_draught_evidence"></span></li>
+                            <!-- <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Confidence:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel2_confidence_string"></span></li> -->
+
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Country:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel2_country_iso"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Speed:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel2_speed"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Dead Weight:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel2_deadweight"></span></li>
-                            <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Signal:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel2_ais_signal"></span></li>
+                            <li style="display: none;"><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Signal:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel2_ais_signal"></span></li>
                             <li><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Operation Mode:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel2_operationmode"></span></li>
                             <li class="coastalynk-tooltip"><span class="fa-li"><i class="fa fa-angle-right" aria-hidden="true"></i></span><?php _e( "Proximity:", "castalynkmap" );?> <span class="coastalynk-sts-popup-content-vessel2_proximity_consistency"></span><span class="coastalynk-tooltiptext"><?php _e( "Proximity is derived from proximity, stationary duration, AIS consistency, and zone alignment.", "castalynkmap" );?></li>
                             

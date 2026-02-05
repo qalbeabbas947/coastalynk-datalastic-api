@@ -20,7 +20,7 @@
                 CSM_STS.back_to_information();
                 CSM_STS.load_datetime_pickers();
                 CSM_STS.load_date_range_js();
-                CSM_STS.popup_top_progress_bar();
+                //CSM_STS.popup_top_progress_bar();
                 CSM_STS.submit_export_popup_event();
             },
             submit_export_popup_event: function(){
@@ -148,8 +148,13 @@
                     var data = $(this).data();
                     
                     $(".coastalynk-sts-popup-content-vessel2_name").html(data.name);
-                    $(".coastalynk-sts-popup-content-vessel2_mmsi").html(data.mmsi);
-                    $(".coastalynk-sts-popup-content-vessel2_imo").html(data.imo);
+                    $(".coastalynk-sts-popup-content-vessel2_mmsi").html( data.mmsi + '/' + data.imo );
+                   // $(".coastalynk-sts-popup-content-vessel2_imo").html(data.imo);
+                   if( data.transfer_status != '' ) {
+                        $(".coastalynk-popup-sts-transfer-status").html( 'Transfer Signal: ' + data.transfer_status + ' + ' + data.transfer_confidence);    
+                    } else {
+                        $(".coastalynk-popup-sts-transfer-status").html( '');    
+                    }
                     $(".coastalynk-sts-popup-content-coordinate").html('['+ data.lat +', '+data.lon+']');
                     $(".coastalynk-sts-popup-content-vessel2_tonnage").html(data.gross_tonnage);
                     $(".coastalynk-sts-popup-content-vessel2_type").html(data.type);
@@ -202,7 +207,7 @@
                     event.preventDefault();
                     
                     var data = $(this).data();
-                    console.log(data);
+
                     $(".coastalynk-popup-overlay").show();
                     $(".coastalynk-popup-content").show();;
                     $(".coastalynk-sts-popup-content-box-daughterships-loader").show();
@@ -232,8 +237,8 @@
 
                     $(".coastalynk-sts-popup-content-vessel1_tonnage").html(data.gross_tonnage);;
                     $(".coastalynk-sts-popup-content-vessel1_name").html(data.name);
-                    $(".coastalynk-sts-popup-content-vessel1_mmsi").html(data.mmsi);
-                    $(".coastalynk-sts-popup-content-vessel1_imo").html(data.imo);
+                    $(".coastalynk-sts-popup-content-vessel1_mmsi").html( data.mmsi + '/' + data.imo );
+                    // $(".coastalynk-sts-popup-content-vessel1_imo").html(data.imo);
                     $(".coastalynk-sts-popup-content-vessel1_country_iso").html(data.country_iso);
                     $(".coastalynk-sts-popup-content-vessel1_type").html(data.type);
                     $(".coastalynk-sts-popup-content-vessel1_type_specific").html(data.type_specific);

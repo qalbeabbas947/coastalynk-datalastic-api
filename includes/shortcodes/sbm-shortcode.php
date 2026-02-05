@@ -56,7 +56,7 @@ class Coastalynk_SBM_Shortcode {
         $type_of_port = __( "Offshore Terminal", "castalynkmap" );
 
         $table_name = $wpdb->prefix . 'coastalynk_ports';
-        $port_data = $wpdb->get_results("SELECT * FROM $table_name where country_iso='NG'"); // where port_type='Offshore Terminal'
+        $port_data = $wpdb->get_results("SELECT * FROM $table_name where country_iso='NG' and port_type='Offshore Terminal'"); // where port_type='Offshore Terminal'
 
         $ports = [];  
         foreach( $port_data as $port ) {
@@ -64,7 +64,7 @@ class Coastalynk_SBM_Shortcode {
         }
 
         $table_name_sbm = $wpdb->prefix . 'coastalynk_sbm';
-        $vessel_data = $wpdb->get_results("SELECT * FROM $table_name_sbm where last_updated = (select max(last_updated) from $table_name_sbm)");
+        $vessel_data = $wpdb->get_results("SELECT * FROM $table_name_sbm where last_updated in (select max(last_updated) from $table_name_sbm group by uuid) and is_offloaded!='Yes'");
         ?>
 
         <div class="vessel-dashboard-container">

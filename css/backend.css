@@ -296,6 +296,11 @@ input.coastalynk-sts-retrieve-popup-daughtership-btn {
 .coastalyn-flag-port-listing{
     width: 50px;
 }
+p.coastalynk-popup-sts-transfer-status, .coastalynk-popup-content p {
+    padding: 0px;
+    margin: 0px;
+    text-align: left;
+}
 
 .coastalynk-sts-popup-content-box-list .fa-angle-right:before {
     content: "\f105";

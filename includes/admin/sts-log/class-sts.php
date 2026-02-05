@@ -233,10 +233,12 @@ class CSM_STS_Log_Admin_listing extends WP_List_Table {
         if( !empty( strip_tags( $item['id'] ) ) ) { 
             $attributes = '';
             foreach( $item as $key=>$val ) {
-
-                
                 if( in_array( $key, ['last_updated', 'start_date', 'end_date', 'vessel1_last_position_UTC', 'vessel2_last_position_UTC'] ) ) {
-                    $attributes .= ' data-'.$key.' = "'.get_date_from_gmt( $val, CSM_DATE_FORMAT.' '.CSM_TIME_FORMAT ).'"';
+                    if( !empty( $val ) && $val != '-' ) {
+                        $attributes .= ' data-'.$key.' = "'.get_date_from_gmt( $val, CSM_DATE_FORMAT.' '.CSM_TIME_FORMAT ).'"';
+                    } else {
+                        $attributes .= ' data-'.$key.' = ""';
+                    }
                 } else if( in_array( $key, ['vessel1_draught', 'vessel1_completed_draught', 'vessel2_draught', 'vessel2_completed_draught' ] ) ) {
                     $attributes .= ' data-'.$key.' = "'.( floatval( $val ) > 0?$val.'m':__( "Pending", "castalynkmap" )).'"';
                 } else {
