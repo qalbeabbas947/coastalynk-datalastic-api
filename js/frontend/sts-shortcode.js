@@ -266,7 +266,7 @@
             $(".coastalynk-sts-popup-content-data_points_analyzed").html(data.data_points_analyzed);
             $(".coastalynk-sts-popup-content-operationmode").html(data.operationmode);
             $(".coastalynk-sts-popup-content-status").html(data.status);
-            $(".coastalynk-sts-popup-content-top-heading-status").html(data.status);
+            $(".coastalynk-sts-popup-content-top-heading-status").html(data.top_status);
             $(".coastalynk-sts-popup-content-last_updated").html(data.last_updated);            
             $('.coastalynk-sts-popup-content-box-daughtship-detail').hide();
             $('.coastalynk-sts-popup-content-box-close-daughtship-detail').hide();

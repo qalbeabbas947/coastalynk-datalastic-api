@@ -75,12 +75,13 @@ class Coastalynk_STS_Shortcode {
             }
         }
 
-        $vessel_data = $wpdb->get_results( "SELECT e.id, e.id as did, e.uuid as vessel1_uuid, e.mmsi as vessel1_mmsi,e.name as vessel1_name,e.imo as vessel1_imo,e.country_iso as vessel1_country_iso, 
+        $vessel_data = $wpdb->get_results( "SELECT e.id, d.id as did, e.uuid as vessel1_uuid, e.mmsi as vessel1_mmsi,e.name as vessel1_name,e.imo as vessel1_imo,e.country_iso as vessel1_country_iso, 
         e.type as vessel1_type, e.type_specific as vessel1_type_specific, e.last_position_UTC as vessel1_last_position_UTC , e.navigation_status as vessel1_navigation_status, e.draught as vessel1_draught, e.speed as vessel1_speed,d.distance,e.last_updated, e.port, e.zone_terminal_name,
         e.lat as vessel1_lat, e.lon as vessel1_lon, d.uuid as vessel2_uuid, d.mmsi as vessel2_mmsi,d.name as vessel2_name,d.imo as vessel2_imo,d.country_iso as vessel2_country_iso, 
         d.type as vessel2_type, d.type_specific as vessel2_type_specific, d.speed as vessel2_speed, e.last_position_UTC as vessel2_last_position_UTC, d.navigation_status as vessel2_navigation_status, d.draught as vessel2_draught, d.lat as vessel2_lat, d.lon as vessel2_lon  
         from ".$event_table_mother." as e inner join ".$event_table_daughter." as d on(e.id=d.event_id) where e.is_disappeared = 'No'");
-    
+        
+
         $table_listing = $wpdb->get_results( "SELECT * from ".$event_table_mother." where is_disappeared = 'No'",ARRAY_A );
         ?>
         
@@ -174,7 +175,7 @@ class Coastalynk_STS_Shortcode {
                             <?php foreach( $table_listing as $vessel ) { 
                                 ?>
                                 <tr>
-                                    <td>
+                                    <td data-id="<?php echo $vessel['id']; ?>">
                                         <?php 
                                             if( !empty( $vessel['country_iso'] ) ) {
                                                 echo '<img src="'.CSM_IMAGES_URL."flags/".strtolower( $vessel['country_iso'] ).".jpg".'" class="coastalyn-flag-port-listing" alt="'.$vessel['country_iso'].'">';
@@ -226,7 +227,15 @@ class Coastalynk_STS_Shortcode {
                                                         $attributes .= ' data-'.$key.' = "'.__( "No Change", "castalynkmap" ).'"';
                                                     }
                                                 } else if( in_array( $key, [ 'status' ] ) ) {
-                                                    $attributes .= ' data-'.$key.' = "'.( $val == 'Completed'?__( "Concluded", "castalynkmap" ):($val == 'Detected'?__( "Ongoing", "castalynkmap" ):$val)).'"';
+                                                    if( $val != 'Detected' ) {
+                                                        $val = __( "Concluded", "castalynkmap" );
+                                                        $valtop = __( "Completed", "castalynkmap" );
+                                                    } else {
+                                                        $val = __( "Ongoing", "castalynkmap" );
+                                                        $valtop = __( "Ongoing", "castalynkmap" );
+                                                    }
+                                                    $attributes .= ' data-'.$key.' = "'.$val.'"';
+                                                    $attributes .= ' data-top_'.$key.' = "'.$valtop.'"';
                                                 } else {
                                                     $attributes .= ' data-'.$key.' = "'.$val.'"';
                                                 }
@@ -395,7 +404,14 @@ class Coastalynk_STS_Shortcode {
                     features: []
                 };
 
-                <?php foreach( $vessel_data as $feature ) { ?>
+                <?php foreach( $vessel_data as $feature ) { 
+                    $distance = $feature->distance;
+                    $sql = "SELECT ST_Distance_Sphere( POINT(".$feature->vessel1_lon.", ".$feature->vessel1_lat."), POINT(".$feature->vessel2_lon.", ".$feature->vessel2_lat.") ) AS distance_meters limit 1;";
+                    //if distance is 200m then qualify for the event creation.
+                    $distance = $wpdb->get_var($sql);
+                    
+
+                    ?>
                     vesselData.features.push({
                         type: 'Feature',
                         geometry: {
@@ -415,7 +431,7 @@ class Coastalynk_STS_Shortcode {
                             last_position_UTC: "<?php echo get_date_from_gmt( $feature->vessel1_last_position_UTC, CSM_DATE_FORMAT.' '.CSM_TIME_FORMAT );?>",
                             name: "<?php echo $feature->vessel1_name;?>",
                             port: "<?php echo $feature->port;?>",
-                            distance: "<?php echo $feature->distance;?>",
+                            distance: "<?php echo $distance;?>",
                             last_updated: "<?php echo get_date_from_gmt( $feature->last_updated, CSM_DATE_FORMAT.' '.CSM_TIME_FORMAT );?>"
                         }
                     });
@@ -438,12 +454,13 @@ class Coastalynk_STS_Shortcode {
                             navigation_status: "<?php echo $feature->vessel2_navigation_status;?>",
                             last_position_UTC: "<?php echo get_date_from_gmt( $feature->vessel2_last_position_UTC, CSM_DATE_FORMAT.' '.CSM_TIME_FORMAT );?>",
                             port: "<?php echo $feature->port;?>",
-                            distance: "<?php echo $feature->distance;?>",
+                            distance: "<?php echo $distance;?>",
                             last_updated: "<?php echo get_date_from_gmt( $feature->last_updated, CSM_DATE_FORMAT.' '.CSM_TIME_FORMAT );?>",
                         }
                     });
 
                 <?php } ?>
+                
             // Convert to heatmap points
             const heatPoints = vesselData.features.map(feature => [
                 feature.geometry.coordinates[1],
@@ -486,8 +503,12 @@ class Coastalynk_STS_Shortcode {
 
                 // Vessel data structure
                 var vessels = {
-                    <?php foreach( $vessel_data as $feature ) { ?>
-                        '<?php echo $feature->vessel1_uuid;?>': {
+                    <?php foreach( $vessel_data as $feature ) { 
+                        $sql = "SELECT ST_Distance_Sphere( POINT(".$feature->vessel1_lon.", ".$feature->vessel1_lat."), POINT(".$feature->vessel2_lon.", ".$feature->vessel2_lat.") ) AS distance_meters limit 1;";
+                        //if distance is 200m then qualify for the event creation.
+                        $distance = $wpdb->get_var($sql);
+                        ?>
+                        '<?php echo $feature->vessel1_mmsi;?>': {
                             id: '<?php echo $feature->vessel1_uuid;?>',
                             imo: "<?php echo $feature->vessel1_imo;?>",
                             name: '<?php echo $feature->vessel1_name;?>',
@@ -502,10 +523,10 @@ class Coastalynk_STS_Shortcode {
                             lat: '<?php echo $feature->vessel1_lat;?>',
                             lng: '<?php echo $feature->vessel1_lon;?>',
                             port: "<?php echo $feature->port;?>",
-                            distance: "<?php echo $feature->distance;?>",
+                            distance: "<?php echo $distance;?>",
                             last_updated: "<?php echo get_date_from_gmt( $feature->last_updated, CSM_DATE_FORMAT.' '.CSM_TIME_FORMAT );?>",
                         },
-                        '<?php echo $feature->vessel2_uuid;?>': {
+                        '<?php echo $feature->vessel2_mmsi;?>': {
                             id: '<?php echo $feature->vessel2_uuid;?>',
                             imo: "<?php echo $feature->vessel2_imo;?>",
                             name: '<?php echo $feature->vessel2_name;?>',
@@ -520,7 +541,7 @@ class Coastalynk_STS_Shortcode {
                             navigation_status: "<?php echo $feature->vessel2_navigation_status;?>",
                             flag: "<?php echo CSM_IMAGES_URL."flags/".strtolower( $feature->vessel2_country_iso ).".jpg"; ?>",
                             port: "<?php echo $feature->port;?>",
-                            distance: "<?php echo $feature->distance;?>",
+                            distance: "<?php echo $distance;?>",
                             last_updated: "<?php echo get_date_from_gmt( $feature->last_updated, CSM_DATE_FORMAT.' '.CSM_TIME_FORMAT );?>",
                         },
                     <?php } ?>
@@ -529,14 +550,18 @@ class Coastalynk_STS_Shortcode {
 
                 // Transfer operations data
                 var transferOperations = [
-                    <?php foreach( $vessel_data as $feature ) { ?>
+                    <?php foreach( $vessel_data as $feature ) { 
+                        $sql = "SELECT ST_Distance_Sphere( POINT(".$feature->vessel1_lon.", ".$feature->vessel1_lat."), POINT(".$feature->vessel2_lon.", ".$feature->vessel2_lat.") ) AS distance_meters limit 1;";
+                        //if distance is 200m then qualify for the event creation.
+                        $distance = $wpdb->get_var($sql)
+                        ?>
                     {
-                        id: 'transfer<?php echo $feature->vessel1_uuid;?>',
-                        vessel1: '<?php echo $feature->vessel1_uuid;?>',
-                        vessel2: '<?php echo $feature->vessel2_uuid;?>',
+                        id: 'transfer<?php echo $feature->vessel1_mmsi;?>-<?php echo $feature->vessel2_mmsi;?>',
+                        vessel1: '<?php echo $feature->vessel1_mmsi;?>',
+                        vessel2: '<?php echo $feature->vessel2_mmsi;?>',
                         speed: '<?php echo $feature->vessel1_speed;?>',
                         port: "<?php echo $feature->port;?>",
-                        distance: "<?php echo number_format($feature->distance);?>",
+                        distance: "<?php echo number_format($distance);?>",
                         last_updated: "<?php echo get_date_from_gmt( $feature->last_updated, CSM_DATE_FORMAT.' '.CSM_TIME_FORMAT );?>",
                         color: '#00ff00'
                     },
@@ -553,6 +578,7 @@ class Coastalynk_STS_Shortcode {
                 for (var vesselId in vessels) {
                     if (vessels.hasOwnProperty(vesselId)) {
                         var vessel = vessels[vesselId];
+                        
                         vesselMarkers[vesselId] = L.marker(
                             vessel.position,
                             {icon: createVesselIcon()}
@@ -732,16 +758,11 @@ class Coastalynk_STS_Shortcode {
             legend.onAdd = function(map) {
                 const div = L.DomUtil.create('div', 'info legend');
                 div.innerHTML = `
-                    <h4>Traffic Density</h4>
-                    <div class="legend">
-                        <i style="background: blue;"></i> Low<br>
-                        <i style="background: lime;"></i> Medium<br>
-                        <i style="background: red;"></i> High
-                    </div>
+                    
                     <h4>Map Features</h4>
-                    <div class="legend">
+                    <div class="legend" style="vertical-align: middle">
                         <img src="https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-2x-blue.png" style="width: 15px; height: 25px;"> Port<br>
-                        <span style="color: #ff7800;">●</span> Individual Vessel
+                        <img src="<?php echo CSM_URL;?>images/ship.png" style="width: 15px; height: 25px;"> Individual Vessel
                     </div>
                 `;
                 return div;

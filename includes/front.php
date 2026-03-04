@@ -550,7 +550,7 @@ class Coastalynk_Sea_Vessel_Map_Front {
                 <div class="content-box">
                     <div class="narrative-text">
                         ' . $event_narrative . '
-                    </div>
+                    </div> 
                     <p style="font-size: 9pt; color: #666; margin-top: 10px;">
                         <em>This narrative reflects system-observed AIS signals only and does not constitute confirmation of an STS operation or any compliance assessment.</em>
                     </p>
