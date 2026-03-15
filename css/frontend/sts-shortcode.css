@@ -13,6 +13,24 @@ p.coastalynk-popup-sts-transfer-status {
 .dashboard-sts{
     position: relative;
 }
+.leaflet-container {
+    /* position: absolute;
+    z-index: 0; 
+    display: none;*/
+    height: 600px;
+    width: 100%; /* Or fixed px */
+    max-width: 1200px;
+}
+#leaflet-container-wrapper{
+    position: fixed;
+    visibility: hidden;
+}
+.leaflet-container-label{
+    display: none;
+    text-align: center;
+    font-size: 1rem;
+    color: white;
+}
 .coastalynk-sts-map-notification{
     position: absolute;
     top: 5px;
@@ -23,7 +41,7 @@ p.coastalynk-popup-sts-transfer-status {
     z-index: 999;
     font-size: 0.75rem;
     font-weight: bold;
-    background-color: rgba(0, 136, 255, 0.5);
+    background-color: rgba(24, 27, 29, 0.5);
     border-radius: 5px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }

@@ -711,6 +711,8 @@ class Coastalynk_Dashboard_Port_Congestion_Shortcode {
         wp_enqueue_style( 'coastlynk-map-dataTables-css', '//cdn.datatables.net/2.3.3/css/dataTables.dataTables.min.css' );
         wp_enqueue_style( 'coastlynk-select2.min.css', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css' );
         wp_enqueue_style( 'coastlynk-map-leaflet-css', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css', array(), time() );
+        wp_enqueue_script( 'markercluster', 'https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js', array( 'jquery' ) );
+        wp_enqueue_script( 'leaflet-screenshoter', 'https://unpkg.com/leaflet-simple-map-screenshoter', array( 'jquery' ) );
         wp_enqueue_style( 'coastlynk-map-css', CSM_CSS_URL.'/frontend/port-congestion-shortcode.css', array(), time() );
 
         wp_enqueue_script( 'coastlynk-map-dataTables-js', '//cdn.datatables.net/2.3.3/js/dataTables.min.js', array( 'jquery' ) );

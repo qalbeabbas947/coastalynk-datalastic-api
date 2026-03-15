@@ -1,7 +1,9 @@
 (function ($, map) {
   "use strict";
   $(document).ready(function () {
-    var Shortcode = {
+
+    var Shortcode = { 
+      vessel_image: null,
       init: function () {
         this.prebutton(); 
         this.nextButton(); 
@@ -51,9 +53,55 @@
         },
         submit_export_popup_event: function(){
             $('#coastalynk-port-sts-popup-history-form').on('click', '.coastalynk-sts-history-buttons-popup-export-pdf', function(event) {
+                $('.coastalynk-sts-popup-content-boxes').css('position', 'relative').css('display', 'none');
+                $('.leaflet-container-label').css('position', 'relative').css('display', 'block');
+                $('#leaflet-container').css('position', 'relative').css('display', 'block');
+                leaflet_map.invalidateSize(); // Forces redraw
                 event.preventDefault();
                 let btn = $(this).data('id');
-                $("#coastalynk-port-sts-popup-history-form").submit();
+                setTimeout(() => {
+                    console.log("Waited 2 seconds");
+                    let format = 'image' // 'image' - return base64, 'canvas' - return canvas
+                    let overridedPluginOptions = {
+                        mimeType: 'image/jpeg'
+                    }
+                    let simpleMapScreenshoter = L.simpleMapScreenshoter().addTo(leaflet_map);
+                    simpleMapScreenshoter.takeScreen(format, overridedPluginOptions).then(blob => {
+                        //Shortcode.vessel_image = blob;
+                        $('#coastalynk_sts_popup_map_image').val(blob);
+                        $("#coastalynk-port-sts-popup-history-form").submit();
+                    // $('#leaflet-container').css('position', 'relative').css('display', 'none');
+                        //$('.coastalynk-sts-popup-content-boxes').css('position', 'relative').css('display', 'flex');
+                        // console.log(Shortcode.vessel_image);
+                        // // Create a FormData object
+                        // const formData = new FormData();
+
+                        // // Append the Blob to the FormData object. 
+                        // // The third argument provides a filename for the server (important for PHP's $_FILES).
+                        // formData.append("file", blob, "filename.jpg");
+                        // formData.append("action", "sts_save_blob_screenshots");
+                        // // Send the request to the PHP script
+                        // fetch(COSTALYNKVARS.ajaxURL, {
+                        //     method: "POST",
+                        //     body: formData, // Send the FormData object directly
+                        // })
+                        // .then(response => response.text())
+                        // .then(result => {
+                        //     console.log("Server response:", result);
+                        // })
+                        // .catch(error => {
+                        //     console.error("Error:", error);
+                        // });
+                    }).catch(e => {
+                        console.error(e)
+                    });
+                }, 1000); // 2000 milliseconds = 2 seconds
+                
+                
+
+                
+                 
+                
             });
         },
         submit_export: function() {
@@ -108,7 +156,6 @@
             event.preventDefault();
             console.log($(this).data());
             var data = $(this).data();
-            
             
             $(".coastalynk-sts-popup-content-vessel2_name").html(data.name);
             $(".coastalynk-sts-popup-content-vessel2_mmsi").html(data.mmsi + '/' + data.imo);
@@ -178,20 +225,90 @@
             document.querySelector(".coastalynk-sts-popup-content").style.display = 'none';
         });
       },
-      load_popup: function() {
+       // Function to create transfer connection
+        createTransferConnection: function(marker, marker_daughter) {
+            
+            var latlngs = [
+                marker.getLatLng(),
+                marker_daughter.getLatLng()
+            ];
+            
+            var style = {
+                    color: '#00ff00',
+                    weight: 4,
+                    dashArray: null,
+                    opacity: 0.9
+                };
+            
+            var line = L.polyline(latlngs, style).addTo(leaflet_map);
+            
+            // Add hover effects
+            line.on('mouseover', function(e) {
+                this.setStyle({weight: style.weight + 2});
+            });
+            
+            line.on('mouseout', function(e) {
+                this.setStyle({weight: style.weight});
+            });
+            
+            leaflet_activeLines.push(line);
+            // Add popup to transfer line
+            // line.bindPopup(`
+            //     <div class="transfer-info">
+            //         <h4>Ship-to-Ship Transfer</h4>
+            //         <p>Vessels: ${vessels[operation.vessel1].name} ↔ ${vessels[operation.vessel2].name}</p>
+            //         <p>Speed: ${operation.speed}</p>
+            //         <p>Port: ${operation.port}</p>
+            //         <p>Closest Distance: ${operation.distance} meters</p>
+            //         <p>Realtime Distance: ${operation.actual_distance} meters</p>
+            //         <p>Last Updated: ${operation.last_updated}</p>
+            //     </div>
+            // `);
+            
+            // Store reference
+            // leaflet_transferConnections[operation.id] = {
+            //     line: line,
+            //     operation: operation
+            // };
+            
+            // leaflet_activeLines.push(line);
+            
+            // return operation.id;
+        },
+       load_popup: function() {
 
         $('.coastalynk-sts-table_wrapper').on('click', '.coastalynk-sts-retrieve-popup-btn', function(event) {
             event.preventDefault();
             
             let button = event.target;
             var data = $(this).data();
-            console.log(data);
+            $('.coastalynk-sts-popup-content-boxes').css('position', 'relative').css('display', 'flex');
             button.style.display = "none";
             $(".coastalynk-popup-sts-remarks").html('');
             $(".coastalynk-sts-popup-overlay").show(); 
             $(".coastalynk-sts-popup-content").show();
             $(".coastalynk-sts-popup-content-box-daughterships-loader").show();
             $(".coastalynk-sts-popup-content-box-daughterships").html('');
+
+            $('#leaflet-container').css('position', 'relative').css('display', 'none');
+            
+            leaflet_map = L.map('leaflet-container').setView([data.lat, data.lon], 7);
+            leaflet_osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(leaflet_map);    
+            leaflet_map.invalidateSize(); // Forces redraw
+            leaflet_vesselMarkers.forEach(m => leaflet_map.removeLayer(m));
+            leaflet_activeLines.forEach(m => leaflet_map.removeLayer(m));
+            leaflet_activeLines = [];                // empty the array
+            leaflet_vesselMarkers = [];                // empty the array
+
+            let marker = L.marker(
+                [data.lat, data.lon],
+                {icon: createVesselIcon()}
+            ).addTo(leaflet_map);
+            leaflet_map.setView([data.lat, data.lon], 14);
+            leaflet_vesselMarkers.push(marker);
+
             $.ajax({
                 type: 'POST',
                 aSync: false,
@@ -209,6 +326,18 @@
                     $(".coastalynk-sts-popup-content-box-daughterships").html(response);
                     $(".coastalynk-sts-popup-content-box-daughterships-loader").hide(); 
                     $(".coastalynk-sts-popup-content-vessel1_draught_change").html($("#coastalynk-sts-popup-calculated-draught-change").val());
+
+                    $('.coastalynk-sts-retrieve-popup-daughtership-btn').each(function(index, element) {
+                    
+                        let btn_data = $(this).data();
+                        let marker_daughter = L.marker(
+                            [btn_data.lat, btn_data.lon],
+                            {icon: createVesselIcon()}
+                        ).addTo(leaflet_map);
+                        
+                        leaflet_vesselMarkers.push(marker_daughter);
+                        Shortcode.createTransferConnection(marker, marker_daughter);
+                    });
                 },
                 error: function(jqXHR, textStatus, errorThrown) {
                 }
