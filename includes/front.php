@@ -414,6 +414,59 @@ class Coastalynk_Sea_Vessel_Map_Front {
         return "Speed behaviour cannot be determined due to incomplete AIS data.";
     }
 
+    function renderMultiVesselDatalasticSection($motherVessel, $daughterVessels) {
+        $allVessels = array_merge([$motherVessel], $daughterVessels);
+        
+        // Initialize dynamic warning counters for the three specific checks
+        $warnings = [
+            'no_draught' => 0,
+            'ais_interruptions' => 0,
+            'limited_data_points' => 0
+        ];
+        
+        // Analyze each vessel for the three specific conditions
+        foreach ($allVessels as $vessel) {
+            // Check 1: Draught data missing or zero
+            if (!isset($vessel['draught']) || !isset($vessel['completed_draught']) || $vessel['draught'] === null || $vessel['completed_draught'] === null || $vessel['draught'] == 0 || $vessel['completed_draught'] == 0) {
+                $warnings['no_draught']++;
+            }
+            
+            // Check 2: AIS signal interruptions
+            if (isset($vessel['ais_interruptions']) && $vessel['ais_interruptions'] === true) {
+                $warnings['ais_interruptions']++;
+            }
+            
+            // Check 3: Limited data points (less than 10)
+            if (isset($vessel['data_points']) && $vessel['data_points'] < 10) {
+                $warnings['limited_data_points']++;
+            }
+        }
+        
+        ob_start();
+        ?>
+            <div class="note-item">• Cargo transfer cannot be confirmed using AIS data alone.</div>
+            <div class="note-item">• Vessel intent cannot be fully determined without operational or visual verification.</div>
+            <?php if ($warnings['no_draught'] > 0) { ?>
+                <div class="note-item">• Draught change unavailable due to insufficient AIS draught updates.</div>
+            <?php } ?>
+            
+            <?php if ($warnings['ais_interruptions'] > 0){ ?>
+                <div class="note-item">• AIS signal interruptions observed during the observation window.</div>
+            <?php } ?>
+            
+            <?php if ($warnings['limited_data_points'] > 0){ ?>
+                <div class="note-item">• Limited AIS data points may reduce detection confidence.</div>
+            <?php } ?>
+            
+            <?php if (array_sum($warnings) == 0) { ?>
+                <div class="note-item">• No significant AIS data limitations detected for this fleet.</div>
+            <?php } ?>
+        <?php
+        $content =  ob_get_contents();
+        ob_end_clean();
+        
+        return $content;
+    }
     /**
      * Export Single Event PDF
      */
@@ -467,6 +520,7 @@ class Coastalynk_Sea_Vessel_Map_Front {
 
         // Prepare image data
         $imageData = base64_encode(file_get_contents('https://coastalynk.com/staging/wp-content/themes/coastalynk/assets/images/pdf_logo.png'));
+       // $imageData = base64_encode(file_get_contents('http://localhost:8089/wp-content/themes/coastalynk/assets/images/pdf_logo.png'));
         $base64Image = 'data:image/jpeg;base64,' . $imageData;
 
         // Generate Event Narrative (Section 3)
@@ -532,6 +586,49 @@ class Coastalynk_Sea_Vessel_Map_Front {
         $system_notes[] = "No visual confirmation or additional intelligence sources were used.";
         $system_notes[] = "Event classification is based on proximity, duration, and AIS behavior patterns.";
         $generated = wp_date( 'Y-m-d H:i', null, new DateTimeZone( 'UTC' ) );
+        // Daughter Vessels
+        $transfer_status = '';
+        $vessel_list_html = '';
+        $detection_confidence = '';
+        $vessels_involved = $mother_vessel['name'];
+        if (!empty($daughter_vessels)) {
+            $vessel_list_html .= '
+                    <div class="sub-section">
+                        <strong>Daughter Vessel(s):</strong>
+                        <table class="vessel-table">
+                            <tr>
+                                <th>Name</th>
+                                <th>IMO</th>
+                                <th>MMSI</th>
+                                <th>Flag</th>
+                                <th>Type</th>
+                                <th>Gross Tonnage</th>
+                            </tr>
+                        ';
+            
+            foreach ($daughter_vessels as $index => $daughter) {
+                $vessels_involved .= ', '.$daughter['name'];
+                $vessel_list_html .= '
+                        
+                            <tr>
+                                <td>' . ($daughter['name'] ?? 'Not Available') . '</td>
+                                <td>' . ($daughter['imo'] ?? 'Not Available') . '</td>
+                                <td>' . ($daughter['mmsi'] ?? 'Not Available') . '</td>
+                                <td>' . ($daughter['country_iso'] ?? 'Not Available') . '</td>
+                                <td>' . ($daughter['type'] ?? 'Not Available') . ' / ' . ($daughter['type_specific'] ?? 'Not Available') . '</td>
+                                <td>' . ($daughter['gross_tonnage'] ?? 'Not Available') . '</td>
+                            </tr>';
+                if( !empty( $daughter['transfer_confidence'] ) ) {
+                    $transfer_status = $daughter['transfer_confidence'];
+                }
+
+                if( !empty( $daughter['confidence_string'] ) ) {
+                    $detection_confidence = $daughter['confidence_string'];
+                }
+                    
+            }
+            $vessel_list_html .= '</table></div>';
+        }
         // HTML content with new structure
         $html = '
         <!DOCTYPE html>
@@ -573,6 +670,36 @@ class Coastalynk_Sea_Vessel_Map_Front {
                 </table> 
             </div>
             <div style="padding: 20px;">
+            <div class="section-title">Key Findings</div>
+            <div class="content-box">
+                <table width="100%" cellpadding="5" cellspacing="0" style="border-bottom: 1px solid #ddd;">
+                    <tr>
+                        <td width="25%">'.__("Event type:", "castalynkmap").'</td>
+                        <td width="25%">' . ($first_daughter['event_type'] ?? 'Vessel Interaction Detected') . '</td>
+                        <td width="25%">'.__("Location:", "castalynkmap").'</td>
+                        <td width="25%">' . ( $mother_vessel['zone_terminal_name'] ?? 'Not Available' ) . '</td>
+                    </tr>
+                    <tr>
+                        <td>'.__("Vessels involved:", "castalynkmap").'</td>
+                        <td>' . ($vessels_involved ?? 'Not Available'). '</td>
+                        <td>'.__("Stationary duration:", "castalynkmap").'</td>
+                        <td>' . ($first_daughter['stationary_duration_hours'] ?? 'Not Available')  . '</td>
+                    </tr>
+                    <tr>
+                        <td>'.__("Proximity consistency:", "castalynkmap").'</td>
+                        <td>' . ($first_daughter['proximity_consistency'] ?? 'Not Available') . '</td>
+                        <td>'.__("STS likelihood:", "castalynkmap").'</td>
+                        <td>' . ($transfer_status ?? 'Not Available') . '</td>
+                    </tr>
+                    
+                    <tr>
+                        <td>'.__("Detection confidence:", "castalynkmap").'</td>
+                        <td>' . ( $detection_confidence ?? 'Not Available' ). '</td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>
                 <!-- Event Summary -->
             <div class="section-title">1. Case Reference</div>
             <div class="content-box">
@@ -626,47 +753,7 @@ class Coastalynk_Sea_Vessel_Map_Front {
                     </table>
                 </div>';
 
-        // Daughter Vessels
-        $transfer_status = '';
-        $detection_confidence = '';
-        if (!empty($daughter_vessels)) {
-            $html .= '
-                    <div class="sub-section">
-                        <strong>Daughter Vessel(s):</strong>
-                        <table class="vessel-table">
-                            <tr>
-                                <th>Name</th>
-                                <th>IMO</th>
-                                <th>MMSI</th>
-                                <th>Flag</th>
-                                <th>Type</th>
-                                <th>Gross Tonnage</th>
-                            </tr>
-                        ';
-            
-            foreach ($daughter_vessels as $index => $daughter) {
-                $html .= '
-                        
-                            <tr>
-                                <td>' . ($daughter['name'] ?? 'Not Available') . '</td>
-                                <td>' . ($daughter['imo'] ?? 'Not Available') . '</td>
-                                <td>' . ($daughter['mmsi'] ?? 'Not Available') . '</td>
-                                <td>' . ($daughter['country_iso'] ?? 'Not Available') . '</td>
-                                <td>' . ($daughter['type'] ?? 'Not Available') . ' / ' . ($daughter['type_specific'] ?? 'Not Available') . '</td>
-                                <td>' . ($daughter['gross_tonnage'] ?? 'Not Available') . '</td>
-                            </tr>';
-                if( !empty( $daughter['transfer_confidence'] ) ) {
-                    $transfer_status = $daughter['transfer_confidence'];
-                }
-
-                if( !empty( $daughter['confidence_string'] ) ) {
-                    $detection_confidence = $daughter['confidence_string'];
-                }
-                    
-            }
-            $html .= '</table></div>';
-        }
-
+        $html .= $vessel_list_html;
         $html .= '
                     <p style="font-size: 9pt; color: #666; margin-top: 10px;">
                         <em>Note: Vessel roles (mother/daughter) are assigned based on system observation context only.</em>
@@ -693,12 +780,31 @@ class Coastalynk_Sea_Vessel_Map_Front {
                     $html .= '<p><img width="640px" src="'.$coastalynk_sts_popup_map_image.'" /></p>';
                 }
             $speed_profile = $this->getFleetSpeedMessage($mother_vessel, $daughter_vessels);
-            
+            $data_limitation = $this->renderMultiVesselDatalasticSection($mother_vessel, $daughter_vessels);
             $html .= '</div>
+                </div><!-- Operational Timeline -->
+            <div class="section-title">8. Operational Timeline</div>
+            <div class="content-box">
+                <div class="indicator-grid">
+                
+                    <div class="indicator-item">
+                        <div class="indicator-label">AIS Signal</div>
+                        <div class="indicator-value">' . ($mother_vessel['ais_signal'] ?? 'Not Available') . '</div>
+                    </div>
+                    <div class="indicator-item">
+                        <div class="indicator-label">Start Date</div>
+                        <div class="indicator-value">' . ($mother_vessel['start_date'] ?? 'Not Available') . '</div>
+                    </div>
+                    <div class="indicator-item">
+                        <div class="indicator-label">End Date</div>
+                        <div class="indicator-value">' . ($mother_vessel['end_date'] ?? 'Not Available') . '</div>
+                    </div>
+                </div>
+            </div>
             <div class="section-title">5. Detection & Risk Profile</div>
             <div class="content-box">
                 <p><strong>'.__("Indicators:", "castalynkmap").'</strong></p>
-                <table width="100%" cellpadding="5" cellspacing="0">
+                <table width="100%" cellpadding="5" cellspacing="0" style="border-bottom: 1px solid #ddd;">
                     <tr>
                         <td width="25%">'.__("STS Likelihood:", "castalynkmap").'</td>
                         <td width="25%">' . ($transfer_status ?? 'Not Available') . '</td>
@@ -764,7 +870,7 @@ class Coastalynk_Sea_Vessel_Map_Front {
 
             <div class="section-title">6. Operational Interpretation</div>
             <div class="content-box">
-                <div class="narrative-text">
+                <div class="narrative-text" style="border-bottom: 1px solid #ddd;">
                     ' . $event_narrative . '
                 </div> 
                 <p style="font-size: 9pt; color: #666; margin-top: 10px;">
@@ -773,8 +879,8 @@ class Coastalynk_Sea_Vessel_Map_Front {
             </div>
             <div class="section-title">7. Data Limitations</div>
             <div class="content-box">
-                <div class="narrative-text">
-                    ' . $event_narrative . '
+                <div class="narrative-text" style="border-bottom: 1px solid #ddd;">
+                    '.$data_limitation.'
                 </div> 
                 <p style="font-size: 9pt; color: #666; margin-top: 10px;">
                     <em>This narrative reflects system-observed AIS signals only and does not constitute confirmation of an STS operation or any compliance assessment.</em>
@@ -789,209 +895,209 @@ class Coastalynk_Sea_Vessel_Map_Front {
                     $html .= '<div class="note-item">• ' . $note . '</div>';
                 }
 
-                $html .= '
+                $html .= '<div style="border-bottom: 1px solid #ddd;">&nbsp;</div>
                     <div style="margin-top: 15px; padding: 10px; background-color: #f0f7ff; border-radius: 4px; font-size: 9pt;">
                         <strong>Report Metadata:</strong><br>
                         Generated: ' . date('Y-m-d H:i:s') . '<br>
                         Event ID: ' . $event_id . '<br>
                         Report Version: v1.0.
                     </div>
-            </div>
-            <div class="section-title">6. Operational Risk Indicator</div>
-            <div class="content-box">
-                    <div class="indicator-grid">';
+            </div>';
+    //         $html .= '<div class="section-title">6. Operational Risk Indicator</div>
+    //         <div class="content-box">
+    //                 <div class="indicator-grid">';
                     
-        if (!empty($daughter_vessels)) {
-            $first_daughter = $daughter_vessels[0];
+    //     if (!empty($daughter_vessels)) {
+    //         $first_daughter = $daughter_vessels[0];
 
-            $html .= '
-                        <div class="indicator-item">
-                            <div class="indicator-label">Proximity Signal:</div>
-                            <div class="indicator-value">' . ($first_daughter['proximity_signal'] ?? 'Not Available') . '</div>
-                        </div>
-                        <div class="indicator-item">
-                            <div class="indicator-label">Proximity Consistency:</div>
-                            <div class="indicator-value">' . ($first_daughter['proximity_consistency'] ?? 'Not Available') . '</div>
-                        </div>
-                        <div class="indicator-item">
-                            <div class="indicator-label">Stationary Duration:</div>
-                            <div class="indicator-value">' . ($first_daughter['stationary_duration_hours'] ?? 'Not Available') . ' hours</div>
-                        </div>
-                        <div class="indicator-item">
-                            <div class="indicator-label">AIS Data Points:</div>
-                            <div class="indicator-value">' . ($first_daughter['data_points_analyzed'] ?? 'Not Available') . ' analyzed</div>
-                        </div>
-                        <div class="indicator-item">
-                            <div class="indicator-label">Operational Context:</div>
-                            <div class="indicator-value">' . ($mother_vessel['port'] ?? 'Not Available') . '</div>
-                        </div>
-                         <div class="indicator-item">
-                            <div class="indicator-label">Outcome Status:</div>
-                            <div class="indicator-value">' . ($mother_vessel['outcome_status'] ?? 'Not Available') . '</div>
-                        </div>
-                         <div class="indicator-item">
-                            <div class="indicator-label">Transfer Status:</div>
-                            <div class="indicator-value">' . ($mother_vessel['transfer_status'] ?? 'Not Available') . '</div>
-                        </div>
-                        <div class="indicator-item">
-                            <div class="indicator-label">Transfer Confidence:</div>
-                            <div class="indicator-value">' . ($mother_vessel['transfer_confidence'] ?? 'Not Available') . '</div>
-                        </div>
-                        ';
-        }
+    //         $html .= '
+    //                     <div class="indicator-item">
+    //                         <div class="indicator-label">Proximity Signal:</div>
+    //                         <div class="indicator-value">' . ($first_daughter['proximity_signal'] ?? 'Not Available') . '</div>
+    //                     </div>
+    //                     <div class="indicator-item">
+    //                         <div class="indicator-label">Proximity Consistency:</div>
+    //                         <div class="indicator-value">' . ($first_daughter['proximity_consistency'] ?? 'Not Available') . '</div>
+    //                     </div>
+    //                     <div class="indicator-item">
+    //                         <div class="indicator-label">Stationary Duration:</div>
+    //                         <div class="indicator-value">' . ($first_daughter['stationary_duration_hours'] ?? 'Not Available') . ' hours</div>
+    //                     </div>
+    //                     <div class="indicator-item">
+    //                         <div class="indicator-label">AIS Data Points:</div>
+    //                         <div class="indicator-value">' . ($first_daughter['data_points_analyzed'] ?? 'Not Available') . ' analyzed</div>
+    //                     </div>
+    //                     <div class="indicator-item">
+    //                         <div class="indicator-label">Operational Context:</div>
+    //                         <div class="indicator-value">' . ($mother_vessel['port'] ?? 'Not Available') . '</div>
+    //                     </div>
+    //                      <div class="indicator-item">
+    //                         <div class="indicator-label">Outcome Status:</div>
+    //                         <div class="indicator-value">' . ($mother_vessel['outcome_status'] ?? 'Not Available') . '</div>
+    //                     </div>
+    //                      <div class="indicator-item">
+    //                         <div class="indicator-label">Transfer Status:</div>
+    //                         <div class="indicator-value">' . ($mother_vessel['transfer_status'] ?? 'Not Available') . '</div>
+    //                     </div>
+    //                     <div class="indicator-item">
+    //                         <div class="indicator-label">Transfer Confidence:</div>
+    //                         <div class="indicator-value">' . ($mother_vessel['transfer_confidence'] ?? 'Not Available') . '</div>
+    //                     </div>
+    //                     ';
+    //     }
 
-        $html .= '
-                        <div class="indicator-item">
-                            <div class="indicator-label">Mother Vessel AIS:</div>
-                            <div class="indicator-value">' . ($mother_vessel['ais_continuity'] ?? 'Not Available') . ' signal</div>
-                        </div>';
+    //     $html .= '
+    //                     <div class="indicator-item">
+    //                         <div class="indicator-label">Mother Vessel AIS:</div>
+    //                         <div class="indicator-value">' . ($mother_vessel['ais_continuity'] ?? 'Not Available') . ' signal</div>
+    //                     </div>';
 
-        if (!empty($daughter_vessels)) {
-            $html .= '
-                        <div class="indicator-item">
-                            <div class="indicator-label">Event Percentage</div>
-                            <div class="indicator-value">' . ($first_daughter['event_percentage'] ?? 'Not Available') . '%</div>
-                        </div>
-                        ';
-        }
+    //     if (!empty($daughter_vessels)) {
+    //         $html .= '
+    //                     <div class="indicator-item">
+    //                         <div class="indicator-label">Event Percentage</div>
+    //                         <div class="indicator-value">' . ($first_daughter['event_percentage'] ?? 'Not Available') . '%</div>
+    //                     </div>
+    //                     ';
+    //     }
 
         
 
-        $html .= '
-                    </div>
-                    <p style="font-size: 9pt; color: #666; margin-top: 10px;">
-                        <em>Note: Indicators represent system-observed signals only. No compliance or intent conclusions are drawn.</em>
-                    </p>
-                </div>
+    //     $html .= '
+    //                 </div>
+    //                 <p style="font-size: 9pt; color: #666; margin-top: 10px;">
+    //                     <em>Note: Indicators represent system-observed signals only. No compliance or intent conclusions are drawn.</em>
+    //                 </p>
+    //             </div>
 
-            <div class="section-title">6. Interaction Behavior Pattern</div>
-            <div class="content-box">
-                    <div class="indicator-grid">
-                    <div class="indicator-item">
-                            <div class="indicator-label">Speed Profile:</div>
-                            <div class="indicator-value">' . $speed_profile . '</div>
-                        </div>
-                    </div>
-                </div><!-- Operational Timeline -->
-            <div class="section-title">8. Operational Timeline</div>
-            <div class="content-box">
-                <div class="indicator-grid">';
+    //         <div class="section-title">6. Interaction Behavior Pattern</div>
+    //         <div class="content-box">
+    //                 <div class="indicator-grid">
+    //                 <div class="indicator-item">
+    //                         <div class="indicator-label">Speed Profile:</div>
+    //                         <div class="indicator-value">' . $speed_profile . '</div>
+    //                     </div>
+    //                 </div>
+    //             </div><!-- Operational Timeline -->
+    //         <div class="section-title">8. Operational Timeline</div>
+    //         <div class="content-box">
+    //             <div class="indicator-grid">';
                 
-    if (!empty($daughter_vessels)) {
-        $first_daughter = $daughter_vessels[0];
-        $html .= '
-                    <div class="indicator-item">
-                        <div class="indicator-label">Proximity Consistency</div>
-                        <div class="indicator-value">' . ($first_daughter['proximity_consistency'] ?? 'Not Available') . '</div>
-                    </div>
-                    <div class="indicator-item">
-                        <div class="indicator-label">Stationary Duration</div>
-                        <div class="indicator-value">' . ($first_daughter['stationary_duration_hours'] ?? 'Not Available') . ' hours</div>
-                    </div>
-                    <div class="indicator-item">
-                        <div class="indicator-label">AIS Data Points</div>
-                        <div class="indicator-value">' . ($first_daughter['data_points_analyzed'] ?? 'Not Available') . ' analyzed</div>
-                    </div>';
-    }
+    // if (!empty($daughter_vessels)) {
+    //     $first_daughter = $daughter_vessels[0];
+    //     $html .= '
+    //                 <div class="indicator-item">
+    //                     <div class="indicator-label">Proximity Consistency</div>
+    //                     <div class="indicator-value">' . ($first_daughter['proximity_consistency'] ?? 'Not Available') . '</div>
+    //                 </div>
+    //                 <div class="indicator-item">
+    //                     <div class="indicator-label">Stationary Duration</div>
+    //                     <div class="indicator-value">' . ($first_daughter['stationary_duration_hours'] ?? 'Not Available') . ' hours</div>
+    //                 </div>
+    //                 <div class="indicator-item">
+    //                     <div class="indicator-label">AIS Data Points</div>
+    //                     <div class="indicator-value">' . ($first_daughter['data_points_analyzed'] ?? 'Not Available') . ' analyzed</div>
+    //                 </div>';
+    // }
 
-    $html .= '
-                    <div class="indicator-item">
-                        <div class="indicator-label">Mother Vessel AIS</div>
-                        <div class="indicator-value">' . ($mother_vessel['ais_continuity'] ?? 'Not Available') . ' signal</div>
-                    </div>';
+    // $html .= '
+    //                 <div class="indicator-item">
+    //                     <div class="indicator-label">Mother Vessel AIS</div>
+    //                     <div class="indicator-value">' . ($mother_vessel['ais_continuity'] ?? 'Not Available') . ' signal</div>
+    //                 </div>';
 
-    if (!empty($daughter_vessels)) {
-        $html .= '
-                    <div class="indicator-item">
-                        <div class="indicator-label">Event Percentage</div>
-                        <div class="indicator-value">' . ($first_daughter['event_percentage'] ?? 'Not Available') . '%</div>
-                    </div>
-                    ';
-    }
+    // if (!empty($daughter_vessels)) {
+    //     $html .= '
+    //                 <div class="indicator-item">
+    //                     <div class="indicator-label">Event Percentage</div>
+    //                     <div class="indicator-value">' . ($first_daughter['event_percentage'] ?? 'Not Available') . '%</div>
+    //                 </div>
+    //                 ';
+    // }
 
-    $html .= '
-                </div>
-                <p style="font-size: 9pt; color: #666; margin-top: 10px;">
-                    <em>Note: Indicators represent system-observed signals only. No compliance or intent conclusions are drawn.</em>
-                </p>
-            </div>
-            <!-- Event Narrative -->
-            <div class="section-title">9. Operational Assessment</div>
-            <div class="content-box">
-                <div class="narrative-text">
-                    ' . $event_narrative . '
-                </div> 
-                <p style="font-size: 9pt; color: #666; margin-top: 10px;">
-                    <em>This narrative reflects system-observed AIS signals only and does not constitute confirmation of an STS operation or any compliance assessment.</em>
-                </p>
-            </div>
+    // $html .= '
+    //             </div>
+    //             <p style="font-size: 9pt; color: #666; margin-top: 10px;">
+    //                 <em>Note: Indicators represent system-observed signals only. No compliance or intent conclusions are drawn.</em>
+    //             </p>
+    //         </div>
+    //         <!-- Event Narrative -->
+    //         <div class="section-title">9. Operational Assessment</div>
+    //         <div class="content-box">
+    //             <div class="narrative-text">
+    //                 ' . $event_narrative . '
+    //             </div> 
+    //             <p style="font-size: 9pt; color: #666; margin-top: 10px;">
+    //                 <em>This narrative reflects system-observed AIS signals only and does not constitute confirmation of an STS operation or any compliance assessment.</em>
+    //             </p>
+    //         </div>
             
-            <div class="section-title">11. Regulatory Relevance</div>
-            <div class="content-box">
-                <div class="narrative-text">
-                    Monitoring offshore STS operations<br>
-                    Verification of cargo or bunkering activity<br>
-                    Safety and environmental oversight<br>
-                    Operational pattern analysis<br>
-                    Coordination with maritime enforcement agencies<br>
-                </div> 
-            </div>
-            <div class="section-title">12. Evidence Included</div>
-            <div class="content-box">
-                <div class="narrative-text tickbox">
-                    ✓ AIS track visualization<br>
-                    ✓ Proximity analysis<br>
-                    ✓ Timeline reconstruction<br>
-                    ✓ Vessel identity verification<br>
-                </div> 
-            </div>
-            <div class="section-title">13. Methodology & Data Basis</div>
-            <div class="content-box">
-                <div class="narrative-text tickbox">
-                    <p>
-                        This report is generated automatically from AIS vessel tracking data processed by the Coastalynk operational intelligence system.
-                    </p>
-                    <p>
-                        The system analyzes vessel proximity, movement behavior, AIS signal continuity, and duration of interaction to identify patterns consistent with offshore ship-to-ship activity.
-                    </p>
-                    <p>
-                        All timestamps are expressed in Coordinated Universal Time (UTC).
-                    </p>
-                    <p>
-                        All geographic coordinates use the WGS‑84 standard.
-                    </p>
-                    <p>
-                        AIS signal availability and transmission quality may influence detection confidence and continuity metrics.
-                    </p>
-                </div> 
-            </div>';
+    //         <div class="section-title">11. Regulatory Relevance</div>
+    //         <div class="content-box">
+    //             <div class="narrative-text">
+    //                 Monitoring offshore STS operations<br>
+    //                 Verification of cargo or bunkering activity<br>
+    //                 Safety and environmental oversight<br>
+    //                 Operational pattern analysis<br>
+    //                 Coordination with maritime enforcement agencies<br>
+    //             </div> 
+    //         </div>
+    //         <div class="section-title">12. Evidence Included</div>
+    //         <div class="content-box">
+    //             <div class="narrative-text tickbox">
+    //                 ✓ AIS track visualization<br>
+    //                 ✓ Proximity analysis<br>
+    //                 ✓ Timeline reconstruction<br>
+    //                 ✓ Vessel identity verification<br>
+    //             </div> 
+    //         </div>
+    //         <div class="section-title">13. Methodology & Data Basis</div>
+    //         <div class="content-box">
+    //             <div class="narrative-text tickbox">
+    //                 <p>
+    //                     This report is generated automatically from AIS vessel tracking data processed by the Coastalynk operational intelligence system.
+    //                 </p>
+    //                 <p>
+    //                     The system analyzes vessel proximity, movement behavior, AIS signal continuity, and duration of interaction to identify patterns consistent with offshore ship-to-ship activity.
+    //                 </p>
+    //                 <p>
+    //                     All timestamps are expressed in Coordinated Universal Time (UTC).
+    //                 </p>
+    //                 <p>
+    //                     All geographic coordinates use the WGS‑84 standard.
+    //                 </p>
+    //                 <p>
+    //                     AIS signal availability and transmission quality may influence detection confidence and continuity metrics.
+    //                 </p>
+    //             </div> 
+    //         </div>';
      
 
-        $html .= '
-                    <p style="font-size: 9pt; color: #666; margin-top: 10px;">
-                        <em>Note: Vessel roles (mother/daughter) are assigned based on system observation context only.</em>
-                    </p>
-                </div>
+    //     $html .= '
+    //                 <p style="font-size: 9pt; color: #666; margin-top: 10px;">
+    //                     <em>Note: Vessel roles (mother/daughter) are assigned based on system observation context only.</em>
+    //                 </p>
+    //             </div>
 
-                <!-- System Notes -->
-                <div class="section-title">14. SYSTEM NOTES (AUTO-GENERATED)</div>
-                <div class="content-box">';
+    //             <!-- System Notes -->
+    //             <div class="section-title">14. SYSTEM NOTES (AUTO-GENERATED)</div>
+    //             <div class="content-box">';
                 
-        foreach ($system_notes as $note) {
-            $html .= '<div class="note-item">• ' . $note . '</div>';
-        }
+    //     foreach ($system_notes as $note) {
+    //         $html .= '<div class="note-item">• ' . $note . '</div>';
+    //     }
 
-        $html .= '
-                    <div style="margin-top: 15px; padding: 10px; background-color: #f0f7ff; border-radius: 4px; font-size: 9pt;">
-                        <strong>Report Metadata:</strong><br>
-                        Generated: ' . date('Y-m-d H:i:s') . '<br>
-                        Event ID: ' . $event_id . '<br>
-                        Report Version: v1.0.
-                    </div>
-                </div>
+        // $html .= '
+        //             <div style="margin-top: 15px; padding: 10px; background-color: #f0f7ff; border-radius: 4px; font-size: 9pt;">
+        //                 <strong>Report Metadata:</strong><br>
+        //                 Generated: ' . date('Y-m-d H:i:s') . '<br>
+        //                 Event ID: ' . $event_id . '<br>
+        //                 Report Version: v1.0.
+        //             </div>
+        //         </div>';
             
 
-            <div class="footer">
+           $html .= ' <div class="footer">
                 <strong>Rules Version: v1.0</strong><br>
                 <strong>STS Likelihood Rules v1.0</strong><br>
                 <strong>STS Data Quality Rules v1.0</strong><br>
